@@ -1,9 +1,9 @@
 package ru.nsu.fit.markelov;
 
-public abstract class HeapSort {
-    public abstract boolean compare(int a, int b); // comparator
+public abstract class HeapSort<T> {
+    public abstract boolean compare(T a, T b); // comparator
 
-    public void sort(int[] arr) {
+    public T[] sort(T[] arr) {
         for (int i = arr.length / 2 - 1; i >= 0; i--) { // heap building
             siftDown(arr, arr.length, i);
         }
@@ -12,9 +12,11 @@ public abstract class HeapSort {
             swap(arr, 0, i);
             siftDown(arr, i, 0);
         }
+
+        return arr;
     }
 
-    private void siftDown(int[] arr, int len, int parent) {
+    private void siftDown(T[] arr, int len, int parent) {
         int child = 2 * parent + 1; // left child
 
         if (child >= len) { // no children
@@ -31,8 +33,8 @@ public abstract class HeapSort {
         }
     }
 
-    private void swap(int[] arr, int a, int b) {
-        int tmp = arr[a];
+    private void swap(T[] arr, int a, int b) {
+        T tmp = arr[a];
         arr[a] = arr[b];
         arr[b] = tmp;
     }
