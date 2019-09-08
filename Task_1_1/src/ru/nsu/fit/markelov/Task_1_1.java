@@ -7,8 +7,12 @@ public class Task_1_1 {
                 {100, -9, 0, 5, 0, 0, 27, 0, -7, 5},
         };
 
-        HeapSort heapSort = new HeapSort((a, b) -> (int) a - (int) b);
-//        HeapSort heapSort = new HeapSort(Comparator.comparing(a -> (int) a));
+        HeapSort heapSort = new HeapSort() {
+            @Override
+            public boolean compare(int a, int b) {
+                return a > b;
+            }
+        };
 
         for (int i = 0; i < arrays.length; i++) {
             System.out.println("Test " + (i + 1) + ":");

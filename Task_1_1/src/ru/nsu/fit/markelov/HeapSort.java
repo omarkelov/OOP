@@ -1,13 +1,7 @@
 package ru.nsu.fit.markelov;
 
-import java.util.Comparator;
-
-public class HeapSort {
-    private Comparator mComparator;
-
-    public HeapSort(Comparator comparator) {
-        mComparator = comparator;
-    }
+public abstract class HeapSort {
+    public abstract boolean compare(int a, int b); // comparator
 
     public void sort(int[] arr) {
         for (int i = arr.length / 2 - 1; i >= 0; i--) { // heap building
@@ -27,11 +21,11 @@ public class HeapSort {
             return;
         }
 
-        if (child + 1 < len && cmp(arr[child + 1], arr[child])) {
+        if (child + 1 < len && compare(arr[child + 1], arr[child])) {
             child++; // right child
         }
 
-        if (cmp(arr[child], arr[parent])) {
+        if (compare(arr[child], arr[parent])) {
             swap(arr, child, parent);
             siftDown(arr, len, child);
         }
@@ -41,9 +35,5 @@ public class HeapSort {
         int tmp = arr[a];
         arr[a] = arr[b];
         arr[b] = tmp;
-    }
-
-    private boolean cmp(int a, int b) {
-        return mComparator.compare(a, b) > 0;
     }
 }
