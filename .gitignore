@@ -1,5 +1,5 @@
 # Folder
-build/
+*/build/
 
 # Compiled class file
 *.class
