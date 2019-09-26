@@ -15,12 +15,20 @@ public class HeapSort {
     * worst case. It is an in-place algorithm, but not stable.
     *
     * @param  arr        the array to be sorted
-    * @param  comparator the comparator to determine the order of the array
-    * @return            the initial array after sorting
+    * @param  comparator the comparator to determine the order of the array. A null value indicates that the elements' natural ordering should be used.
+    * @return            the initial array after sorting or null if initial array was null
     * @see               Comparator
     */
     public <T> T[] sort(T[] arr, Comparator comparator) {
-        mComparator = comparator;
+        if (arr == null) {
+            return null;
+        }
+
+        try {
+            mComparator = comparator;
+        } catch (NullPointerException e) {
+            mComparator = Comparator.naturalOrder();
+        }
 
         for (int i = arr.length / 2 - 1; i >= 0; i--) { // heap building
             siftDown(arr, arr.length, i);
