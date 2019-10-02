@@ -51,7 +51,7 @@ public class FloydWarshall implements ShortestPath {
     public int getShortestPath(int start, int finish) {
         if (start < 1 || start > mMatrix.length || finish < 1 || finish > mMatrix.length) {
             throw new IllegalArgumentException(
-                    "The starting or ending node cannot be" +
+                    "The starting or ending node cannot be " +
                     "less than one or higher than maximal node"
             );
         }

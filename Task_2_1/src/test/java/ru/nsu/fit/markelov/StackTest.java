@@ -3,11 +3,9 @@ package ru.nsu.fit.markelov;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Iterator;
-
 public class StackTest {
     @Test
-    public void test1() {
+    public void test() {
         Stack<Integer> stack = new Stack<>();
 
         for (int i = 1; i <= 4; i++) {
@@ -17,9 +15,8 @@ public class StackTest {
 
         int j = 0;
         Integer[] arr = new Integer[] {1, 2, 3, 4};
-        Iterator iterator = stack.iterator();
-        while (iterator.hasNext()) {
-            Assert.assertEquals(arr[j++], iterator.next());
+        for (Integer i : stack) {
+            Assert.assertEquals(arr[j++], i);
         }
 
         Assert.assertEquals(new Integer(4), stack.pop());
@@ -33,9 +30,8 @@ public class StackTest {
 
         j = 0;
         arr = new Integer[] {1, 2, 11, 12, 13, 14};
-        iterator = stack.iterator();
-        while (iterator.hasNext()) {
-            Assert.assertEquals(arr[j++], iterator.next());
+        for (Integer i : stack) {
+            Assert.assertEquals(arr[j++], i);
         }
 
         Assert.assertEquals(new Integer(14), stack.pop());
