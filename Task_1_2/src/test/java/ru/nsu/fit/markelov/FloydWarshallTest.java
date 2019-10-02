@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class FloydWarshallTest {
     @Test
-    public void test1() {
+    public void test() {
         Graph graph = new Graph();
         graph.addEdge(4, 2, 2);
         graph.addEdge(1, 4, 8);

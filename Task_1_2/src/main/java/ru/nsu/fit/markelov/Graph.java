@@ -52,6 +52,13 @@ public class Graph {
     }
 
     /**
+     * @return stack of edges
+     */
+    public Stack<Edge> getEdges() {
+        return mEdges;
+    }
+
+    /**
      * @return standard iterator over graph's edges
      * @see    Iterator
      */
