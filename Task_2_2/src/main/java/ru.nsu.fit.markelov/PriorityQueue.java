@@ -1,6 +1,7 @@
 package ru.nsu.fit.markelov;
 
 import java.util.Comparator;
+import java.util.EmptyStackException;
 
 public class PriorityQueue<T extends Comparable> extends Stack<T> {
 
@@ -60,22 +61,21 @@ public class PriorityQueue<T extends Comparable> extends Stack<T> {
     }
 
     /**
-     * Retrieves and removes the head of this queue, or returns null
-     * if this queue is empty.
+     * Retrieves and removes the head of this queue.
      * <p>
      * Takes O (log(n)) time for n sized PriorityQueue.
      *
-     * @return the head of this queue, or null if this queue is empty
+     * @return                     the head of this queue
+     * @throws EmptyStackException if the stack is empty
      */
     @SuppressWarnings("unchecked")
     public T extract() {
-        if (count() == 0) {
-            return null;
-        }
-
         T elem = (T) objects[0];
 
-        objects[0] = pop();
+        // synchronous 'objects[0] = pop()' leads to split of 'objects'
+        T lastElem = pop();
+        objects[0] = lastElem;
+
         siftDown(0);
 
         return elem;

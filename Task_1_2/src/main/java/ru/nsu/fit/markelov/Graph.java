@@ -1,10 +1,10 @@
 package ru.nsu.fit.markelov;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 
 public class Graph {
 
-    private Stack<Edge> mEdges;
+    private ArrayList<Edge> mEdges;
     private boolean mDirected;
     private int mMaxNodeIndex;
 
@@ -21,7 +21,7 @@ public class Graph {
      * @param directed a flag to determine whether a Graph is directed
      */
     public Graph(boolean directed) {
-        mEdges = new Stack<>();
+        mEdges = new ArrayList<>();
         mDirected = directed;
         mMaxNodeIndex = 0;
     }
@@ -43,27 +43,20 @@ public class Graph {
         verifyNode(fromNode, "source");
         verifyNode(toNode, "sink");
 
-        mEdges.push(new Edge(fromNode, toNode, weight));
+        mEdges.add(new Edge(fromNode, toNode, weight));
         if (!mDirected) {
-            mEdges.push(new Edge(toNode, fromNode, weight));
+            mEdges.add(new Edge(toNode, fromNode, weight));
         }
 
         mMaxNodeIndex = Math.max(mMaxNodeIndex, Math.max(fromNode, toNode));
     }
 
     /**
-     * @return stack of edges
+     * @return edges as Iterable interface
+     * @see    Iterable
      */
-    public Stack<Edge> getEdges() {
+    public Iterable<Edge> getEdges() {
         return mEdges;
-    }
-
-    /**
-     * @return standard iterator over graph's edges
-     * @see    Iterator
-     */
-    public Iterator getEdgesIterator() {
-        return mEdges.iterator();
     }
 
     /**

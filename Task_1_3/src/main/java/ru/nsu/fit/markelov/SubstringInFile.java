@@ -2,11 +2,12 @@ package ru.nsu.fit.markelov;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class SubstringInFile {
 
     private int mBufferSize;
-    private Stack<Integer> mPositions;
+    private ArrayList<Integer> mPositions;
 
     /**
      * Creates a new SubstringInFile with default buffer size.
@@ -45,7 +46,7 @@ public class SubstringInFile {
      * @see             FileReader
      */
     public int[] find(String fileName, String pattern) {
-        mPositions = new Stack<>();
+        mPositions = new ArrayList<>();
 
         if (mBufferSize == -1 || mBufferSize < 16 * pattern.length()) {
             mBufferSize = 16 * pattern.length();
@@ -67,8 +68,8 @@ public class SubstringInFile {
                 int[] positions = zFunction.getPositions();
                 for (int j = 0; j < positions.length; j++) {
                     int position = i * buffer.length + positions[j] - (i+1) * offset;
-                    if (mPositions.count() == 0 || (int) mPositions.objects[mPositions.count() - 1] != position) {
-                        mPositions.push(position);
+                    if (mPositions.size() == 0 || mPositions.get(mPositions.size() - 1) != position) {
+                        mPositions.add(position);
                     }
                 }
 
@@ -79,9 +80,9 @@ public class SubstringInFile {
             return null;
         }
 
-        int[] positions = new int[mPositions.count()];
-        for (int i = 0; i < mPositions.count(); i++) {
-            positions[i] = (int) mPositions.objects[i];
+        int[] positions = new int[mPositions.size()];
+        for (int i = 0; i < mPositions.size(); i++) {
+            positions[i] = mPositions.get(i);
         }
 
         return positions;
