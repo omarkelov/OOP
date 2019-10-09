@@ -20,7 +20,7 @@ public class PriorityQueueTest {
         pairPriorityQueue.insert(new Pair<>(1, "7"));
         pairPriorityQueue.insert(new Pair<>(8, "8"));
 
-        Assert.assertEquals(8, pairPriorityQueue.count());
+        Assert.assertEquals(8, pairPriorityQueue.getCount());
 
         int j = 0;
         Integer[] arr = new Integer[] {1, 3, 2, 5, 4, 7, 6, 8};
@@ -31,13 +31,13 @@ public class PriorityQueueTest {
         for (int i = 1; i <= 8; i++) {
             Assert.assertEquals(i, ((Pair) pairPriorityQueue.extract()).getKey());
         }
-        Assert.assertEquals(0, pairPriorityQueue.count());
+        Assert.assertEquals(0, pairPriorityQueue.getCount());
 
         boolean exceptionCaught;
         try {
             pairPriorityQueue.extract();
             exceptionCaught = false;
-        } catch (EmptyStackException e) {
+        } catch (EmptyQueueException e) {
             exceptionCaught = true;
         }
         Assert.assertTrue(exceptionCaught);

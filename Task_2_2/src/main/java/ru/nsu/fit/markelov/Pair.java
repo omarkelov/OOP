@@ -2,8 +2,8 @@ package ru.nsu.fit.markelov;
 
 public class Pair<K extends Comparable, V> implements Comparable<Pair> {
 
-    private K mKey;
-    private V mValue;
+    private K key;
+    private V value;
 
     /**
      * Creates a Pair that represents a <(key, value)> object.
@@ -15,8 +15,8 @@ public class Pair<K extends Comparable, V> implements Comparable<Pair> {
      * @param value the value
      */
     public Pair(K key, V value) {
-        mKey = key;
-        mValue = value;
+        this.key = key;
+        this.value = value;
     }
 
     /**
@@ -25,7 +25,7 @@ public class Pair<K extends Comparable, V> implements Comparable<Pair> {
     @Override
     @SuppressWarnings("unchecked")
     public int compareTo(Pair anotherPair) {
-        return mKey.compareTo(anotherPair.getKey());
+        return key.compareTo(anotherPair.getKey());
     }
 
     /**
@@ -33,20 +33,20 @@ public class Pair<K extends Comparable, V> implements Comparable<Pair> {
      */
     @Override
     public String toString() {
-        return "(" + mKey + "; " + mValue + ")";
+        return "(" + key + "; " + value + ")";
     }
 
     /**
      * return the key of this pair
      */
     public K getKey() {
-        return mKey;
+        return key;
     }
 
     /**
      * return the value of this pair
      */
     public V getValue() {
-        return mValue;
+        return value;
     }
 }
