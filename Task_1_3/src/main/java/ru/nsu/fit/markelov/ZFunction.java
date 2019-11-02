@@ -1,66 +1,27 @@
 package ru.nsu.fit.markelov;
 
-import java.util.Arrays;
-
 public class ZFunction {
-
-    private char[] mString;
-    private int[] mPositions;
-
     /**
-     * Creates a new ZFunction.
+     * Calculates a z-Function of the specified string.
      * <p>
-     * Copies the input data (which stays unmodified) to operate with,
-     * builds a z-function of the string and saves it in an array of ints.
+     * It takes O(n) char comparisons, where n is the length
+     * of the string.
      *
-     * @param str       the sequence of chars to find at
-     * @param strLen    the length of char sequence
-     * @param delimiter the symbol never met in a string
-     * @param pattern   the substring to find
+     * @param  chars char array to matchAll in
+     * @return       z-Function of the specified string
      */
-    public ZFunction(char[] str, int strLen, char delimiter, char[] pattern) {
-        mString = new char[pattern.length + 1 + strLen];
-        System.arraycopy(pattern, 0, mString, 0, pattern.length);
-        mString[pattern.length] = delimiter;
-        System.arraycopy(str, 0, mString, pattern.length + 1, strLen);
-
-        findPositions(pattern.length, strLen);
-    }
-
-    /**
-     * Returns the positions of a substring in a specified string.
-     *
-     * @return the positions of substring in a specified string
-     */
-    public int[] getPositions() {
-        return mPositions;
-    }
-
-    private void findPositions(int m, int n) {
-        int[] zs = getZFunction();
-
-        int count = 0;
-        for (int i = m + 1; i < m + 1 + n; i++) {
-            if (zs[i] == m) {
-                zs[count++] = i - m - 1;
-            }
-        }
-
-        mPositions = Arrays.copyOf(zs, count);
-    }
-
-    private int[] getZFunction() {
-        int[] z = new int[mString.length];
+    public static int[] getZValues(char[] chars) {
+        int[] z = new int[chars.length];
 
         int l = 0,
             r = 0;
 
-        for (int i = 1; i < mString.length; i++) {
+        for (int i = 1; i < chars.length; i++) {
             if (i < r) {
                 z[i] = Math.min(r - i, z[i - l]);
             }
 
-            while (i + z[i] < mString.length && mString[z[i]] == mString[i + z[i]]) {
+            while (i + z[i] < chars.length && chars[z[i]] == chars[i + z[i]]) {
                 z[i]++;
             }
 
