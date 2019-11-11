@@ -4,95 +4,87 @@ import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 
+/**
+ * <code>Stack</code> represents a last-in-first-out (LIFO) model
+ * of objects. The usual push and pop operations are provided, as
+ * well as a method to get the amount of objects kept.
+ * <p>
+ * When a stack is first created, it contains no items and no
+ * memory is allocated. However, the size of a stack can grow
+ * or shrink depending on a default resize factor (1.5) to
+ * accommodate adding and removing items.
+ * <p>
+ * A Stack implements <code>Iterable</code> interface.
+ *
+ * @author Oleg Markelov
+ * @see    Iterable
+ */
 public class Stack<T> implements Iterable<T> {
 
     private static double RESIZE_FACTOR = 1.5;
 
-    private Object[] objects;
-    private int count;
-    private int capacity;
-    private double resizeFactor;
+    private Object[] mObjects;
+    private int mCount;
+    private int mCapacity;
+    private double mResizeFactor;
 
     /**
-     * Creates a Stack that represents a last-in-first-out (LIFO) model
-     * of objects. The usual push and pop operations are provided, as
-     * well as a method to get the amount of objects kept.
-     * <p>
-     * When a stack is first created, it contains no items and no
-     * memory is allocated. However, the size of a stack can grow
-     * or shrink depending on a default resize factor (1.5) to
-     * accommodate adding and removing items.
-     * <p>
-     * A Stack implements Iterable interface.
-     *
-     * @see Iterable
+     * Creates a <code>Stack</code> with default resize factor.
      */
     public Stack() {
         this(RESIZE_FACTOR);
     }
 
     /**
-     * Creates a Stack that represents a last-in-first-out (LIFO) model
-     * of objects. The usual push and pop operations are provided, as
-     * well as a method to get the amount of objects kept.
-     * <p>
-     * When a stack is first created, it contains no items and no
-     * memory is allocated. However, the size of a stack can grow
-     * or shrink depending on a specified resize factor to
-     * accommodate adding and removing items.
-     * <p>
-     * A Stack implements Iterable interface.
-     *
-     * @param resizeFactor the resize factor that is used for Stack growing.
-     * @see   Iterable
+     * Creates a <code>Stack</code> with specified resize factor.
      */
     public Stack(double resizeFactor) {
-        count = 0;
-        capacity = 0;
-        this.resizeFactor = resizeFactor;
+        mCount = 0;
+        mCapacity = 0;
+        this.mResizeFactor = resizeFactor;
     }
 
     /**
      * Pushes an object onto the top of this stack.
      * <p>
-     * If there is no enough space for object storing, the capacity of the
-     * stack is increased automatically.
+     * If there is no enough space for object storing, the capacity
+     * of the stack is increased automatically.
      *
      * @param elem the element to add.
      */
     public void push(T elem) {
-        if (objects == null) {
-            capacity = 1;
-            objects = new Object[1];
-        } else if (capacity == count) {
-            capacity = (int) Math.ceil(capacity * resizeFactor);
-            objects = Arrays.copyOf(objects, capacity);
+        if (mObjects == null) {
+            mCapacity = 1;
+            mObjects = new Object[1];
+        } else if (mCapacity == mCount) {
+            mCapacity = (int) Math.ceil(mCapacity * mResizeFactor);
+            mObjects = Arrays.copyOf(mObjects, mCapacity);
         }
 
-        objects[count++] = elem;
+        mObjects[mCount++] = elem;
     }
 
     /**
      * Removes the object at the top of this stack and returns it.
      * <p>
-     * If there is too much space after object removing, the capacity of the
-     * stack is decreased automatically.
+     * If there is too much space after object removing, the
+     * capacity of the stack is decreased automatically.
      *
-     * @return                     the object at the top of this stack
-                                   or null, if it is empty.
+     * @return                     the object at the top of this
+     *                             stack or null, if it is empty.
      * @throws EmptyStackException if the stack is empty.
      */
     @SuppressWarnings("unchecked")
     public T pop() {
-        if (count == 0) {
+        if (mCount == 0) {
             throw new EmptyStackException();
         }
 
-        T elem = (T) objects[--count];
+        T elem = (T) mObjects[--mCount];
 
-        if (count <= (int) Math.ceil(capacity / (resizeFactor * resizeFactor))) {
-            capacity = (int) Math.ceil(capacity / resizeFactor);
-            objects = Arrays.copyOf(objects, capacity);
+        if (mCount <= (int) Math.ceil(mCapacity / (mResizeFactor * mResizeFactor))) {
+            mCapacity = (int) Math.ceil(mCapacity / mResizeFactor);
+            mObjects = Arrays.copyOf(mObjects, mCapacity);
         }
 
         return elem;
@@ -104,7 +96,7 @@ public class Stack<T> implements Iterable<T> {
      * @return the amount of objects in this stack.
      */
     public int count() {
-        return count;
+        return mCount;
     }
 
     /**
@@ -118,18 +110,24 @@ public class Stack<T> implements Iterable<T> {
 
             @Override
             public boolean hasNext() {
-                return i < count;
+                return i < mCount;
             }
 
             @Override
             public T next() {
-                return (T) objects[i++];
+                return (T) mObjects[i++];
             }
         };
     }
 
-    // for testing only
+    /**
+     * Returns the capacity of this stack.
+     * <p>
+     * <i>This method should be used for testing only</i>.
+     *
+     * @return the capacity of this stack.
+     */
     public int getCapacity() {
-        return capacity;
+        return mCapacity;
     }
 }
