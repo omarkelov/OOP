@@ -71,6 +71,7 @@ public class StreamPatternMatcher {
         System.arraycopy(pattern.toCharArray(), 0, buffer, 0, pattern.length());
         buffer[pattern.length()] = delimiter;
 
+        // https://funkyimg.com/i/2YKEp.png
         int prefixLen = pattern.length() + 1;
         int extraLen = pattern.length();
         int charsToRead = bufferSize - (prefixLen + extraLen);
