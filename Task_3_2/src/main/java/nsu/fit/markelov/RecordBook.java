@@ -1,5 +1,10 @@
 package nsu.fit.markelov;
 
+import nsu.fit.markelov.Records.Record;
+import nsu.fit.markelov.Visitors.GradeVisitor;
+import nsu.fit.markelov.Visitors.IncreasedScholarshipVisitor;
+import nsu.fit.markelov.Visitors.Visitor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,10 +19,12 @@ import java.util.InputMismatchException;
  */
 public class RecordBook {
 
-    private int mSemestersAmount;
-    private int mLastSemester;
-    private ArrayList<NonDifRecord> mNonDifRecords;
-    private ArrayList<DifRecord> mDifRecords;
+    private int semestersAmount;
+    private int lastSemester;
+    private ArrayList<Record> records;
+
+    private Visitor<Double> gradeVisitor;
+    private Visitor<Boolean> increasedScholarshipVisitor;
 
     /**
      * Creates a new <code>RecordBook</code>.
@@ -31,53 +38,46 @@ public class RecordBook {
      *                                if 'lastSemester' > 'semestersAmount'.
      */
     public RecordBook(int semestersAmount, int lastSemester) throws InputMismatchException {
-        mSemestersAmount = semestersAmount;
-        mLastSemester = lastSemester;
+        this.semestersAmount = semestersAmount;
+        this.lastSemester = lastSemester;
         checkInput();
 
-        mNonDifRecords = new ArrayList<>();
-        mDifRecords = new ArrayList<>();
+        records = new ArrayList<>();
+
+        gradeVisitor = new GradeVisitor();
+        increasedScholarshipVisitor = new IncreasedScholarshipVisitor();
     }
 
     /**
-     * Adds non-differential record.
+     * Adds any record.
      *
-     * @param nonDifRecord the record to be added.
-     * @see   NonDifRecord
+     * @param record the record to be added.
+     * @see   Record
      */
-    public void addRecord(NonDifRecord nonDifRecord) {
-        mNonDifRecords.add(nonDifRecord);
+    public void addRecord(Record record) {
+        records.add(record);
     }
 
     /**
-     * Adds differential record.
+     * Calculates and returns the average grade of the <code>RecordBook</code>.
      *
-     * @param difRecord the record to be added.
-     * @see   DifRecord
-     */
-    public void addRecord(DifRecord difRecord) {
-        mDifRecords.add(difRecord);
-    }
-
-    /**
-     * Calculates and returns the average point of the <code>RecordBook</code>.
-     *
-     * @return the average point of the <code>RecordBook</code>.
+     * @return the average grade of the <code>RecordBook</code>.
      */
     public double getRecordBookAverage() {
-        return getAverage(mDifRecords);
+        return getAverage(records);
     }
 
     /**
-     * Calculates and returns the average point of the diploma.
+     * Calculates and returns the average grade of the diploma.
      *
-     * @return the average point of the diploma.
+     * @return the average grade of the diploma.
      */
     public double getDiplomaAverage() {
-        // (subject -> DifRecord) map for getting only the last record of each subject
-        HashMap<String, DifRecord> map = new HashMap<>();
-        mDifRecords.forEach(record -> {
-            if (!map.containsKey(record.getSubject()) || record.getSemester() > map.get(record.getSubject()).getSemester()) {
+        // (subject -> RecordDif) map for getting only the last record of each subject
+        HashMap<String, Record> map = new HashMap<>();
+        records.forEach(record -> {
+            if (!map.containsKey(record.getSubject()) ||
+                    record.getSemester() > map.get(record.getSubject()).getSemester()) {
                 map.put(record.getSubject(), record);
             }
         });
@@ -86,40 +86,40 @@ public class RecordBook {
     }
 
     /**
-     * Calculates and returnes whether the student should get
+     * Calculates and returns whether the student should get
      * an increased scholarship.
      *
      * @return whether the student should get an increased scholarship.
      */
     public boolean isIncreasedScholarship() {
-        boolean creditsPassed = mNonDifRecords.stream()
-                .filter(record -> record.getSemester() == mLastSemester)
-                .allMatch(NonDifRecord::isPassed);
-
-        boolean exellentMarks = mDifRecords.stream()
-                .filter(record -> record.getSemester() == mLastSemester)
-                .allMatch(record -> record.getPoint() == 5);
-
-        return creditsPassed && exellentMarks;
+        return records.stream()
+                .filter(record -> record.getSemester() == lastSemester)
+//                .allMatch(record -> record.acceptBoolean(increasedScholarshipVisitor) &&
+                .allMatch(record -> record.isIncreasedScholarship() &&
+                        record.getSemester() != semestersAmount);
     }
 
-    private double getAverage(Collection<DifRecord> collection) {
+    private double getAverage(Collection<Record> collection) {
         return collection.stream()
-                .mapToDouble(DifRecord::getPoint)
+//                .mapToDouble(record -> record.acceptDouble(gradeVisitor))
+                .mapToDouble(Record::getGradeDouble)
+                .filter(grade -> !Double.isNaN(grade))
                 .average()
                 .orElse(Double.NaN);
     }
 
     private void checkInput() throws InputMismatchException {
-        if (mSemestersAmount < 1) {
-            throw new InputMismatchException("Invalid 'semestersAmount' parameter was passed to the RecordBook class constructor.");
+        if (semestersAmount < 1) {
+            throw new InputMismatchException("Invalid 'semestersAmount' parameter was passed to" +
+                    " the RecordBook class constructor.");
         }
 
-        if (mLastSemester < 1) {
-            throw new InputMismatchException("Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.");
+        if (lastSemester < 1) {
+            throw new InputMismatchException("Invalid 'lastSemester' parameter was passed to the" +
+                    " RecordBook class constructor.");
         }
 
-        if (mLastSemester > mSemestersAmount) {
+        if (lastSemester > semestersAmount) {
             throw new InputMismatchException("lastSemester must be <= semestersAmount.");
         }
     }

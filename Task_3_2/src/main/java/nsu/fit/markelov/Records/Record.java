@@ -1,4 +1,7 @@
-package nsu.fit.markelov;
+package nsu.fit.markelov.Records;
+
+import nsu.fit.markelov.RecordBook;
+import nsu.fit.markelov.Visitors.Visitor;
 
 import java.util.InputMismatchException;
 
@@ -11,8 +14,8 @@ import java.util.InputMismatchException;
  */
 public abstract class Record {
 
-    private String mSubject;
-    private int mSemester;
+    private String subject;
+    private int semester;
 
     /**
      * Creates a new <code>Record</code>.
@@ -23,8 +26,8 @@ public abstract class Record {
      *                                Or if 'semester' parameter less than one was passed.
      */
     public Record(String subject, int semester) throws InputMismatchException {
-        mSubject = subject;
-        mSemester = semester;
+        this.subject = subject;
+        this.semester = semester;
         checkInput();
     }
 
@@ -34,7 +37,7 @@ public abstract class Record {
      * @return the subject of the record.
      */
     public String getSubject() {
-        return mSubject;
+        return subject;
     }
 
     /**
@@ -43,7 +46,7 @@ public abstract class Record {
      * @return the semester of the record.
      */
     public int getSemester() {
-        return mSemester;
+        return semester;
     }
 
     /**
@@ -54,12 +57,24 @@ public abstract class Record {
     public abstract String getEvaluation();
 
     private void checkInput() throws InputMismatchException {
-        if (mSubject == null || mSubject.isEmpty()) {
-            throw new InputMismatchException("null or empty 'subject' parameter was passed to the Record class constructor.");
+        if (subject == null || subject.isEmpty()) {
+            throw new InputMismatchException("null or empty 'subject' parameter was passed to the" +
+                    " Record class constructor.");
         }
 
-        if (mSemester < 1) {
-            throw new InputMismatchException("Invalid 'semester' parameter was passed to the Record class constructor.");
+        if (semester < 1) {
+            throw new InputMismatchException("Invalid 'semester' parameter was passed to the" +
+                    " Record class constructor.");
         }
     }
+
+    // ---------------------------------------------------------------------------------------------
+
+    public abstract Double acceptDouble(Visitor<Double> visitor);
+
+    public abstract Boolean acceptBoolean(Visitor<Boolean> visitor);
+
+    public abstract Double getGradeDouble();
+
+    public abstract Boolean isIncreasedScholarship();
 }
