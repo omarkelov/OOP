@@ -23,10 +23,10 @@ public class Stack<T> implements Iterable<T> {
 
     private static double RESIZE_FACTOR = 1.5;
 
-    private Object[] mObjects;
-    private int mCount;
-    private int mCapacity;
-    private double mResizeFactor;
+    private Object[] objects;
+    private int count;
+    private int capacity;
+    private double resizeFactor;
 
     /**
      * Creates a <code>Stack</code> with default resize factor.
@@ -39,9 +39,9 @@ public class Stack<T> implements Iterable<T> {
      * Creates a <code>Stack</code> with specified resize factor.
      */
     public Stack(double resizeFactor) {
-        mCount = 0;
-        mCapacity = 0;
-        this.mResizeFactor = resizeFactor;
+        count = 0;
+        capacity = 0;
+        this.resizeFactor = resizeFactor;
     }
 
     /**
@@ -53,15 +53,15 @@ public class Stack<T> implements Iterable<T> {
      * @param elem the element to add.
      */
     public void push(T elem) {
-        if (mObjects == null) {
-            mCapacity = 1;
-            mObjects = new Object[1];
-        } else if (mCapacity == mCount) {
-            mCapacity = (int) Math.ceil(mCapacity * mResizeFactor);
-            mObjects = Arrays.copyOf(mObjects, mCapacity);
+        if (objects == null) {
+            capacity = 1;
+            objects = new Object[1];
+        } else if (capacity == count) {
+            capacity = (int) Math.ceil(capacity * resizeFactor);
+            objects = Arrays.copyOf(objects, capacity);
         }
 
-        mObjects[mCount++] = elem;
+        objects[count++] = elem;
     }
 
     /**
@@ -76,15 +76,15 @@ public class Stack<T> implements Iterable<T> {
      */
     @SuppressWarnings("unchecked")
     public T pop() {
-        if (mCount == 0) {
+        if (count == 0) {
             throw new EmptyStackException();
         }
 
-        T elem = (T) mObjects[--mCount];
+        T elem = (T) objects[--count];
 
-        if (mCount <= (int) Math.ceil(mCapacity / (mResizeFactor * mResizeFactor))) {
-            mCapacity = (int) Math.ceil(mCapacity / mResizeFactor);
-            mObjects = Arrays.copyOf(mObjects, mCapacity);
+        if (count <= (int) Math.ceil(capacity / (resizeFactor * resizeFactor))) {
+            capacity = (int) Math.ceil(capacity / resizeFactor);
+            objects = Arrays.copyOf(objects, capacity);
         }
 
         return elem;
@@ -96,7 +96,7 @@ public class Stack<T> implements Iterable<T> {
      * @return the amount of objects in this stack.
      */
     public int count() {
-        return mCount;
+        return count;
     }
 
     /**
@@ -110,12 +110,12 @@ public class Stack<T> implements Iterable<T> {
 
             @Override
             public boolean hasNext() {
-                return i < mCount;
+                return i < count;
             }
 
             @Override
             public T next() {
-                return (T) mObjects[i++];
+                return (T) objects[i++];
             }
         };
     }
@@ -128,6 +128,6 @@ public class Stack<T> implements Iterable<T> {
      * @return the capacity of this stack.
      */
     public int getCapacity() {
-        return mCapacity;
+        return capacity;
     }
 }
