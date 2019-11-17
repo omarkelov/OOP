@@ -71,7 +71,7 @@ public class StreamPatternMatcher {
         System.arraycopy(pattern.toCharArray(), 0, buffer, 0, pattern.length());
         buffer[pattern.length()] = delimiter;
 
-        // https://funkyimg.com/i/2YKEp.png
+        // BUFFER VISUALIZATION: https://funkyimg.com/i/2YNEd.png
         int prefixLen = pattern.length() + 1;
         int extraLen = pattern.length();
         int charsToRead = bufferSize - (prefixLen + extraLen);
@@ -93,7 +93,7 @@ public class StreamPatternMatcher {
                     // position in the whole stream
                     int position = i * (buffer.length - prefixLen) + bufferPosition - (i+1) * extraLen;
 
-                    // to avoid adding duplicates if it's found in the 'extra' zone
+                    // to avoid adding duplicates from the 'extra' zone
                     if (positionsList.size() == 0 || positionsList.get(positionsList.size() - 1) != position) {
                         positionsList.add(position);
                     }
