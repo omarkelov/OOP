@@ -28,13 +28,13 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * BFS is for breadth first search. DFS is for depth first search.
      */
     public enum ITERATOR_TYPE {BFS, DFS}
-    private ITERATOR_TYPE mIteratorType;
+    private ITERATOR_TYPE iteratorType;
 
-    private int mModificationCount;
+    private int modificationCount;
 
-    private T mValue;
-    private Tree<T> mParent;
-    private ArrayList<Tree<T>> mChildren;
+    private T value;
+    private Tree<T> parent;
+    private ArrayList<Tree<T>> children;
 
     /**
      * Creates the root node with specified value.
@@ -53,12 +53,12 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * @param parent the parent node.
      */
     public Tree(T value, Tree<T> parent) {
-        mIteratorType = ITERATOR_TYPE.BFS;
-        mModificationCount = 0;
+        iteratorType = ITERATOR_TYPE.BFS;
+        modificationCount = 0;
 
-        mValue = value;
-        mParent = parent;
-        mChildren = new ArrayList<>();
+        this.value = value;
+        this.parent = parent;
+        children = new ArrayList<>();
 
         if (!isRoot()) {
             parent.add(this);
@@ -86,8 +86,8 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * @return     added tree itself.
      */
     public Tree<T> add(Tree<T> tree) {
-        tree.mParent = this;
-        mChildren.add(tree);
+        tree.parent = this;
+        children.add(tree);
         incModificationCount();
 
         return tree;
@@ -101,7 +101,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
      *              if the node with specified value was not found.
      */
     public boolean remove(T value) {
-        Iterator<Tree<T>> i = mChildren.iterator();
+        Iterator<Tree<T>> i = children.iterator();
         while (i.hasNext()) {
             if (value.equals(i.next().getValue())) {
                 i.remove();
@@ -125,7 +125,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
             throw new RuntimeException("Unable to remove the root");
         }
 
-        return mParent.remove(mValue); // increments mModificationCount!
+        return parent.remove(value); // increments modificationCount!
     }
 
     /**
@@ -134,7 +134,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * @return the value of the current node.
      */
     public T getValue() {
-        return mValue;
+        return value;
     }
 
     /**
@@ -143,7 +143,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * @param iteratorType the type of iterating the tree.
      */
     public void setIteratorType(ITERATOR_TYPE iteratorType) {
-        mIteratorType = iteratorType;
+        this.iteratorType = iteratorType;
     }
 
     /**
@@ -156,7 +156,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
         traverseList.addLast(this);
 
         return new Iterator<Tree<T>>() {
-            int expectedModificationCount = mModificationCount;
+            int expectedModificationCount = modificationCount;
 
             @Override
             public boolean hasNext() {
@@ -167,12 +167,12 @@ public class Tree<T> implements Iterable<Tree<T>> {
             public Tree<T> next() {
                 checkForComodification();
 
-                switch (mIteratorType) {
+                switch (iteratorType) {
                     case DFS:
-                        traverseList.addAll(1, traverseList.peekFirst().mChildren);
+                        traverseList.addAll(1, traverseList.peekFirst().children);
                         break;
                     case BFS:
-                        traverseList.addAll(traverseList.peekFirst().mChildren);
+                        traverseList.addAll(traverseList.peekFirst().children);
                         break;
                 }
 
@@ -180,7 +180,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
             }
 
             private void checkForComodification() {
-                if (mModificationCount != expectedModificationCount) {
+                if (modificationCount != expectedModificationCount) {
                     throw new ConcurrentModificationException();
                 }
             }
@@ -192,16 +192,16 @@ public class Tree<T> implements Iterable<Tree<T>> {
     }
 
     private void incModificationCount(Tree<T> tree) {
-        tree.mModificationCount++;
+        tree.modificationCount++;
 
         if (tree.isRoot()) {
             return;
         }
 
-        incModificationCount(tree.mParent);
+        incModificationCount(tree.parent);
     }
 
     private boolean isRoot() {
-        return mParent == null;
+        return parent == null;
     }
 }
