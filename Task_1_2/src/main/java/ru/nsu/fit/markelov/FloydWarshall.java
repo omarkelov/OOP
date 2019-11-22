@@ -5,7 +5,7 @@ public class FloydWarshall implements ShortestPath {
     // cannot be higher for algorithm correction
     private static int UNREACHABLE_WEIGHT = Integer.MAX_VALUE / 2;
 
-    private int mMatrix[][];
+    private int[][] matrix;
 
     /**
      * Creates a new FloydWarshall for a specified graph.
@@ -20,22 +20,22 @@ public class FloydWarshall implements ShortestPath {
      * @param graph a graph to get the data from
      */
     public FloydWarshall(Graph graph) {
-        mMatrix = new int[graph.getMaxNodeIndex()+1][graph.getMaxNodeIndex()+1];
+        matrix = new int[graph.getMaxNodeIndex()+1][graph.getMaxNodeIndex()+1];
 
-        for (int i = 0; i < mMatrix.length; i++) {
-            for (int j = 0; j < mMatrix.length; j++) {
-                mMatrix[i][j] = UNREACHABLE_WEIGHT;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                matrix[i][j] = UNREACHABLE_WEIGHT;
             }
         }
 
         for (Edge edge : graph.getEdges()) {
-            mMatrix[edge.getFrom()][edge.getTo()] = edge.getWeight();
+            matrix[edge.getFrom()][edge.getTo()] = edge.getWeight();
         }
 
-        for (int k = 1; k < mMatrix.length; k++) {
-            for (int i = 1; i < mMatrix.length; i++) {
-                for (int j = 1; j < mMatrix.length; j++) {
-                    mMatrix[i][j] = Integer.min(mMatrix[i][j], mMatrix[i][k] + mMatrix[k][j]);
+        for (int k = 1; k < matrix.length; k++) {
+            for (int i = 1; i < matrix.length; i++) {
+                for (int j = 1; j < matrix.length; j++) {
+                    matrix[i][j] = Integer.min(matrix[i][j], matrix[i][k] + matrix[k][j]);
                 }
             }
         }
@@ -46,13 +46,13 @@ public class FloydWarshall implements ShortestPath {
      */
     @Override
     public int getShortestPath(int start, int finish) {
-        if (start < 1 || start > mMatrix.length || finish < 1 || finish > mMatrix.length) {
+        if (start < 1 || start > matrix.length || finish < 1 || finish > matrix.length) {
             throw new IllegalArgumentException(
                     "The starting or ending node index cannot be " +
                     "less than one or higher than the maximal node index"
             );
         }
 
-        return (mMatrix[start][finish] != UNREACHABLE_WEIGHT) ? mMatrix[start][finish] : -1;
+        return (matrix[start][finish] != UNREACHABLE_WEIGHT) ? matrix[start][finish] : -1;
     }
 }
