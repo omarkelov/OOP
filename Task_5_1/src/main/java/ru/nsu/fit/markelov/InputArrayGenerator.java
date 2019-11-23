@@ -9,11 +9,11 @@ public class InputArrayGenerator {
     public static final int PRIME = 2147483647;
     public static final int NON_PRIME = 4;
 
-    public static ArrayList<Integer> generate(int primesAmount, int nonPrimesAmount, Random random) {
+    public static ArrayList<Integer> generate(int nPrimes, int nNonPrimes, Random random) {
         ArrayList<Integer> arrayList = new ArrayList<>();
 
-        arrayList.addAll(Collections.nCopies(primesAmount, PRIME));
-        arrayList.addAll(Collections.nCopies(nonPrimesAmount, NON_PRIME));
+        arrayList.addAll(Collections.nCopies(nPrimes, PRIME));
+        arrayList.addAll(Collections.nCopies(nNonPrimes, NON_PRIME));
         Collections.shuffle(arrayList, random);
 
         return arrayList;
