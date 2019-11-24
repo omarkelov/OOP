@@ -20,12 +20,15 @@ public class Calculator {
     }
 
     public double calculate(String expression) throws IllegalArgumentException {
-        for (String token : expression.split(" ")) {
+        stack.clear();
+
+        for (String token : tokenize(expression)) {
             process(token);
         }
 
         if (!stack.isEmpty()) {
-            throw new IllegalArgumentException("No operands for operation: \"" + stack.pop().getClass().getSimpleName() + "\"");
+            throw new IllegalArgumentException("No operands for operation: \"" +
+                    stack.pop().getClass().getSimpleName() + "\"");
         }
 
         return res;
@@ -53,11 +56,15 @@ public class Calculator {
         } else if (token.equals(SquareRoot.SYMBOL)) {
             stack.push(new SquareRoot());
         } else {
-            if (stack.isEmpty()) {
-                throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
+            try {
+                double number = Double.parseDouble(token);
+                if (stack.isEmpty()) {
+                    throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
+                }
+                rollBack(number);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
             }
-
-            rollBack(Double.parseDouble(token));
         }
     }
 
@@ -71,5 +78,9 @@ public class Calculator {
             res = stack.pop().calculate();
             rollBack(res);
         }
+    }
+
+    private String[] tokenize(String str) {
+        return str.split("\\s+");
     }
 }
