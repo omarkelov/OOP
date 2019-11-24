@@ -1,6 +1,7 @@
 package ru.nsu.fit.markelov;
 
 import ru.nsu.fit.markelov.operations.Operation;
+import ru.nsu.fit.markelov.operations.OperationMap;
 import ru.nsu.fit.markelov.operations.binary.*;
 import ru.nsu.fit.markelov.operations.unary.Cosinus;
 import ru.nsu.fit.markelov.operations.unary.Negation;
@@ -19,7 +20,7 @@ public class Calculator {
         stack = new LinkedList<>();
     }
 
-    public double calculate(String expression) throws IllegalArgumentException {
+    public double calculate(String expression) throws IllegalArgumentException, InstantiationException, IllegalAccessException {
         stack.clear();
 
         for (String token : tokenize(expression)) {
@@ -27,14 +28,30 @@ public class Calculator {
         }
 
         if (!stack.isEmpty()) {
-            throw new IllegalArgumentException("No operands for operation: \"" +
-                    stack.pop().getClass().getSimpleName() + "\"");
+            throw new IllegalArgumentException("No operands for operation:" +
+                    " \"" + stack.pop().getClass().getSimpleName() + "\"");
         }
 
         return res;
     }
 
-    private void process(String token) throws IllegalArgumentException {
+    private void process(String token) throws IllegalArgumentException, InstantiationException, IllegalAccessException {
+        try {
+            if (OperationMap.MAP.containsKey(token)) {
+                stack.push((Operation) OperationMap.MAP.get(token).newInstance());
+            } else {
+                double number = Double.parseDouble(token);
+                if (stack.isEmpty()) {
+                    throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
+                }
+                rollBack(number);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
+        }
+    }
+
+    /*private void process(String token) throws IllegalArgumentException {
         if (token.equals(Plus.SYMBOL)) {
             stack.push(new Plus());
         } else if (token.equals(Minus.SYMBOL)) {
@@ -66,7 +83,7 @@ public class Calculator {
                 throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
             }
         }
-    }
+    }*/
 
     private void rollBack(double operand) {
         if (stack.isEmpty()) {
@@ -74,7 +91,7 @@ public class Calculator {
         }
 
         stack.peek().setOperand(operand);
-        if (stack.peek().isReady()) {
+        if (stack.peek().isReadyToCalculate()) {
             res = stack.pop().calculate();
             rollBack(res);
         }

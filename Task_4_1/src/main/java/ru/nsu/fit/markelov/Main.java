@@ -8,12 +8,13 @@ public class Main {
 
         Scanner iScanner = new Scanner(System.in);
         String input;
+        System.out.println("Enter the expression and press \"Enter\" to calculate:");
         while (iScanner.hasNextLine()) {
             try {
                 input = iScanner.nextLine();
                 System.out.println(calculator.calculate(input));
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Error (" + e.getMessage() + ")");
             }
         }
 
