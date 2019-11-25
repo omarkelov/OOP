@@ -2,11 +2,6 @@ package ru.nsu.fit.markelov;
 
 import ru.nsu.fit.markelov.operations.Operation;
 import ru.nsu.fit.markelov.operations.OperationMap;
-import ru.nsu.fit.markelov.operations.binary.*;
-import ru.nsu.fit.markelov.operations.unary.Cosinus;
-import ru.nsu.fit.markelov.operations.unary.Negation;
-import ru.nsu.fit.markelov.operations.unary.Sinus;
-import ru.nsu.fit.markelov.operations.unary.SquareRoot;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -28,8 +23,8 @@ public class Calculator {
         }
 
         if (!stack.isEmpty()) {
-            throw new IllegalArgumentException("No operands for operation:" +
-                    " \"" + stack.pop().getClass().getSimpleName() + "\"");
+            throw new IllegalArgumentException("No operands for operation: " +
+                    "\"" + stack.pop().getClass().getSimpleName() + "\"");
         }
 
         return res;
@@ -44,7 +39,7 @@ public class Calculator {
                 if (stack.isEmpty()) {
                     throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
                 }
-                rollBack(number);
+                rollBackThroughStack(number);
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
@@ -78,14 +73,14 @@ public class Calculator {
                 if (stack.isEmpty()) {
                     throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
                 }
-                rollBack(number);
+                rollBackThroughStack(number);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
             }
         }
     }*/
 
-    private void rollBack(double operand) {
+    private void rollBackThroughStack(double operand) {
         if (stack.isEmpty()) {
             return;
         }
@@ -93,7 +88,7 @@ public class Calculator {
         stack.peek().setOperand(operand);
         if (stack.peek().isReadyToCalculate()) {
             res = stack.pop().calculate();
-            rollBack(res);
+            rollBackThroughStack(res);
         }
     }
 
