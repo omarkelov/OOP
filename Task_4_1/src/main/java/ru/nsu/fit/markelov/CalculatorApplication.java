@@ -2,7 +2,7 @@ package ru.nsu.fit.markelov;
 
 import java.util.Scanner;
 
-public class Main {
+public class CalculatorApplication {
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
 
