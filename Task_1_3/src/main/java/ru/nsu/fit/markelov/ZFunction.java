@@ -1,14 +1,20 @@
 package ru.nsu.fit.markelov;
 
+/**
+ * <code>ZFunction</code> class is a helper class that calculates
+ * a z-Function of the string.
+ * <p>
+ * It takes O(n) char comparisons, where n is the length of the
+ * string.
+ *
+ * @author Oleg Markelov
+ */
 public class ZFunction {
     /**
-     * Calculates a z-Function of the specified string.
-     * <p>
-     * It takes O(n) char comparisons, where n is the length
-     * of the string.
+     * Calculates and returns a z-Function of the specified string.
      *
-     * @param  chars char array to matchAll in
-     * @return       z-Function of the specified string
+     * @param  chars char array to calculate for.
+     * @return       z-Function of the specified string.
      */
     public static int[] getZValues(char[] chars) {
         int[] z = new int[chars.length];
