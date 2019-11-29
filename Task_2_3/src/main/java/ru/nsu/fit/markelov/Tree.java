@@ -1,9 +1,6 @@
 package ru.nsu.fit.markelov;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * The <code>Tree</code> class simulates a hierarchical tree structure,
@@ -17,7 +14,7 @@ import java.util.LinkedList;
  * and can be traversed with help of breadth or depth first search.
  * A breadth first search is used by default.
  *
- * @auther Oleg Markelov
+ * @author Oleg Markelov
  * @see    Iterable
  */
 public class Tree<T> implements Iterable<Tree<T>> {
@@ -101,10 +98,10 @@ public class Tree<T> implements Iterable<Tree<T>> {
      *              if the node with specified value was not found.
      */
     public boolean remove(T value) {
-        Iterator<Tree<T>> i = children.iterator();
-        while (i.hasNext()) {
-            if (value.equals(i.next().getValue())) {
-                i.remove();
+        Iterator<Tree<T>> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            if (value.equals(iterator.next().getValue())) {
+                iterator.remove();
                 incModificationCount();
 
                 return true;
@@ -120,7 +117,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * @return                  whether the node was removed.
      * @throws RuntimeException if the current node is a root.
      */
-    public boolean remove() throws RuntimeException {
+    public boolean remove() {
         if (isRoot()) {
             throw new RuntimeException("Unable to remove the root");
         }
@@ -165,6 +162,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
 
             @Override
             public Tree<T> next() {
+                checkForPresence();
                 checkForComodification();
 
                 switch (iteratorType) {
@@ -177,6 +175,12 @@ public class Tree<T> implements Iterable<Tree<T>> {
                 }
 
                 return traverseList.removeFirst();
+            }
+
+            private void checkForPresence() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
             }
 
             private void checkForComodification() {
