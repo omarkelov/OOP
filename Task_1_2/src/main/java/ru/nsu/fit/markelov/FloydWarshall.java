@@ -51,7 +51,7 @@ public class FloydWarshall implements ShortestPath {
      * {@inheritDoc}
      */
     @Override
-    public int getShortestPath(int start, int finish) throws ConcurrentModificationException, IllegalArgumentException {
+    public int getShortestPath(int start, int finish) {
         if (initialEdgesAmount != graph.getEdgesAmount()) {
             throw new ConcurrentModificationException("Cannot get the shortest path, as " +
                     "the graph was modified");
