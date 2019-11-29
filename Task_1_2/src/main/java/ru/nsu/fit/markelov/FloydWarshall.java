@@ -51,17 +51,15 @@ public class FloydWarshall implements ShortestPath {
      * {@inheritDoc}
      */
     @Override
-    public int getShortestPath(int start, int finish) {
+    public int getShortestPath(int start, int finish) throws ConcurrentModificationException, IllegalArgumentException {
         if (initialEdgesAmount != graph.getEdgesAmount()) {
             throw new ConcurrentModificationException("Cannot get the shortest path, as " +
                     "the graph was modified");
         }
 
         if (start < 1 || start > matrix.length || finish < 1 || finish > matrix.length) {
-            throw new IllegalArgumentException(
-                    "The starting or ending node index cannot be " +
-                    "less than one or higher than the maximal node index"
-            );
+            throw new IllegalArgumentException("The starting or ending node index cannot be " +
+                    "less than one or higher than the maximal node index");
         }
 
         return (matrix[start][finish] != UNREACHABLE_WEIGHT) ? matrix[start][finish] : -1;
