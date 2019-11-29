@@ -17,7 +17,7 @@ import java.io.Reader;
  * <p>
  * <code>FilePatternMatcher</code> uses own char buffer, that
  * default size is 16x[the length of pattern string] and minimal
- * size is 2x[the length of pattern string].
+ * size is 4x[the length of pattern string].
  *
  * @author Oleg Markelov
  * @see    StreamPatternMatcher
