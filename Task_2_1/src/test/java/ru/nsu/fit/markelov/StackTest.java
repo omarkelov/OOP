@@ -103,7 +103,7 @@ public class StackTest {
             stack.push(i);
         }
 
-        Iterator iterator = stack.iterator();
+        Iterator<Integer> iterator = stack.iterator();
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }
