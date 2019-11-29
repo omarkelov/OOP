@@ -3,6 +3,7 @@ package ru.nsu.fit.markelov;
 import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * <code>Stack</code> represents a last-in-first-out (LIFO) model
@@ -115,7 +116,11 @@ public class Stack<T> implements Iterable<T> {
 
             @Override
             public T next() {
-                return (T) objects[i++];
+                if (hasNext()) {
+                    return (T) objects[i++];
+                } else {
+                    throw new NoSuchElementException();
+                }
             }
         };
     }
@@ -123,11 +128,11 @@ public class Stack<T> implements Iterable<T> {
     /**
      * Returns the capacity of this stack.
      * <p>
-     * <i>This method should be used for testing only</i>.
+     * <i>This method should be used for testing only.</i>
      *
      * @return the capacity of this stack.
      */
-    public int getCapacity() {
+    protected int getCapacity() {
         return capacity;
     }
 }

@@ -4,10 +4,46 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.EmptyStackException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class StackTest {
+
     @Test
-    public void test() {
+    public void testPush() {
+        Stack<Integer> stack = new Stack<>(2);
+
+        for (int i = 1; i <= 4; i++) {
+            stack.push(i);
+        }
+
+        int j = 0;
+        Integer[] arr = new Integer[] {1, 2, 3, 4};
+        for (Integer i : stack) {
+            Assert.assertEquals(arr[j++], i);
+        }
+    }
+
+    @Test
+    public void testPop() {
+        Stack<Integer> stack = new Stack<>(2);
+
+        for (int i = 1; i <= 5; i++) {
+            stack.push(i);
+        }
+
+        Assert.assertEquals(new Integer(5), stack.pop());
+        Assert.assertEquals(new Integer(4), stack.pop());
+
+        int j = 0;
+        Integer[] arr = new Integer[] {1, 2, 3};
+        for (Integer i : stack) {
+            Assert.assertEquals(arr[j++], i);
+        }
+    }
+
+    @Test
+    public void testCountAndCapacity() {
         Stack<Integer> stack = new Stack<>(2);
 
         for (int i = 1; i <= 4; i++) {
@@ -25,8 +61,8 @@ public class StackTest {
             Assert.assertEquals(arr[j++], i);
         }
 
-        Assert.assertEquals(new Integer(5), stack.pop());
-        Assert.assertEquals(new Integer(4), stack.pop());
+        stack.pop();
+        stack.pop();
         Assert.assertEquals(3, stack.count());
         Assert.assertEquals(8, stack.getCapacity());
 
@@ -36,31 +72,58 @@ public class StackTest {
         Assert.assertEquals(7, stack.count());
         Assert.assertEquals(8, stack.getCapacity());
 
-        j = 0;
-        arr = new Integer[] {1, 2, 3, 11, 12, 13, 14};
-        for (Integer i : stack) {
-            Assert.assertEquals(arr[j++], i);
-        }
-
-        Assert.assertEquals(new Integer(14), stack.pop());
-        Assert.assertEquals(new Integer(13), stack.pop());
-        Assert.assertEquals(new Integer(12), stack.pop());
-        Assert.assertEquals(new Integer(11), stack.pop());
+        stack.pop();
+        stack.pop();
+        stack.pop();
+        stack.pop();
         Assert.assertEquals(8, stack.getCapacity());
-        Assert.assertEquals(new Integer(3), stack.pop());
+        stack.pop();
         Assert.assertEquals(4, stack.getCapacity());
-        Assert.assertEquals(new Integer(2), stack.pop());
+        stack.pop();
         Assert.assertEquals(2, stack.getCapacity());
-        Assert.assertEquals(new Integer(1), stack.pop());
+        stack.pop();
         Assert.assertEquals(1, stack.getCapacity());
+    }
 
-        boolean exceptionCaught;
+    @Test
+    public void testEmptyStackException() {
+        Stack<Integer> stack = new Stack<>();
         try {
             stack.pop();
-            exceptionCaught = false;
+            Assert.fail();
         } catch (EmptyStackException e) {
-            exceptionCaught = true;
+            System.out.println(e.getClass().getSimpleName() + " got caught.");
         }
-        Assert.assertTrue(exceptionCaught);
+    }
+
+    @Test
+    public void testNoSuchElementException() {
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 1; i <= 4; i++) {
+            stack.push(i);
+        }
+
+        Iterator iterator = stack.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught.");
+        }
+    }
+
+    @Test
+    public void testNoSuchElementExceptionEmptyStack() {
+        Stack<Integer> stack = new Stack<>();
+        try {
+            stack.iterator().next();
+            Assert.fail();
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught.");
+        }
     }
 }
