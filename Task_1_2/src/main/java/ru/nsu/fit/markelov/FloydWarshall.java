@@ -1,11 +1,15 @@
 package ru.nsu.fit.markelov;
 
+import java.util.ConcurrentModificationException;
+
 public class FloydWarshall implements ShortestPath {
 
     // cannot be higher for algorithm correction
     private static int UNREACHABLE_WEIGHT = Integer.MAX_VALUE / 2;
 
     private int[][] matrix;
+    private Graph graph;
+    private int initialEdgesAmount;
 
     /**
      * Creates a new FloydWarshall for a specified graph.
@@ -21,6 +25,8 @@ public class FloydWarshall implements ShortestPath {
      */
     public FloydWarshall(Graph graph) {
         matrix = new int[graph.getMaxNodeIndex()+1][graph.getMaxNodeIndex()+1];
+        this.graph = graph;
+        initialEdgesAmount = graph.getEdgesAmount();
 
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
@@ -46,6 +52,11 @@ public class FloydWarshall implements ShortestPath {
      */
     @Override
     public int getShortestPath(int start, int finish) {
+        if (initialEdgesAmount != graph.getEdgesAmount()) {
+            throw new ConcurrentModificationException("Cannot get the shortest path, as " +
+                    "the graph was modified");
+        }
+
         if (start < 1 || start > matrix.length || finish < 1 || finish > matrix.length) {
             throw new IllegalArgumentException(
                     "The starting or ending node index cannot be " +

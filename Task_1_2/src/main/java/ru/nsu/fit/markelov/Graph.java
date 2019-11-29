@@ -60,6 +60,13 @@ public class Graph {
     }
 
     /**
+     * @return the amount of edges
+     */
+    public int getEdgesAmount() {
+        return edges.size();
+    }
+
+    /**
      * @return maximal node index in this graph
      */
     public int getMaxNodeIndex() {

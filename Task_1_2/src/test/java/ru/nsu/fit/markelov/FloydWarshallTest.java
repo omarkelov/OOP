@@ -16,6 +16,10 @@ public class FloydWarshallTest {
 
         FloydWarshall floydWarshall = new FloydWarshall(graph);
 
+        //////////////////////////////////////////////
+        graph.addEdge(4, 3, 9);
+        //////////////////////////////////////////////
+
         Assert.assertEquals(8, floydWarshall.getShortestPath(4, 3));
         Assert.assertEquals(9, floydWarshall.getShortestPath(1, 3));
     }
