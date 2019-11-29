@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Graph {
 
-    private ArrayList<Edge> mEdges;
-    private boolean mDirected;
-    private int mMaxNodeIndex;
+    private ArrayList<Edge> edges;
+    private boolean directed;
+    private int maxNodeIndex;
 
     /**
      * Creates an empty undirected Graph (with no edges).
@@ -21,9 +21,9 @@ public class Graph {
      * @param directed a flag to determine whether a Graph is directed
      */
     public Graph(boolean directed) {
-        mEdges = new ArrayList<>();
-        mDirected = directed;
-        mMaxNodeIndex = 0;
+        edges = new ArrayList<>();
+        this.directed = directed;
+        maxNodeIndex = 0;
     }
 
     /**
@@ -34,21 +34,21 @@ public class Graph {
      * An IllegalArgumentException is thrown if there is no such
      * node in the graph.
      *
-     * @param  fromNode source node of edge
-     * @param  toNode   sink node of edge
-     * @param  weight   a weight of edge
+     * @param  fromNode                 source node of edge
+     * @param  toNode                   sink node of edge
+     * @param  weight                   a weight of edge
      * @throws IllegalArgumentException if node number is less than one.
      */
     public void addEdge(int fromNode, int toNode, int weight) {
         verifyNode(fromNode, "source");
         verifyNode(toNode, "sink");
 
-        mEdges.add(new Edge(fromNode, toNode, weight));
-        if (!mDirected) {
-            mEdges.add(new Edge(toNode, fromNode, weight));
+        edges.add(new Edge(fromNode, toNode, weight));
+        if (!directed) {
+            edges.add(new Edge(toNode, fromNode, weight));
         }
 
-        mMaxNodeIndex = Math.max(mMaxNodeIndex, Math.max(fromNode, toNode));
+        maxNodeIndex = Math.max(maxNodeIndex, Math.max(fromNode, toNode));
     }
 
     /**
@@ -56,14 +56,21 @@ public class Graph {
      * @see    Iterable
      */
     public Iterable<Edge> getEdges() {
-        return mEdges;
+        return edges;
+    }
+
+    /**
+     * @return the amount of edges
+     */
+    public int getEdgesAmount() {
+        return edges.size();
     }
 
     /**
      * @return maximal node index in this graph
      */
     public int getMaxNodeIndex() {
-        return mMaxNodeIndex;
+        return maxNodeIndex;
     }
 
     private void verifyNode(int node, String type) {
