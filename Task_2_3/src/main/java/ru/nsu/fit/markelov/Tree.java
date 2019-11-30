@@ -66,8 +66,8 @@ public class Tree<T> implements Iterable<Tree<T>> {
      * Creates a new node with specified value and adds it
      * as a child to current node.
      *
-     * @param value the value to be attached to the node.
-     * @return      the created tree.
+     * @param  value the value to be attached to the node.
+     * @return       the created tree.
      */
     public Tree<T> add(T value) {
         Tree<T> tree = new Tree<>(value, this);
@@ -79,8 +79,8 @@ public class Tree<T> implements Iterable<Tree<T>> {
     /**
      * Adds the node as a child to current node.
      *
-     * @param tree the node to be added.
-     * @return     added tree itself.
+     * @param  tree the node to be added.
+     * @return      added tree itself.
      */
     public Tree<T> add(Tree<T> tree) {
         tree.parent = this;
@@ -93,9 +93,9 @@ public class Tree<T> implements Iterable<Tree<T>> {
     /**
      * Removes the direct child node with specified value in case it exists.
      *
-     * @param value the value of the child.
-     * @return      whether the node was removed. Returns <tt>false</tt>
-     *              if the node with specified value was not found.
+     * @param  value the value of the child.
+     * @return       whether the node was removed. Returns <tt>false</tt>
+     *               if the node with specified value was not found.
      */
     public boolean remove(T value) {
         Iterator<Tree<T>> iterator = children.iterator();
@@ -119,7 +119,7 @@ public class Tree<T> implements Iterable<Tree<T>> {
      */
     public boolean remove() {
         if (isRoot()) {
-            throw new RuntimeException("Unable to remove the root");
+            throw new RuntimeException("Unable to remove the root.");
         }
 
         return parent.remove(value); // increments modificationCount!
