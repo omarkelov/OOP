@@ -17,9 +17,9 @@ public class GradedRecord extends Record {
     /**
      * Creates a new <code>GradedRecord</code>.
      *
-     * @param subject                 the subject name.
-     * @param semester                the semester number.
-     * @param grade                   the grade from 2 to 5.
+     * @param  subject                  the subject name.
+     * @param  semester                 the semester number.
+     * @param  grade                    the grade from 2 to 5.
      * @throws IllegalArgumentException if the grade is not between 2 and 5.
      */
     public GradedRecord(String subject, int semester, int grade) {
@@ -54,6 +54,9 @@ public class GradedRecord extends Record {
         return grade + "";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

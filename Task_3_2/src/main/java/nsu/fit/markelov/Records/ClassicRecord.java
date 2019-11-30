@@ -45,6 +45,9 @@ public class ClassicRecord extends Record {
         return passed ? "Passed" : "Not passed";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

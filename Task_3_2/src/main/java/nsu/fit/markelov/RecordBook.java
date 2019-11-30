@@ -7,6 +7,7 @@ import nsu.fit.markelov.Visitors.IncreasedScholarshipVisitor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The <code>RecordBook</code> class is a collection of student's
@@ -24,9 +25,9 @@ public class RecordBook {
     /**
      * Creates a new <code>RecordBook</code>.
      *
-     * @param semestersAmount           the number of semesters during
+     * @param  semestersAmount          the number of semesters during
      *                                  the whole period of study.
-     * @param lastSemester              the number of semester the student
+     * @param  lastSemester             the number of semester the student
      *                                  finished.
      * @throws IllegalArgumentException if 'semestersAmount' or 'lastSemester'
      *                                  parameter less than one was passed. Or
@@ -41,18 +42,18 @@ public class RecordBook {
     }
 
     private void checkInput() {
+        String message = null;
+
         if (semestersAmount < 1) {
-            throw new IllegalArgumentException("Invalid 'semestersAmount' parameter was passed to" +
-                    " the RecordBook class constructor.");
+            message = "Invalid 'semestersAmount' parameter was passed to the RecordBook class constructor.";
+        } else if (lastSemester < 1) {
+            message = "Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.";
+        } else if (lastSemester > semestersAmount) {
+            message = "lastSemester must be <= semestersAmount.";
         }
 
-        if (lastSemester < 1) {
-            throw new IllegalArgumentException("Invalid 'lastSemester' parameter was passed to " +
-                    "the RecordBook class constructor.");
-        }
-
-        if (lastSemester > semestersAmount) {
-            throw new IllegalArgumentException("lastSemester must be <= semestersAmount.");
+        if (message != null) {
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -82,7 +83,7 @@ public class RecordBook {
      */
     public double getDiplomaAverage() {
         // (subject -> GradedRecord) map for getting only the last record of each subject
-        HashMap<String, Record> map = new HashMap<>();
+        Map<String, Record> map = new HashMap<>();
         records.forEach(record -> {
             if (!map.containsKey(record.getSubject()) ||
                     record.getSemester() > map.get(record.getSubject()).getSemester()) {
@@ -109,10 +110,10 @@ public class RecordBook {
         return visitor.isIncreasedScholarship();
     }
 
-    private double getAverage(Collection<Record> collection) {
+    private double getAverage(Collection<Record> records) {
         AverageGradeVisitor visitor = new AverageGradeVisitor();
 
-        collection.forEach(record -> record.accept(visitor));
+        records.forEach(record -> record.accept(visitor));
 
         return visitor.getAverage();
     }

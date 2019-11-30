@@ -1,7 +1,6 @@
 package nsu.fit.markelov.Records;
 
 import nsu.fit.markelov.RecordBook;
-import nsu.fit.markelov.Visitors.Visitable;
 import nsu.fit.markelov.Visitors.Visitor;
 
 /**
@@ -11,7 +10,7 @@ import nsu.fit.markelov.Visitors.Visitor;
  * @author Oleg Markelov
  * @see    RecordBook
  */
-public abstract class Record implements Visitable {
+public abstract class Record {
 
     private String subject;
     private int semester;
@@ -31,14 +30,16 @@ public abstract class Record implements Visitable {
     }
 
     private void checkInput() {
+        String message = null;
+
         if (subject == null || subject.isEmpty()) {
-            throw new IllegalArgumentException("null or empty 'subject' parameter was passed to the" +
-                    " Record class constructor.");
+            message = "null or empty 'subject' parameter was passed to the Record class constructor.";
+        } else if (semester < 1) {
+            message = "Invalid 'semester' parameter was passed to the Record class constructor.";
         }
 
-        if (semester < 1) {
-            throw new IllegalArgumentException("Invalid 'semester' parameter was passed to the" +
-                    " Record class constructor.");
+        if (message != null) {
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -67,5 +68,10 @@ public abstract class Record implements Visitable {
      */
     public abstract String getEvaluation();
 
+    /**
+     * Applies a visitor to this record.
+     *
+     * @param visitor a visitor to be applied.
+     */
     public abstract void accept(Visitor visitor);
 }
