@@ -36,17 +36,17 @@ public class Calculator {
     }
 
     private void process(String token) throws InstantiationException, IllegalAccessException {
-        try {
-            Operation operation = operationFactory.createOperation(token);
-            if (operation != null) {
-                stack.push(operation);
-            } else {
-                double number = Double.parseDouble(token);
-                if (stack.isEmpty()) {
-                    throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
-                }
-                rollBackThroughStack(number);
+        Operation operation = operationFactory.createOperation(token);
+        if (operation != null) {
+            stack.push(operation);
+        } else try {
+            double number = Double.parseDouble(token);
+
+            if (stack.isEmpty()) {
+                throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
             }
+
+            rollBackThroughStack(number);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
         }

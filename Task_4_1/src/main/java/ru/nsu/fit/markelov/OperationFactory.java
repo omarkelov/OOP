@@ -31,7 +31,11 @@ public class OperationFactory {
     }
 
     public Operation createOperation(String token) throws InstantiationException, IllegalAccessException {
-        return (Operation) map.get(token).newInstance();
+        if (map.containsKey(token)) {
+            return (Operation) map.get(token).newInstance();
+        } else {
+            return null;
+        }
     }
 
     public void addOperation(String token, Class<?> clazz) {
