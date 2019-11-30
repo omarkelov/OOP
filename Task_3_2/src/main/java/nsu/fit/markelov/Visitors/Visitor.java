@@ -1,9 +1,9 @@
 package nsu.fit.markelov.Visitors;
 
-import nsu.fit.markelov.Records.RecordDif;
-import nsu.fit.markelov.Records.RecordNonDif;
+import nsu.fit.markelov.Records.ClassicRecord;
+import nsu.fit.markelov.Records.GradedRecord;
 
-public interface Visitor<T> {
-    T visit(RecordDif recordDif);
-    T visit(RecordNonDif recordNonDif);
+public interface Visitor {
+    void visit(GradedRecord gradedRecord);
+    void visit(ClassicRecord classicRecord);
 }

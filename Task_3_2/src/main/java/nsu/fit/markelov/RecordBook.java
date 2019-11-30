@@ -1,14 +1,12 @@
 package nsu.fit.markelov;
 
 import nsu.fit.markelov.Records.Record;
-import nsu.fit.markelov.Visitors.GradeVisitor;
+import nsu.fit.markelov.Visitors.AverageGradeVisitor;
 import nsu.fit.markelov.Visitors.IncreasedScholarshipVisitor;
-import nsu.fit.markelov.Visitors.Visitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 
 /**
  * The <code>RecordBook</code> class is a collection of student's
@@ -23,29 +21,39 @@ public class RecordBook {
     private int lastSemester;
     private ArrayList<Record> records;
 
-    private Visitor<Double> gradeVisitor;
-    private Visitor<Boolean> increasedScholarshipVisitor;
-
     /**
      * Creates a new <code>RecordBook</code>.
      *
-     * @param semestersAmount         the number of semesters during
-     *                                the whole period of study.
-     * @param lastSemester            the number of semester the student
-     *                                finished.
-     * @throws InputMismatchException if 'semestersAmount' or 'lastSemester'
-     *                                parameter less than one was passed. Or
-     *                                if 'lastSemester' > 'semestersAmount'.
+     * @param semestersAmount           the number of semesters during
+     *                                  the whole period of study.
+     * @param lastSemester              the number of semester the student
+     *                                  finished.
+     * @throws IllegalArgumentException if 'semestersAmount' or 'lastSemester'
+     *                                  parameter less than one was passed. Or
+     *                                  if 'lastSemester' > 'semestersAmount'.
      */
-    public RecordBook(int semestersAmount, int lastSemester) throws InputMismatchException {
+    public RecordBook(int semestersAmount, int lastSemester) {
         this.semestersAmount = semestersAmount;
         this.lastSemester = lastSemester;
         checkInput();
 
         records = new ArrayList<>();
+    }
 
-        gradeVisitor = new GradeVisitor();
-        increasedScholarshipVisitor = new IncreasedScholarshipVisitor();
+    private void checkInput() {
+        if (semestersAmount < 1) {
+            throw new IllegalArgumentException("Invalid 'semestersAmount' parameter was passed to" +
+                    " the RecordBook class constructor.");
+        }
+
+        if (lastSemester < 1) {
+            throw new IllegalArgumentException("Invalid 'lastSemester' parameter was passed to " +
+                    "the RecordBook class constructor.");
+        }
+
+        if (lastSemester > semestersAmount) {
+            throw new IllegalArgumentException("lastSemester must be <= semestersAmount.");
+        }
     }
 
     /**
@@ -73,7 +81,7 @@ public class RecordBook {
      * @return the average grade of the diploma.
      */
     public double getDiplomaAverage() {
-        // (subject -> RecordDif) map for getting only the last record of each subject
+        // (subject -> GradedRecord) map for getting only the last record of each subject
         HashMap<String, Record> map = new HashMap<>();
         records.forEach(record -> {
             if (!map.containsKey(record.getSubject()) ||
@@ -92,35 +100,20 @@ public class RecordBook {
      * @return whether the student should get an increased scholarship.
      */
     public boolean isIncreasedScholarship() {
-        return records.stream()
+        IncreasedScholarshipVisitor visitor = new IncreasedScholarshipVisitor();
+
+        records.stream()
                 .filter(record -> record.getSemester() == lastSemester)
-//                .allMatch(record -> record.acceptBoolean(increasedScholarshipVisitor) &&
-                .allMatch(record -> record.isIncreasedScholarship() &&
-                        record.getSemester() != semestersAmount);
+                .forEach(record -> record.accept(visitor));
+
+        return visitor.isIncreasedScholarship();
     }
 
     private double getAverage(Collection<Record> collection) {
-        return collection.stream()
-//                .mapToDouble(record -> record.acceptDouble(gradeVisitor))
-                .mapToDouble(Record::getGradeDouble)
-                .filter(grade -> !Double.isNaN(grade))
-                .average()
-                .orElse(Double.NaN);
-    }
+        AverageGradeVisitor visitor = new AverageGradeVisitor();
 
-    private void checkInput() throws InputMismatchException {
-        if (semestersAmount < 1) {
-            throw new InputMismatchException("Invalid 'semestersAmount' parameter was passed to" +
-                    " the RecordBook class constructor.");
-        }
+        collection.forEach(record -> record.accept(visitor));
 
-        if (lastSemester < 1) {
-            throw new InputMismatchException("Invalid 'lastSemester' parameter was passed to the" +
-                    " RecordBook class constructor.");
-        }
-
-        if (lastSemester > semestersAmount) {
-            throw new InputMismatchException("lastSemester must be <= semestersAmount.");
-        }
+        return visitor.getAverage();
     }
 }

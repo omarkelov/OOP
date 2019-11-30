@@ -1,17 +1,27 @@
 package nsu.fit.markelov.Visitors;
 
-import nsu.fit.markelov.Records.RecordDif;
-import nsu.fit.markelov.Records.RecordNonDif;
+import nsu.fit.markelov.Records.ClassicRecord;
+import nsu.fit.markelov.Records.GradedRecord;
 
-public class IncreasedScholarshipVisitor implements Visitor<Boolean> {
+public class IncreasedScholarshipVisitor implements Visitor {
+
+    private boolean increasedScholarship = true;
 
     @Override
-    public Boolean visit(RecordDif recordDif) {
-        return recordDif.getGrade() == 5;
+    public void visit(GradedRecord gradedRecord) {
+        if (gradedRecord.getGrade() != 5) {
+            increasedScholarship = false;
+        }
     }
 
     @Override
-    public Boolean visit(RecordNonDif recordNonDif) {
-        return recordNonDif.isPassed();
+    public void visit(ClassicRecord classicRecord) {
+        if (!classicRecord.isPassed()) {
+            increasedScholarship = false;
+        }
+    }
+
+    public boolean isIncreasedScholarship() {
+        return increasedScholarship;
     }
 }

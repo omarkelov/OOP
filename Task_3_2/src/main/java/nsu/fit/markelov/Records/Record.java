@@ -1,9 +1,8 @@
 package nsu.fit.markelov.Records;
 
 import nsu.fit.markelov.RecordBook;
+import nsu.fit.markelov.Visitors.Visitable;
 import nsu.fit.markelov.Visitors.Visitor;
-
-import java.util.InputMismatchException;
 
 /**
  * The <code>Record</code> class represents a single record
@@ -12,7 +11,7 @@ import java.util.InputMismatchException;
  * @author Oleg Markelov
  * @see    RecordBook
  */
-public abstract class Record {
+public abstract class Record implements Visitable {
 
     private String subject;
     private int semester;
@@ -20,15 +19,27 @@ public abstract class Record {
     /**
      * Creates a new <code>Record</code>.
      *
-     * @param subject                 the subject name.
-     * @param semester                the semester number.
-     * @throws InputMismatchException if null or empty 'subject' parameter was passed.
-     *                                Or if 'semester' parameter less than one was passed.
+     * @param  subject                  the subject name.
+     * @param  semester                 the semester number.
+     * @throws IllegalArgumentException if null or empty 'subject' parameter was passed.
+     *                                  Or if 'semester' parameter less than one was passed.
      */
-    public Record(String subject, int semester) throws InputMismatchException {
+    public Record(String subject, int semester) {
         this.subject = subject;
         this.semester = semester;
         checkInput();
+    }
+
+    private void checkInput() {
+        if (subject == null || subject.isEmpty()) {
+            throw new IllegalArgumentException("null or empty 'subject' parameter was passed to the" +
+                    " Record class constructor.");
+        }
+
+        if (semester < 1) {
+            throw new IllegalArgumentException("Invalid 'semester' parameter was passed to the" +
+                    " Record class constructor.");
+        }
     }
 
     /**
@@ -56,25 +67,5 @@ public abstract class Record {
      */
     public abstract String getEvaluation();
 
-    private void checkInput() throws InputMismatchException {
-        if (subject == null || subject.isEmpty()) {
-            throw new InputMismatchException("null or empty 'subject' parameter was passed to the" +
-                    " Record class constructor.");
-        }
-
-        if (semester < 1) {
-            throw new InputMismatchException("Invalid 'semester' parameter was passed to the" +
-                    " Record class constructor.");
-        }
-    }
-
-    // ---------------------------------------------------------------------------------------------
-
-    public abstract Double acceptDouble(Visitor<Double> visitor);
-
-    public abstract Boolean acceptBoolean(Visitor<Boolean> visitor);
-
-    public abstract Double getGradeDouble();
-
-    public abstract Boolean isIncreasedScholarship();
+    public abstract void accept(Visitor visitor);
 }

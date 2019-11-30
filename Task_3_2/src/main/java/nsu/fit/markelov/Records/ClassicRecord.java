@@ -4,24 +4,24 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Visitors.Visitor;
 
 /**
- * The <code>RecordNonDif</code> class represents a single
+ * The <code>ClassicRecord</code> class represents a single
  * non-differential record in <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook
  */
-public class RecordNonDif extends Record {
+public class ClassicRecord extends Record {
 
     private boolean passed;
 
     /**
-     * Creates a new <code>RecordNonDif</code>.
+     * Creates a new <code>ClassicRecord</code>.
      *
      * @param subject  the subject name.
      * @param semester the semester number.
      * @param passed   whether the credit is passed.
      */
-    public RecordNonDif(String subject, int semester, boolean passed) {
+    public ClassicRecord(String subject, int semester, boolean passed) {
         super(subject, semester);
         this.passed = passed;
     }
@@ -45,24 +45,8 @@ public class RecordNonDif extends Record {
         return passed ? "Passed" : "Not passed";
     }
 
-    // ---------------------------------------------------------------------------------------------
-
-    public Double acceptDouble(Visitor<Double> visitor) {
-        return visitor.visit(this);
-    }
-
     @Override
-    public Boolean acceptBoolean(Visitor<Boolean> visitor) {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public Double getGradeDouble() {
-        return Double.NaN;
-    }
-
-    @Override
-    public Boolean isIncreasedScholarship() {
-        return passed;
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }
