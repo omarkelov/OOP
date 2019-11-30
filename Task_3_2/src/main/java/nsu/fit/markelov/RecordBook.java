@@ -1,44 +1,83 @@
 package nsu.fit.markelov;
 
+import nsu.fit.markelov.Records.Record;
+import nsu.fit.markelov.Visitors.GradeVisitor;
+import nsu.fit.markelov.Visitors.IncreasedScholarshipVisitor;
+import nsu.fit.markelov.Visitors.Visitor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 
+/**
+ * The <code>RecordBook</code> class is a collection of student's
+ * records during the whole period of study.
+ *
+ * @author Oleg Markelov
+ * @see    Record
+ */
 public class RecordBook {
 
     private int semestersAmount;
-    private int semestersFinished;
+    private int lastSemester;
     private ArrayList<Record> records;
 
-    public RecordBook(int semestersAmount, int semestersFinished) throws Exception {
+    private Visitor<Double> gradeVisitor;
+    private Visitor<Boolean> increasedScholarshipVisitor;
+
+    /**
+     * Creates a new <code>RecordBook</code>.
+     *
+     * @param semestersAmount         the number of semesters during
+     *                                the whole period of study.
+     * @param lastSemester            the number of semester the student
+     *                                finished.
+     * @throws InputMismatchException if 'semestersAmount' or 'lastSemester'
+     *                                parameter less than one was passed. Or
+     *                                if 'lastSemester' > 'semestersAmount'.
+     */
+    public RecordBook(int semestersAmount, int lastSemester) throws InputMismatchException {
         this.semestersAmount = semestersAmount;
-        this.semestersFinished = semestersFinished;
+        this.lastSemester = lastSemester;
         checkInput();
 
         records = new ArrayList<>();
+
+        gradeVisitor = new GradeVisitor();
+        increasedScholarshipVisitor = new IncreasedScholarshipVisitor();
     }
 
+    /**
+     * Adds any record.
+     *
+     * @param record the record to be added.
+     * @see   Record
+     */
     public void addRecord(Record record) {
         records.add(record);
     }
 
-    public double getAverage() {
+    /**
+     * Calculates and returns the average grade of the <code>RecordBook</code>.
+     *
+     * @return the average grade of the <code>RecordBook</code>.
+     */
+    public double getRecordBookAverage() {
         return getAverage(records);
     }
 
-    private double getAverage(Collection<Record> collection) {
-        return collection.stream()
-                .filter(DifferentialRecord.class::isInstance)
-                .map(DifferentialRecord.class::cast)
-                .mapToDouble(DifferentialRecord::getMark)
-                .average()
-                .orElse(Double.NaN);
-    }
-
+    /**
+     * Calculates and returns the average grade of the diploma.
+     *
+     * @return the average grade of the diploma.
+     */
     public double getDiplomaAverage() {
-        HashMap<String, Record> map = new HashMap<>(); // subject to Record
+        // (subject -> RecordDif) map for getting only the last record of each subject
+        HashMap<String, Record> map = new HashMap<>();
         records.forEach(record -> {
-            if (!map.containsKey(record.getSubject()) || record.getSemester() > map.get(record.getSubject()).getSemester()) {
+            if (!map.containsKey(record.getSubject()) ||
+                    record.getSemester() > map.get(record.getSubject()).getSemester()) {
                 map.put(record.getSubject(), record);
             }
         });
@@ -46,58 +85,42 @@ public class RecordBook {
         return getAverage(map.values());
     }
 
-    public boolean isIncreasedScholarships() {
+    /**
+     * Calculates and returns whether the student should get
+     * an increased scholarship.
+     *
+     * @return whether the student should get an increased scholarship.
+     */
+    public boolean isIncreasedScholarship() {
         return records.stream()
-                .filter(record -> record.getSemester() == semestersFinished)
-                .allMatch(record -> record instanceof DifferentialRecord ?
-                        ((DifferentialRecord)record).getMark() == 5 :
-                        ((ClassicCredit)record).isPassed()
-                );
+                .filter(record -> record.getSemester() == lastSemester)
+//                .allMatch(record -> record.acceptBoolean(increasedScholarshipVisitor) &&
+                .allMatch(record -> record.isIncreasedScholarship() &&
+                        record.getSemester() != semestersAmount);
     }
 
-/*
-        public boolean isIncreasedScholarships() {
-            return records.stream()
-                    .filter(record -> record.getSemester() == semestersFinished)
-                    .allMatch(record -> {
-                        if (record instanceof DifferentialRecord) {
-                            return ((DifferentialRecord)record).getMark() == 5;
-                        } else if (record instanceof ClassicCredit) {
-                            return ((ClassicCredit)record).isPassed();
-                        } else {
-                            throw new ClassCastException(); // likely wrong - then which Exception to use?
-                        }
-                    });
+    private double getAverage(Collection<Record> collection) {
+        return collection.stream()
+//                .mapToDouble(record -> record.acceptDouble(gradeVisitor))
+                .mapToDouble(Record::getGradeDouble)
+                .filter(grade -> !Double.isNaN(grade))
+                .average()
+                .orElse(Double.NaN);
+    }
+
+    private void checkInput() throws InputMismatchException {
+        if (semestersAmount < 1) {
+            throw new InputMismatchException("Invalid 'semestersAmount' parameter was passed to" +
+                    " the RecordBook class constructor.");
         }
-    */
-/*
-    public boolean isIncreasedScholarships() {
-        boolean areCreditsPassed = records.stream()
-                .filter(record -> record.getSemester() == semestersFinished)
-                .filter(DifferentialRecord.class::isInstance)
-                .map(DifferentialRecord.class::cast)
-                .allMatch(record -> record.getMark() == 5);
 
-        boolean areExellentMarks = records.stream()
-                .filter(record -> record.getSemester() == semestersFinished)
-                .filter(DifferentialRecord.class::isInstance)
-                .map(DifferentialRecord.class::cast)
-                .allMatch(record -> record.getMark() == 5);
-
-        return areCreditsPassed && areExellentMarks;
-    }
-*/
-    private void checkInput() throws Exception {
-        if (semestersAmount < 1 || semestersFinished < 1 || semestersFinished > semestersAmount) {
-            throw new Exception("Invalid parameter was passed to the RecordBook class constructor.");
+        if (lastSemester < 1) {
+            throw new InputMismatchException("Invalid 'lastSemester' parameter was passed to the" +
+                    " RecordBook class constructor.");
         }
-    }
 
-    // ----- debug -----
-
-    public void print() {
-        for (Record record : records) {
-            System.out.println(record.getSubject() + ": " + record.getEvaluation());
+        if (lastSemester > semestersAmount) {
+            throw new InputMismatchException("lastSemester must be <= semestersAmount.");
         }
     }
 }
