@@ -7,6 +7,10 @@ import java.util.LinkedList;
 
 public class Calculator {
 
+    public static final String NO_OPERANDS_EXCEPTION_MESSAGE = "No operands for operation: ";
+    public static final String EXTRA_OPERAND_EXCEPTION_MESSAGE = "Extra operand found: ";
+    public static final String INVALID_TOKEN_EXCEPTION_MESSAGE = "Invalid token found: ";
+
     private OperationFactory operationFactory;
     private Deque<Operation> stack;
     private double res;
@@ -24,7 +28,7 @@ public class Calculator {
         }
 
         if (!stack.isEmpty()) {
-            throw new IllegalArgumentException("No operands for operation: " +
+            throw new IllegalArgumentException(NO_OPERANDS_EXCEPTION_MESSAGE +
                     "\"" + stack.pop().getClass().getSimpleName() + "\"");
         }
 
@@ -43,12 +47,14 @@ public class Calculator {
             double number = Double.parseDouble(token);
 
             if (stack.isEmpty()) {
-                throw new IllegalArgumentException("Extra operand found: \"" + token + "\"");
+                throw new IllegalArgumentException(EXTRA_OPERAND_EXCEPTION_MESSAGE +
+                        "\"" + token + "\"");
             }
 
             rollBackThroughStack(number);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid token found: \"" + token + "\"");
+            throw new IllegalArgumentException(INVALID_TOKEN_EXCEPTION_MESSAGE +
+                    "\"" + token + "\"");
         }
     }
 
