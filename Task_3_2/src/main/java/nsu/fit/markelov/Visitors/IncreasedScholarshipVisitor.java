@@ -20,7 +20,7 @@ public class IncreasedScholarshipVisitor implements Visitor {
     /**
      * Cancels an increased scholarship if the grade is not 5.
      *
-     * @param gradedRecord the record to be visited.
+     * @param gradedRecord the record to visit.
      */
     @Override
     public void visit(GradedRecord gradedRecord) {
@@ -32,7 +32,7 @@ public class IncreasedScholarshipVisitor implements Visitor {
     /**
      * Cancels an increased scholarship if the record is not passed.
      *
-     * @param classicRecord the record to be visited.
+     * @param classicRecord the record to visit.
      */
     @Override
     public void visit(ClassicRecord classicRecord) {

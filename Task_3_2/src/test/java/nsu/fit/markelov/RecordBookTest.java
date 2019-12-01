@@ -71,7 +71,7 @@ public class RecordBookTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (e.getMessage() != "Invalid 'nSemesters' parameter was passed to the RecordBook class constructor.") {
+            if (!e.getMessage().startsWith(RecordBook.INVALID_N_SEMESTERS_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }
@@ -81,7 +81,7 @@ public class RecordBookTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (e.getMessage() != "Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.") {
+            if (!e.getMessage().startsWith(RecordBook.INVALID_LAST_SEMESTER_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }
@@ -91,7 +91,18 @@ public class RecordBookTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (e.getMessage() != "lastSemester must be <= nSemesters.") {
+            if (!e.getMessage().startsWith(RecordBook.INVALID_PARAMS_EXCEPTION_MESSAGE)) {
+                Assert.fail();
+            }
+        }
+
+        try {
+            RecordBook recordBook = new RecordBook(8, 8);
+            recordBook.setDiplomaGrade(9);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
+            if (!e.getMessage().startsWith(RecordBook.INVALID_DIPLOMA_GRADE_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }

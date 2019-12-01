@@ -21,7 +21,7 @@ public class ClassicRecordTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (e.getMessage() != "null or empty 'subject' parameter was passed to the Record class constructor.") {
+            if (!e.getMessage().startsWith(ClassicRecord.INVALID_SUBJECT_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }
@@ -31,7 +31,7 @@ public class ClassicRecordTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (e.getMessage() != "Invalid 'semester' parameter was passed to the Record class constructor.") {
+            if (!e.getMessage().startsWith(ClassicRecord.INVALID_SEMESTER_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }

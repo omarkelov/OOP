@@ -19,6 +19,15 @@ import java.util.Map;
  */
 public class RecordBook {
 
+    public static final String INVALID_N_SEMESTERS_EXCEPTION_MESSAGE =
+            "Invalid 'nSemesters' parameter was passed to the RecordBook class constructor.";
+    public static final String INVALID_LAST_SEMESTER_EXCEPTION_MESSAGE =
+            "Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.";
+    public static final String INVALID_PARAMS_EXCEPTION_MESSAGE =
+            "lastSemester must be <= nSemesters.";
+    public static final String INVALID_DIPLOMA_GRADE_EXCEPTION_MESSAGE =
+            "Invalid 'diplomaGrade' parameter was passed to the setDiplomaGrade method.";
+
     private static final double MINIMAL_HONOURS_DIPLOMA_GRADE = 4.75d;
 
     private int nSemesters;
@@ -46,11 +55,11 @@ public class RecordBook {
         String message = null;
 
         if (nSemesters < 1) {
-            message = "Invalid 'nSemesters' parameter was passed to the RecordBook class constructor.";
+            message = INVALID_N_SEMESTERS_EXCEPTION_MESSAGE;
         } else if (lastSemester < 1) {
-            message = "Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.";
+            message = INVALID_LAST_SEMESTER_EXCEPTION_MESSAGE;
         } else if (lastSemester > nSemesters) {
-            message = "lastSemester must be <= nSemesters.";
+            message = INVALID_PARAMS_EXCEPTION_MESSAGE;
         }
 
         if (message != null) {
@@ -148,8 +157,7 @@ public class RecordBook {
      */
     public void setDiplomaGrade(int diplomaGrade) {
         if (diplomaGrade < 2 || diplomaGrade > 5) {
-            throw new IllegalArgumentException("Invalid 'diplomaGrade' parameter was passed to" +
-                    " the setDiplomaGrade method.");
+            throw new IllegalArgumentException(INVALID_DIPLOMA_GRADE_EXCEPTION_MESSAGE);
         }
 
         this.diplomaGrade = diplomaGrade;

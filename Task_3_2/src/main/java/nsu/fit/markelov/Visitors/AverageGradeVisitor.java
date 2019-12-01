@@ -21,7 +21,7 @@ public class AverageGradeVisitor implements Visitor {
     /**
      * Accumulates the sum of all the grades.
      *
-     * @param gradedRecord the record to be visited.
+     * @param gradedRecord the record to visit.
      */
     @Override
     public void visit(GradedRecord gradedRecord) {
@@ -32,7 +32,7 @@ public class AverageGradeVisitor implements Visitor {
     /**
      * Accumulates nothing.
      *
-     * @param classicRecord the record to be visited.
+     * @param classicRecord the record to visit.
      */
     @Override
     public void visit(ClassicRecord classicRecord) {}

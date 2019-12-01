@@ -15,6 +15,18 @@ import nsu.fit.markelov.Records.Record;
  */
 
 public interface Visitor {
+
+    /**
+     * Visits a record.
+     *
+     * @param gradedRecord the record to visit.
+     */
     void visit(GradedRecord gradedRecord);
+
+    /**
+     * Visits a record.
+     *
+     * @param classicRecord the record to visit.
+     */
     void visit(ClassicRecord classicRecord);
 }

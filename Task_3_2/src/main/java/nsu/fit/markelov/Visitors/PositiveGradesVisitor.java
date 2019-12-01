@@ -20,7 +20,7 @@ public class PositiveGradesVisitor implements Visitor {
     /**
      * Cancels the assumption that all the grades are positive if the grade is under 4.
      *
-     * @param gradedRecord the record to be visited.
+     * @param gradedRecord the record to visit.
      */
     @Override
     public void visit(GradedRecord gradedRecord) {
@@ -32,7 +32,7 @@ public class PositiveGradesVisitor implements Visitor {
     /**
      * Cancels the assumption that all the grades are positive if the record is not passed.
      *
-     * @param classicRecord the record to be visited.
+     * @param classicRecord the record to visit.
      */
     @Override
     public void visit(ClassicRecord classicRecord) {

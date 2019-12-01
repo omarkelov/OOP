@@ -12,6 +12,9 @@ import nsu.fit.markelov.Visitors.Visitor;
  */
 public class GradedRecord extends Record {
 
+    public static final String INVALID_GRADE_EXCEPTION_MESSAGE = "Invalid 'grade' parameter was" +
+            " passed to the GradedRecord class constructor.";
+
     private int grade;
 
     /**
@@ -30,8 +33,7 @@ public class GradedRecord extends Record {
 
     private void checkInput() {
         if (grade < 2 || grade > 5) {
-            throw new IllegalArgumentException("Invalid 'grade' parameter was passed to the" +
-                    " GradedRecord class constructor.");
+            throw new IllegalArgumentException(INVALID_GRADE_EXCEPTION_MESSAGE);
         }
     }
 

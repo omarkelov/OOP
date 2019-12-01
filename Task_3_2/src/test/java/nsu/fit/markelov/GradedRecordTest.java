@@ -21,7 +21,7 @@ public class GradedRecordTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (e.getMessage() != "Invalid 'grade' parameter was passed to the GradedRecord class constructor.") {
+            if (!e.getMessage().startsWith(GradedRecord.INVALID_GRADE_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }

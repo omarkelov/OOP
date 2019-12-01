@@ -11,6 +11,11 @@ import nsu.fit.markelov.Visitors.Visitor;
  */
 public abstract class Record {
 
+    public static final String INVALID_SUBJECT_EXCEPTION_MESSAGE =
+            "null or empty 'subject' parameter was passed to the Record class constructor.";
+    public static final String INVALID_SEMESTER_EXCEPTION_MESSAGE =
+            "Invalid 'semester' parameter was passed to the Record class constructor.";
+
     private String subject;
     private int semester;
 
@@ -32,9 +37,9 @@ public abstract class Record {
         String message = null;
 
         if (subject == null || subject.isEmpty()) {
-            message = "null or empty 'subject' parameter was passed to the Record class constructor.";
+            message = INVALID_SUBJECT_EXCEPTION_MESSAGE;
         } else if (semester < 1) {
-            message = "Invalid 'semester' parameter was passed to the Record class constructor.";
+            message = INVALID_SEMESTER_EXCEPTION_MESSAGE;
         }
 
         if (message != null) {
