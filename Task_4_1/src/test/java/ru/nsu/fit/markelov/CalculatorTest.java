@@ -10,6 +10,7 @@ public class CalculatorTest {
     @Test
     public void testBasics() {
         Calculator calculator = new Calculator();
+
         Assert.assertEquals(5, calculator.calculate("+ 3 2"), DELTA);
         Assert.assertEquals(1, calculator.calculate("- 3 2"), DELTA);
         Assert.assertEquals(6, calculator.calculate("* 3 2"), DELTA);
@@ -25,6 +26,8 @@ public class CalculatorTest {
     @Test
     public void testComplex() {
         Calculator calculator = new Calculator();
+
+        Assert.assertEquals(Double.POSITIVE_INFINITY, calculator.calculate("/ 1 0"), DELTA);
         Assert.assertEquals(0, calculator.calculate("sin + - 1 2 1"), DELTA);
         Assert.assertEquals(-3.9885581113d, calculator.calculate("~ ^ 12.34 ~ sin + - 10.67 2.353333 sqrt 99"), DELTA);
     }
@@ -37,6 +40,7 @@ public class CalculatorTest {
             calculator.calculate("sin + - 1 2 1 999");
             Assert.fail();
         } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
             if (!e.getMessage().startsWith(Calculator.EXTRA_OPERAND_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
@@ -46,6 +50,7 @@ public class CalculatorTest {
             calculator.calculate("sinus + - 1 2 1");
             Assert.fail();
         } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
             if (!e.getMessage().startsWith(Calculator.INVALID_TOKEN_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
@@ -55,7 +60,8 @@ public class CalculatorTest {
             calculator.calculate("sin + - 1 2");
             Assert.fail();
         } catch (IllegalArgumentException e) {
-            if (!e.getMessage().startsWith(Calculator.NO_OPERANDS_EXCEPTION_MESSAGE)) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
+            if (!e.getMessage().startsWith(Calculator.NO_OPERAND_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }
