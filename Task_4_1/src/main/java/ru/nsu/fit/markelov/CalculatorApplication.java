@@ -13,7 +13,7 @@ public class CalculatorApplication {
             try {
                 input = iScanner.nextLine();
                 System.out.println(calculator.calculate(input));
-            } catch (IllegalArgumentException|InstantiationException|IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Error (" + e.getMessage() + ")");
             }
         }

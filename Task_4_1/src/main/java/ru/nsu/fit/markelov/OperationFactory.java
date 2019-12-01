@@ -9,7 +9,8 @@ import java.util.TreeMap;
 
 public class OperationFactory {
 
-    public static final String SYMBOL_EXCEPTION_MESSAGE = "\"null\" is not a valid operation symbol.";
+    public static final String SYMBOL_EXCEPTION_MESSAGE =
+            "\"null\" is not a valid operation symbol.";
 
     private Map<String, Class<?>> map;
 
