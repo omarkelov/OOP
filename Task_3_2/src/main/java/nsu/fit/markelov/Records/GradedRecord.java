@@ -4,8 +4,8 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Visitors.Visitor;
 
 /**
- * The <code>GradedRecord</code> class represents a single differential
- * record in <code>RecordBook</code>.
+ * The <code>GradedRecord</code> class represents a single differential record in
+ * <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook
@@ -42,16 +42,6 @@ public class GradedRecord extends Record {
      */
     public int getGrade() {
         return grade;
-    }
-
-    /**
-     * Returns the grade of the record.
-     *
-     * @return the grade of the record.
-     */
-    @Override
-    public String getEvaluation() {
-        return grade + "";
     }
 
     /**

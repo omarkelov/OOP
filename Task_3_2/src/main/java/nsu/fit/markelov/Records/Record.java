@@ -4,8 +4,7 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Visitors.Visitor;
 
 /**
- * The <code>Record</code> class represents a single record
- * in <code>RecordBook</code>.
+ * The <code>Record</code> class represents a single record in <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook
@@ -20,8 +19,8 @@ public abstract class Record {
      *
      * @param  subject                  the subject name.
      * @param  semester                 the semester number.
-     * @throws IllegalArgumentException if null or empty 'subject' parameter was passed.
-     *                                  Or if 'semester' parameter less than one was passed.
+     * @throws IllegalArgumentException if null or empty 'subject' parameter was passed. Or if
+     *                                  'semester' parameter less than one was passed.
      */
     public Record(String subject, int semester) {
         this.subject = subject;
@@ -60,13 +59,6 @@ public abstract class Record {
     public int getSemester() {
         return semester;
     }
-
-    /**
-     * Returns the evaluation of the record.
-     *
-     * @return the evaluation of the record.
-     */
-    public abstract String getEvaluation();
 
     /**
      * Applies a visitor to this record.

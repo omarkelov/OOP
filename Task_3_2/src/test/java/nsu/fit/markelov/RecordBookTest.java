@@ -6,7 +6,11 @@ import nsu.fit.markelov.Records.RealRecords.Exam;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Random;
+
 public class RecordBookTest {
+
+    private static final double DELTA = 0.000001d;
 
     @Test
     public void testMyRecordBook() {
@@ -32,9 +36,64 @@ public class RecordBookTest {
         recordBook.addRecord(new Exam("Introduction to Discrete Mathematics and Mathematical Logic", 2, 5));
         recordBook.addRecord(new Exam("Imperative Programming", 2, 5));
 
-        double delta = 0.000001d;
-        Assert.assertEquals(4.666666666666667d, recordBook.getRecordBookAverage(), delta);
-        Assert.assertEquals(4.625d, recordBook.getDiplomaAverage(), delta);
+        Assert.assertEquals(4.666666666666667d, recordBook.getRecordBookAverage(), DELTA);
+        Assert.assertEquals(4.625d, recordBook.getDiplomaAverage(), DELTA);
+        Assert.assertFalse(recordBook.isHonoursDegree());
         Assert.assertFalse(recordBook.isIncreasedScholarship());
+    }
+
+    @Test
+    public void testHonoursDegree() {
+        Random random = new Random(9);
+
+        RecordBook recordBook = new RecordBook(10, 10);
+        recordBook.setDiplomaGrade(5);
+
+        for (int i = 0; i < 75; i++) {
+            recordBook.addRecord(new Exam(i+"", random.nextInt(10) + 1, 5));
+        }
+
+        for (int i = 0; i < 25; i++) {
+            recordBook.addRecord(new Exam((i+75)+"", random.nextInt(10) + 1, 4));
+        }
+
+        Assert.assertTrue(recordBook.isHonoursDegree());
+
+        recordBook.addRecord(new Exam("extra", random.nextInt(10) + 1, 4));
+
+        Assert.assertFalse(recordBook.isHonoursDegree());
+    }
+
+    @Test
+    public void testIllegalArgumentExceptions() {
+        try {
+            RecordBook recordBook = new RecordBook(0, 0);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
+            if (e.getMessage() != "Invalid 'nSemesters' parameter was passed to the RecordBook class constructor.") {
+                Assert.fail();
+            }
+        }
+
+        try {
+            RecordBook recordBook = new RecordBook(8, 0);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
+            if (e.getMessage() != "Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.") {
+                Assert.fail();
+            }
+        }
+
+        try {
+            RecordBook recordBook = new RecordBook(8, 10);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
+            if (e.getMessage() != "lastSemester must be <= nSemesters.") {
+                Assert.fail();
+            }
+        }
     }
 }

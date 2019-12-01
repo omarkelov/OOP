@@ -4,8 +4,8 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Records.ClassicRecord;
 
 /**
- * The <code>ClassicCredit</code> class represents a single
- * classic credit record in <code>RecordBook</code>.
+ * The <code>ClassicCredit</code> class represents a single classic credit record in
+ * <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook

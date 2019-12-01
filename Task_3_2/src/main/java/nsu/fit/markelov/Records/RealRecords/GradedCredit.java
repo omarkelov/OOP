@@ -4,8 +4,8 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Records.GradedRecord;
 
 /**
- * The <code>GradedCredit</code> class represents a single
- * differential credit record in <code>RecordBook</code>.
+ * The <code>GradedCredit</code> class represents a single differential credit record in
+ * <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook

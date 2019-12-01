@@ -4,8 +4,7 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Records.GradedRecord;
 
 /**
- * The <code>Exam</code> class represents a single
- * Exam record in <code>RecordBook</code>.
+ * The <code>Exam</code> class represents a single Exam record in <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook

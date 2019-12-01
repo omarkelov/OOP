@@ -13,40 +13,40 @@ import nsu.fit.markelov.Records.GradedRecord;
  * @see    Visitor
  */
 
-public class IncreasedScholarshipVisitor implements Visitor {
+public class PositiveGradesVisitor implements Visitor {
 
-    private boolean increasedScholarship = true;
+    private boolean allGradesPositive = true;
 
     /**
-     * Cancels an increased scholarship if the grade is not 5.
+     * Cancels the assumption that all the grades are positive if the grade is under 4.
      *
      * @param gradedRecord the record to be visited.
      */
     @Override
     public void visit(GradedRecord gradedRecord) {
-        if (gradedRecord.getGrade() != 5) {
-            increasedScholarship = false;
+        if (gradedRecord.getGrade() < 4) {
+            allGradesPositive = false;
         }
     }
 
     /**
-     * Cancels an increased scholarship if the record is not passed.
+     * Cancels the assumption that all the grades are positive if the record is not passed.
      *
      * @param classicRecord the record to be visited.
      */
     @Override
     public void visit(ClassicRecord classicRecord) {
         if (!classicRecord.isPassed()) {
-            increasedScholarship = false;
+            allGradesPositive = false;
         }
     }
 
     /**
-     * Returns whether the student should get an increased scholarship.
+     * Returns whether all the grades are positive.
      *
-     * @return whether the student should get an increased scholarship.
+     * @return whether all the grades are positive.
      */
-    public boolean isIncreasedScholarship() {
-        return increasedScholarship;
+    public boolean areAllGradesPositive() {
+        return allGradesPositive;
     }
 }

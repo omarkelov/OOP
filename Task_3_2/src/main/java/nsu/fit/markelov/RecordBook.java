@@ -3,6 +3,7 @@ package nsu.fit.markelov;
 import nsu.fit.markelov.Records.Record;
 import nsu.fit.markelov.Visitors.AverageGradeVisitor;
 import nsu.fit.markelov.Visitors.IncreasedScholarshipVisitor;
+import nsu.fit.markelov.Visitors.PositiveGradesVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,31 +11,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The <code>RecordBook</code> class is a collection of student's
- * records during the whole period of study.
+ * The <code>RecordBook</code> class is a collection of student's records during the whole period
+ * of study.
  *
  * @author Oleg Markelov
  * @see    Record
  */
 public class RecordBook {
 
-    private int semestersAmount;
+    private static final double MINIMAL_HONOURS_DIPLOMA_GRADE = 4.75d;
+
+    private int nSemesters;
     private int lastSemester;
     private ArrayList<Record> records;
+    private Integer diplomaGrade;
 
     /**
      * Creates a new <code>RecordBook</code>.
      *
-     * @param  semestersAmount          the number of semesters during
-     *                                  the whole period of study.
-     * @param  lastSemester             the number of semester the student
-     *                                  finished.
-     * @throws IllegalArgumentException if 'semestersAmount' or 'lastSemester'
-     *                                  parameter less than one was passed. Or
-     *                                  if 'lastSemester' > 'semestersAmount'.
+     * @param  nSemesters               the number of semesters during the whole period of study.
+     * @param  lastSemester             the number of semester the student finished.
+     * @throws IllegalArgumentException if 'nSemesters' or 'lastSemester' parameter less than one
+     *                                  was passed. Or if 'lastSemester' > 'nSemesters'.
      */
-    public RecordBook(int semestersAmount, int lastSemester) {
-        this.semestersAmount = semestersAmount;
+    public RecordBook(int nSemesters, int lastSemester) {
+        this.nSemesters = nSemesters;
         this.lastSemester = lastSemester;
         checkInput();
 
@@ -44,12 +45,12 @@ public class RecordBook {
     private void checkInput() {
         String message = null;
 
-        if (semestersAmount < 1) {
-            message = "Invalid 'semestersAmount' parameter was passed to the RecordBook class constructor.";
+        if (nSemesters < 1) {
+            message = "Invalid 'nSemesters' parameter was passed to the RecordBook class constructor.";
         } else if (lastSemester < 1) {
             message = "Invalid 'lastSemester' parameter was passed to the RecordBook class constructor.";
-        } else if (lastSemester > semestersAmount) {
-            message = "lastSemester must be <= semestersAmount.";
+        } else if (lastSemester > nSemesters) {
+            message = "lastSemester must be <= nSemesters.";
         }
 
         if (message != null) {
@@ -58,10 +59,9 @@ public class RecordBook {
     }
 
     /**
-     * Adds any record.
+     * Adds a record of any kind.
      *
      * @param record the record to be added.
-     * @see   Record
      */
     public void addRecord(Record record) {
         records.add(record);
@@ -74,6 +74,26 @@ public class RecordBook {
      */
     public double getRecordBookAverage() {
         return getAverage(records);
+    }
+
+    private double getAverage(Collection<Record> records) {
+        AverageGradeVisitor visitor = new AverageGradeVisitor();
+
+        records.forEach(record -> record.accept(visitor));
+
+        return visitor.getAverage();
+    }
+
+    /**
+     * Returns whether the student should get the honours degree.
+     *
+     * @return whether the student should get the honours degree.
+     */
+    public boolean isHonoursDegree() {
+        return diplomaGrade != null
+                && diplomaGrade == 5
+                && getDiplomaAverage() >= MINIMAL_HONOURS_DIPLOMA_GRADE
+                && areAllGradesPositive();
     }
 
     /**
@@ -94,13 +114,24 @@ public class RecordBook {
         return getAverage(map.values());
     }
 
+    private boolean areAllGradesPositive() {
+        PositiveGradesVisitor visitor = new PositiveGradesVisitor();
+
+        records.forEach(record -> record.accept(visitor));
+
+        return visitor.areAllGradesPositive();
+    }
+
     /**
-     * Calculates and returns whether the student should get
-     * an increased scholarship.
+     * Calculates and returns whether the student should get an increased scholarship.
      *
      * @return whether the student should get an increased scholarship.
      */
     public boolean isIncreasedScholarship() {
+        if (lastSemester == nSemesters) {
+            return false;
+        }
+
         IncreasedScholarshipVisitor visitor = new IncreasedScholarshipVisitor();
 
         records.stream()
@@ -110,11 +141,18 @@ public class RecordBook {
         return visitor.isIncreasedScholarship();
     }
 
-    private double getAverage(Collection<Record> records) {
-        AverageGradeVisitor visitor = new AverageGradeVisitor();
+    /**
+     * Sets the diploma grade. After that being done, the last semester becomes the latest possible.
+     *
+     * @param diplomaGrade the diploma grade.
+     */
+    public void setDiplomaGrade(int diplomaGrade) {
+        if (diplomaGrade < 2 || diplomaGrade > 5) {
+            throw new IllegalArgumentException("Invalid 'diplomaGrade' parameter was passed to" +
+                    " the setDiplomaGrade method.");
+        }
 
-        records.forEach(record -> record.accept(visitor));
-
-        return visitor.getAverage();
+        this.diplomaGrade = diplomaGrade;
+        lastSemester = nSemesters;
     }
 }

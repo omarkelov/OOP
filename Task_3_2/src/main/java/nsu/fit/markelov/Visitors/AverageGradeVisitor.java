@@ -4,12 +4,10 @@ import nsu.fit.markelov.Records.ClassicRecord;
 import nsu.fit.markelov.Records.GradedRecord;
 
 /**
- * <code>AverageGradeVisitor</code> class is a simple visitor
- * used for accumulating the sum of grades of all the visited
- * records to get the average grade in the end.
+ * <code>AverageGradeVisitor</code> class is a simple visitor used for accumulating the sum of
+ * grades of all the visited records to get the average grade in the end.
  * <p>
- * <code>AverageGradeVisitor</code> implements <code>Visitor</code>
- * interface.
+ * <code>AverageGradeVisitor</code> implements <code>Visitor</code> interface.
  *
  * @author Oleg Markelov
  * @see    Visitor

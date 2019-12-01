@@ -4,8 +4,8 @@ import nsu.fit.markelov.RecordBook;
 import nsu.fit.markelov.Visitors.Visitor;
 
 /**
- * The <code>ClassicRecord</code> class represents a single
- * non-differential record in <code>RecordBook</code>.
+ * The <code>ClassicRecord</code> class represents a single non-differential record in
+ * <code>RecordBook</code>.
  *
  * @author Oleg Markelov
  * @see    RecordBook
@@ -33,16 +33,6 @@ public class ClassicRecord extends Record {
      */
     public boolean isPassed() {
         return passed;
-    }
-
-    /**
-     * Returns whether the credit is passed.
-     *
-     * @return whether the credit is passed.
-     */
-    @Override
-    public String getEvaluation() {
-        return passed ? "Passed" : "Not passed";
     }
 
     /**
