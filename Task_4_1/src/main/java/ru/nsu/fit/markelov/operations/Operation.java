@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 /**
  * The <code>Operation</code> class is an abstract class that is used to calculate the result of one
- * or more operands in a manner defined by its inheritors.
+ * or more operands in a manner defined by its descendants.
  *
  * @author Oleg Markelov
  */
