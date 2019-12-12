@@ -3,6 +3,7 @@
 */.gradle/
 */.idea/
 */build/
+*/out/
 
 *.kotlin_module
 
