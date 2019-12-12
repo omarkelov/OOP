@@ -17,8 +17,10 @@ import java.util.TreeMap;
  */
 public class OperationFactory {
 
-    public static final String ARGUMENT_EXCEPTION_MESSAGE =
+    public static final String NULL_ARGUMENT_EXCEPTION_MESSAGE =
             "\"null\" is not a valid argument.";
+    public static final String SYMBOL_IS_NUMBER_EXCEPTION_MESSAGE =
+            "Number is not a valid operation's symbol: ";
 
     private Map<String, Class<?>> map;
 
@@ -60,7 +62,7 @@ public class OperationFactory {
      *                                other reason.
      */
     public Operation createOperation(String symbol) throws InstantiationException, IllegalAccessException {
-        checkInput(symbol);
+        checkForNull(symbol);
 
         if (map.containsKey(symbol)) {
             return (Operation) map.get(symbol).newInstance();
@@ -72,12 +74,23 @@ public class OperationFactory {
     /**
      * Adds the <code>Operation</code> class to the collection.
      *
-     * @param symbol the symbol for <code>Operation</code> class.
+     * @param symbol the symbol for <code>Operation</code> class. Any sequence of chars can be a
+     *               valid operation's symbol, except one that can be interpreted as number.
      * @param clazz  the <code>Operation</code> class.
      */
     public void addOperation(String symbol, Class<?> clazz) {
-        checkInput(symbol);
-        checkInput(clazz);
+        checkForNull(symbol);
+        checkForNull(clazz);
+
+        try {
+            Double.parseDouble(symbol);
+
+            // exception was not caught - "symbol" is a number
+            throw new IllegalArgumentException(SYMBOL_IS_NUMBER_EXCEPTION_MESSAGE +
+                    "\"" + symbol + "\"");
+        } catch (NumberFormatException e) {
+            // normal case - "symbol" is not a number
+        }
 
         map.put(symbol, clazz);
     }
@@ -88,14 +101,14 @@ public class OperationFactory {
      * @param symbol the symbol for <code>Operation</code> class.
      */
     public void removeOperation(String symbol) {
-        checkInput(symbol);
+        checkForNull(symbol);
 
         map.remove(symbol);
     }
 
-    private <T> void checkInput(T arg) {
+    private <T> void checkForNull(T arg) {
         if (arg == null) {
-            throw new IllegalArgumentException(ARGUMENT_EXCEPTION_MESSAGE);
+            throw new IllegalArgumentException(NULL_ARGUMENT_EXCEPTION_MESSAGE);
         }
     }
 }

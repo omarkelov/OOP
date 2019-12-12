@@ -10,9 +10,9 @@ import java.util.NoSuchElementException;
  */
 public abstract class Operation {
 
-    public static final String GET_OPERAND_EXCEPTION_MESSAGE =
-            "All the operands have already been set.";
     public static final String SET_OPERAND_EXCEPTION_MESSAGE =
+            "All the operands have already been set. An extra one has been found: ";
+    public static final String GET_OPERAND_EXCEPTION_MESSAGE =
             "The operand has not been set yet.";
 
     private int nOperandsSet;
@@ -44,7 +44,7 @@ public abstract class Operation {
      */
     public void setOperand(double value) {
         if (nOperandsSet >= arity) {
-            throw new NoSuchElementException(SET_OPERAND_EXCEPTION_MESSAGE);
+            throw new NoSuchElementException(SET_OPERAND_EXCEPTION_MESSAGE + "\"" + value + "\"");
         }
 
         operands[nOperandsSet++] = value;
@@ -62,8 +62,8 @@ public abstract class Operation {
     /**
      * Returns the value of the operand.
      *
-     * @param id the number of the operand.
-     * @return   the value of the operand.
+     * @param  id the number of the operand.
+     * @return    the value of the operand.
      */
     public double getOperand(int id) {
         if (id >= nOperandsSet) {

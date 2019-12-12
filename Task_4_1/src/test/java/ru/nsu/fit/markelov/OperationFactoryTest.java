@@ -53,7 +53,7 @@ public class OperationFactoryTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (!e.getMessage().startsWith(OperationFactory.ARGUMENT_EXCEPTION_MESSAGE)) {
+            if (!e.getMessage().startsWith(OperationFactory.NULL_ARGUMENT_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         } catch (InstantiationException|IllegalAccessException e) {
@@ -65,7 +65,17 @@ public class OperationFactoryTest {
             Assert.fail();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
-            if (!e.getMessage().startsWith(OperationFactory.ARGUMENT_EXCEPTION_MESSAGE)) {
+            if (!e.getMessage().startsWith(OperationFactory.NULL_ARGUMENT_EXCEPTION_MESSAGE)) {
+                Assert.fail();
+            }
+        }
+
+        try {
+            operationFactory.addOperation("9", Addition.class);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getClass().getSimpleName() + " got caught: " + e.getMessage());
+            if (!e.getMessage().startsWith(OperationFactory.SYMBOL_IS_NUMBER_EXCEPTION_MESSAGE)) {
                 Assert.fail();
             }
         }
