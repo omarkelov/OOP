@@ -94,7 +94,7 @@ public class Calculator {
     }
 
     private String[] tokenize(String str) {
-        return str.split("\\s+");
+        return str.trim().split("\\s+");
     }
 
     private void rollBackThroughStack(double operand) {
