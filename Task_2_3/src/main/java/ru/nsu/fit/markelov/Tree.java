@@ -72,9 +72,13 @@ public class Tree<T extends Comparable<? super T>> implements Iterable<Tree<T>>,
     /**
      * Creates a new node with specified value and adds it as a child to current node. The value
      * cannot be <tt>null</tt>.
+     * <p>
+     * If the value is already present among the direct children of the tree, nothing is being done
+     * and <tt>null</tt> is returned.
      *
      * @param  value the value to be attached to the node.
-     * @return       the created tree.
+     * @return       the created tree or <tt>null</tt> in case the value is already present among
+     *               the direct children of the tree.
      */
     public Tree<T> add(T value) {
         checkForNull(value);
@@ -91,9 +95,13 @@ public class Tree<T extends Comparable<? super T>> implements Iterable<Tree<T>>,
 
     /**
      * Adds the node as a child to current node. The node cannot be <tt>null</tt>.
+     * <p>
+     * If the value of the node is already present among the direct children of the tree, nothing is
+     * being done and <tt>null</tt> is returned.
      *
      * @param  tree the node to be added.
-     * @return      added tree itself.
+     * @return      added tree itself or <tt>null</tt> in case the value of the node is already
+     *              present among the direct children of the tree.
      */
     public Tree<T> add(Tree<T> tree) {
         checkForNull(tree);
