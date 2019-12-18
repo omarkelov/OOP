@@ -1,54 +1,149 @@
 package ru.nsu.fit.markelov;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
+import java.util.*;
 
-public class Tree<T> implements Iterable<Tree<T>> {
+/**
+ * The <code>Tree</code> class simulates a hierarchical tree structure, with a root value and
+ * subtrees of children with a parent node, represented as a set of linked nodes. A tree data
+ * structure is defined recursively as a collection of nodes (starting at a root node). Each node
+ * is a data structure consisting of a value, together with a list of references to direct nodes --
+ * the "children". Among the children all the nodes have different values.
+ * <p>
+ * The <code>Tree</code> class implements <code>Iterable</code> interface and can be traversed with
+ * help of breadth or depth first search. A breadth first search is used by default.
+ * <p>
+ * The <code>Tree</code> class implements <code>Comparable</code> interface, that's why objects of
+ * only comparable type can be used as a value of each node. Also a value cannot be <tt>null</tt>.
+ *
+ * @author Oleg Markelov
+ * @see    Iterable
+ * @see    Comparable
+ */
+public class Tree<T extends Comparable<? super T>> implements Iterable<Tree<T>>, Comparable<Tree<T>> {
 
-    private enum ITERATOR_TYPE {BFS, DFS}
-    private ITERATOR_TYPE iteratorType;
+    public static final String NULL_PARAMETER_EXCEPTION_MESSAGE =
+            "Null input parameter is not allowed.";
+    public static final String ROOT_REMOVING_EXCEPTION_MESSAGE = "Unable to remove the root.";
+    public static final String NO_MORE_ELEMENTS_EXCEPTION_MESSAGE = "All the elements have" +
+            " already been iterated.";
+    public static final String MODIFICATION_EXCEPTION_MESSAGE = "Iterator is no more valid, as" +
+            "the tree was modified.";
 
-    private int modCount;
+    /**
+     * Iterator types that can be used for iterating the tree.
+     * <p>
+     * BFS is for breadth first search. DFS is for depth first search.
+     */
+    public enum IteratorType { BFS, DFS }
+
+    private IteratorType iteratorType;
+    private int modificationCount;
 
     private T value;
     private Tree<T> parent;
-    private ArrayList<Tree<T>> children;
+    private List<Tree<T>> children;
+    private Set<T> childrenValueSet;
 
+    /**
+     * Creates the root node with specified value. The value cannot be <tt>null</tt>.
+     *
+     * @param value the value to be attached to the node.
+     */
     public Tree(T value) {
         this(value, null);
     }
 
-    public Tree(T value, Tree<T> parent) {
-        iteratorType = ITERATOR_TYPE.BFS;
-        modCount = 0;
+    private Tree(T value, Tree<T> parent) {
+        checkForNull(value);
+
+        iteratorType = IteratorType.BFS;
+        modificationCount = 0;
 
         this.value = value;
         this.parent = parent;
         children = new ArrayList<>();
+        childrenValueSet = new TreeSet<>();
+
+        if (parent != null) {
+            parent.add(this);
+        }
     }
 
+    /**
+     * Creates a new node with specified value and adds it as a child to current node. The value
+     * cannot be <tt>null</tt>.
+     * <p>
+     * If the value is already present among the direct children of the tree, nothing is being done
+     * and <tt>null</tt> is returned.
+     *
+     * @param  value the value to be attached to the node.
+     * @return       the created tree or <tt>null</tt> in case the value is already present among
+     *               the direct children of the tree.
+     */
     public Tree<T> add(T value) {
+        checkForNull(value);
+
+        if (childrenValueSet.contains(value)) {
+            return null;
+        }
+
         Tree<T> tree = new Tree<>(value, this);
-        children.add(tree);
-        incModCount();
+        incModificationCount();
 
         return tree;
     }
 
+    /**
+     * Adds the node as a child to current node. The node cannot be <tt>null</tt>.
+     * <p>
+     * If the value of the node is already present among the direct children of the tree, nothing is
+     * being done and <tt>null</tt> is returned.
+     *
+     * @param  tree the node to be added.
+     * @return      added tree itself or <tt>null</tt> in case the value of the node is already
+     *              present among the direct children of the tree.
+     */
     public Tree<T> add(Tree<T> tree) {
+        checkForNull(tree);
+
+        if (childrenValueSet.contains(tree.value)) {
+            return null;
+        }
+
+        if (tree.parent != null) {
+            tree.remove();
+        }
+
         tree.parent = this;
         children.add(tree);
-        incModCount();
+        childrenValueSet.add(tree.value);
+        incModificationCount();
 
         return tree;
     }
 
+    /**
+     * Removes the direct child node with specified value in case it exists. The value cannot be
+     * <tt>null</tt>.
+     *
+     * @param  value the value of the child.
+     * @return       whether the node was removed. Returns <tt>false</tt>
+     *               if the node with specified value was not found.
+     */
     public boolean remove(T value) {
-        for (int i = 0; i < children.size(); i++) {
-            if (value.equals(children.get(i).getValue())) {
-                children.remove(i);
-                incModCount();
+        checkForNull(value);
+
+        if (!childrenValueSet.contains(value)) {
+            return false;
+        }
+
+        childrenValueSet.remove(value);
+
+        Iterator<Tree<T>> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            if (value.equals(iterator.next().getValue())) {
+                iterator.remove();
+                incModificationCount();
 
                 return true;
             }
@@ -57,95 +152,104 @@ public class Tree<T> implements Iterable<Tree<T>> {
         return false;
     }
 
+    /**
+     * Removes the node itself from its root children list.
+     *
+     * @return                  whether the node was removed.
+     * @throws RuntimeException if the current node is a root.
+     */
     public boolean remove() {
-        return parent.remove(value); // increments modCount!
+        if (parent == null) {
+            throw new RuntimeException(ROOT_REMOVING_EXCEPTION_MESSAGE);
+        }
+
+        return parent.remove(value); // increments modificationCount!
     }
 
-    public void useDfsIterator() {
-        iteratorType = ITERATOR_TYPE.DFS;
-    }
-
-    public void useBfsIterator() {
-        iteratorType = ITERATOR_TYPE.BFS;
-    }
-
+    /**
+     * Returns the value of the current node.
+     *
+     * @return the value of the current node.
+     */
     public T getValue() {
         return value;
     }
 
-    public void setValue(T value) {
-        this.value = value;
+    /**
+     * Sets the type of iterating the tree.
+     *
+     * @param iteratorType the type of iterating the tree.
+     */
+    public void setIteratorType(IteratorType iteratorType) {
+        this.iteratorType = iteratorType;
     }
 
-    public ArrayList<Tree<T>> getChildren() {
-        return children;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("unchecked")
     public Iterator<Tree<T>> iterator() {
-        PathSearch<T> pathSearch;
-        switch (iteratorType) {
-            case DFS:
-                pathSearch = new DepthFirstSearch(this);
-                break;
-            case BFS:
-            default:
-                pathSearch = new BreadthFirstSearch(this);
-                break;
-        }
+
+        LinkedList<Tree<T>> traverseList = new LinkedList<>();
+        traverseList.addLast(this);
 
         return new Iterator<Tree<T>>() {
-            private int i = 0;
-            int expectedModCount = modCount;
+            private IteratorType localIteratorType = iteratorType;
+            private int expectedModificationCount = modificationCount;
 
             @Override
             public boolean hasNext() {
-                return i < pathSearch.getPath().size();
+                return !traverseList.isEmpty();
             }
 
             @Override
             public Tree<T> next() {
+                checkForPresence();
                 checkForComodification();
-                return pathSearch.getPath().get(i++);
+
+                switch (localIteratorType) {
+                    case DFS:
+                        traverseList.addAll(1, traverseList.peekFirst().children);
+                        break;
+                    case BFS:
+                        traverseList.addAll(traverseList.peekFirst().children);
+                        break;
+                }
+
+                return traverseList.removeFirst();
+            }
+
+            private void checkForPresence() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException(NO_MORE_ELEMENTS_EXCEPTION_MESSAGE);
+                }
             }
 
             private void checkForComodification() {
-                if (modCount != expectedModCount) {
-                    throw new ConcurrentModificationException();
+                if (modificationCount != expectedModificationCount) {
+                    throw new ConcurrentModificationException(MODIFICATION_EXCEPTION_MESSAGE);
                 }
             }
         };
     }
 
-    private void incModCount() {
-        incModCount(this);
-    }
-
-    private void incModCount(Tree<T> tree) {
-        tree.modCount++;
-
-        if (!tree.hasParent()) {
-            return;
-        }
-
-        incModCount(tree.parent);
-    }
-
-    private boolean hasParent() {
-        return parent != null;
-    }
-
-    // ----- debug -----
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("direct children: ");
-        for (Tree<T> child : children) {
-            stringBuilder.append(child.getValue()).append(", ");
-        }
+    public int compareTo(Tree<T> anotherTree) {
+        return value.compareTo(anotherTree.getValue());
+    }
 
-        return stringBuilder.toString();
+    private void incModificationCount() {
+        for (Tree<T> tree = this; tree != null; tree = tree.parent) {
+            tree.modificationCount++;
+        }
+    }
+
+    private void checkForNull(Object object) {
+        if (object == null) {
+            throw new IllegalArgumentException(NULL_PARAMETER_EXCEPTION_MESSAGE);
+        }
     }
 }
