@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'OOP'
@@ -14,3 +15,11 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.nsu.fit.markelov.Main'
+    }
+}
+
+mainClassName = 'ru.nsu.fit.markelov.Main'
