@@ -1,7 +1,18 @@
 package ru.nsu.fit.markelov;
 
+/**
+ * PrimeNumbers class is used for defining whether the number is prime.
+ *
+ * @author Oleg Markelov
+ */
 public class PrimeNumbers {
 
+    /**
+     * Returns whether the number is prime.
+     *
+     * @param n the number.
+     * @return  whether the number is prime.
+     */
     public static boolean isPrime(int n) {
         if (n <= 1) return false;
         if (n <= 3) return true;
@@ -19,6 +30,12 @@ public class PrimeNumbers {
         return true;
     }
 
+    /**
+     * Returns whether the number is composite.
+     *
+     * @param n the number.
+     * @return  whether the number is composite.
+     */
     public static boolean isNonPrime(int n) {
         return !isPrime(n);
     }

@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
@@ -14,7 +13,7 @@ public class PrimesTest {
     public void test1() {
 //        if (true) return;
 
-        ArrayList<Integer> numbers = InputArrayGenerator.generate(1000, 1, new Random(7));
+        ArrayList<Integer> numbers = PrimesArrayGenerator.generate(1000, 1, new Random(7));
         NonPrimeSearch nonPrimeSearch;
 
         // -----------------------------------------------------------------------------------------
@@ -72,7 +71,7 @@ public class PrimesTest {
                 }
 
                 for (int seed = 0; seed < 50; seed++) {
-                    numbers = InputArrayGenerator.generate(nPrimes, nNonPrimes, new Random(seed));
+                    numbers = PrimesArrayGenerator.generate(nPrimes, nNonPrimes, new Random(seed));
 
                     nonPrimeSearch = new LinearSearch(numbers);
                     nonPrimeSearch.execute();

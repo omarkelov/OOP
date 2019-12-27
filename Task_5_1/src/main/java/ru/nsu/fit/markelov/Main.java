@@ -43,7 +43,7 @@ public class Main {
                 }
 
                 for (int seed = 0; seed < SEEDS; seed++) {
-                    numbers = InputArrayGenerator.generate(nPrimes, nNonPrimes, new Random(seed));
+                    numbers = PrimesArrayGenerator.generate(nPrimes, nNonPrimes, new Random(seed));
 
                     nonPrimeSearch = new LinearSearch(numbers);
                     nonPrimeSearch.execute();
