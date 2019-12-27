@@ -7,12 +7,26 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
+/**
+ * Main class is used to generate html page with a content of several tables. Each table shows the
+ * speedup of the program (searching of a prime number in array) that is executed on several
+ * processor cores in comparison with execution on only one core.
+ *
+ * @author Oleg Markelov
+ */
 public class Main {
 
     private static final int THREADS_MIN = 2;
     private static final int THREADS_MAX = 24;
     private static final int SEEDS = 50;
 
+    /**
+     * Generates html page with a content of several tables. Each table shows the speedup of the
+     * program (searching of a prime number in array) that is executed on several processor cores
+     * in comparison with execution on only one core.
+     *
+     * @param args command line arguments.
+     */
     public static void main(String[] args) {
         ArrayList<Integer> numbers;
         NonPrimeSearch nonPrimeSearch;

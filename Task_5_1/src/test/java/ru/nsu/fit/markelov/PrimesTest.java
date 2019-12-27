@@ -10,7 +10,7 @@ import java.util.stream.DoubleStream;
 public class PrimesTest {
 
     @Test
-    public void test1() {
+    public void testSingle() {
 //        if (true) return;
 
         ArrayList<Integer> numbers = PrimesArrayGenerator.generate(1000, 1, new Random(7));
@@ -39,7 +39,7 @@ public class PrimesTest {
     }
 
     @Test
-    public void test2() {
+    public void testMultiple() {
         if (true) return;
 
         ArrayList<Integer> numbers;
