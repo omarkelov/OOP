@@ -1,0 +1,8 @@
+{
+  "cooks_count": 2,
+  "cooks_productivity": [10, 50],
+  "storage_capacity": 3,
+  "couriers_count": 1,
+  "couriers_bag_capacities": [5],
+  "couriers_productivity": [100]
+}
