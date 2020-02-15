@@ -1,0 +1,19 @@
+{
+  "storage_capacity": 5,
+  "cooks": [
+    {
+      "name": "Cook_1",
+      "productivity": 10
+    }, {
+      "name": "Cook_2",
+      "productivity": 50
+    }
+  ],
+  "couriers": [
+    {
+      "name": "Courier_1",
+      "productivity": 30,
+      "bag_capacity": 2
+    }
+  ]
+}

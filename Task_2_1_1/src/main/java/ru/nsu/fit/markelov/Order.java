@@ -1,5 +1,9 @@
 package ru.nsu.fit.markelov;
 
+import ru.nsu.fit.markelov.workers.Cook;
+import ru.nsu.fit.markelov.workers.Courier;
+import ru.nsu.fit.markelov.workers.Operator;
+
 public class Order {
 
     public enum State {

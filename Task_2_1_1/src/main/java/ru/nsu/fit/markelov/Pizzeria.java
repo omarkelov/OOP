@@ -1,36 +1,57 @@
 package ru.nsu.fit.markelov;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import ru.nsu.fit.markelov.log.Log;
+import ru.nsu.fit.markelov.workers.Cook;
+import ru.nsu.fit.markelov.workers.Courier;
+import ru.nsu.fit.markelov.workers.Operator;
+import ru.nsu.fit.markelov.workers.Worker;
+
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Pizzeria {
 
-    private int nCooks;
-    private int nCouriers;
-    private int storageCapacity = 5;
+    public static final long WORKING_DAY_TIME = 1000;
 
-    private Operator operator;
-    private Cook cook_1;
-    private Cook cook_2;
-    private Courier courier;
+    public Pizzeria(String jsonStr, Log log) {
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        JSONArray jsonCooks = jsonObject.getJSONArray("cooks");
+        JSONArray jsonCouriers = jsonObject.getJSONArray("couriers");
 
-    private BlockingQueue<Order> newOrders;
-    private BlockingQueue<Order> storedOrders;
-    private BlockingQueue<Order> finishedOrders;
+        BlockingQueue<Order> newOrders = new LinkedBlockingQueue<>();
+        BlockingQueue<Order> storedOrders = new LinkedBlockingQueue<>(jsonObject.getInt("storage_capacity"));
+        BlockingQueue<Order> finishedOrders = new LinkedBlockingQueue<>();
 
-    public Pizzeria() {
-        newOrders = new LinkedBlockingQueue<>();
-        storedOrders = new LinkedBlockingQueue<>(storageCapacity);
-        finishedOrders = new LinkedBlockingQueue<>();
+        ArrayList<Worker>workers = new ArrayList<>();
 
-        operator = new Operator("Operator_1", newOrders);
-        cook_1 = new Cook("Cook_1", 10, newOrders, storedOrders);
-        cook_2 = new Cook("Cook_2", 50, newOrders, storedOrders);
-        courier = new Courier("Courier_1", 30, 2, storedOrders, finishedOrders);
+        workers.add(new Operator(log, 100, "Operator_1", newOrders));
 
-        new Thread(operator).start();
-        new Thread(cook_1).start();
-        new Thread(cook_2).start();
-        new Thread(courier).start();
+        for (int i = 0; i < jsonCooks.length(); i++) {
+            JSONObject jsonCook = jsonCooks.getJSONObject(i);
+            workers.add(new Cook(log, 200, jsonCook.getString("name"),
+                    jsonCook.getInt("productivity"), newOrders, storedOrders));
+        }
+
+        for (int i = 0; i < jsonCouriers.length(); i++) {
+            JSONObject jsonCook = jsonCouriers.getJSONObject(i);
+            workers.add(new Courier(log, 300, jsonCook.getString("name"),
+                    jsonCook.getInt("productivity"), jsonCook.getInt("bag_capacity"),
+                    storedOrders, finishedOrders));
+        }
+
+        workers.forEach(Thread::start);
+
+        workers.forEach(worker -> {
+            try {
+                worker.join(WORKING_DAY_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        workers.forEach(Thread::interrupt);
     }
 }
