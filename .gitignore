@@ -33,3 +33,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 Task_2_1_1/log.txt
+Task_2_1_1/simpleLog.txt
+Task_2_1_1/singletonLog.txt
+Task_2_1_1/staticLog.txt

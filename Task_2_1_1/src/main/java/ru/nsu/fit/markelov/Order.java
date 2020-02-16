@@ -6,25 +6,14 @@ import ru.nsu.fit.markelov.workers.Operator;
 
 public class Order {
 
-    public enum State {
-        RECIEVED,
-        BEING_COOKED,
-        STORED,
-        BEING_DELIVERED,
-        DELIVERED
-    }
-
-    private State state;
     private String id;
 
     private Operator operator;
     private Cook cook;
     private Courier courier;
 
-    public Order(String id, Operator operator) {
-        state = State.RECIEVED;
+    public Order(String id) {
         this.id = id;
-        this.operator = operator;
     }
 
     public String getId() {
@@ -35,19 +24,29 @@ public class Order {
         return operator;
     }
 
+    public Order setOperator(Operator operator) {
+        this.operator = operator;
+
+        return this;
+    }
+
     public Cook getCook() {
         return cook;
     }
 
-    public void setCook(Cook cook) {
+    public Order setCook(Cook cook) {
         this.cook = cook;
+
+        return this;
     }
 
     public Courier getCourier() {
         return courier;
     }
 
-    public void setCourier(Courier courier) {
+    public Order setCourier(Courier courier) {
         this.courier = courier;
+
+        return this;
     }
 }

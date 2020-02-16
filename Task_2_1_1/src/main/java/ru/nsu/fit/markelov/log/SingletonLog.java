@@ -3,23 +3,27 @@ package ru.nsu.fit.markelov.log;
 import java.io.IOException;
 import java.io.Writer;
 
-public class SimpleLog implements Log {
+public class SingletonLog implements Log {
+
+    private SingletonLog() {} // singleton: prevent instantiation from other classes
+
+    private static SingletonLog log;
 
     private Writer writer;
     private long startTime;
 
-    public SimpleLog() {
-        startTime = System.currentTimeMillis();
-    }
+    public static SingletonLog getInstance() {
+        if (log == null) {
+            log = new SingletonLog();
+            log.startTime = System.currentTimeMillis();
+        }
 
-    public SimpleLog(Writer writer) {
-        this();
-        setWriter(writer);
+        return log;
     }
 
     @Override
     public void setWriter(Writer writer) {
-        this.writer = writer;
+        log.writer = writer;
     }
 
     @Override
