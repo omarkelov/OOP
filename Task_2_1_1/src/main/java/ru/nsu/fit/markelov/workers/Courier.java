@@ -20,11 +20,11 @@ public class Courier extends Worker {
     private ArrayList<Order> bagOrders = new ArrayList<>();
     private StringBuilder stringBuilder = new StringBuilder();
 
-    public Courier(Log log, long spinningDebugTime, CourierProperties courierProperties, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders) {
-        super(spinningDebugTime, courierProperties.getName());
+    public Courier(Log log, CourierProperties courierProperties, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders) {
+        super(log, courierProperties.getName());
 
         this.log = log;
-        time = courierProperties.getTime();
+        time = courierProperties.getOrderHandlingTime();
         bagCapacity = courierProperties.getBagCapacity();
         this.storedOrders = storedOrders;
         this.finishedOrders = finishedOrders;

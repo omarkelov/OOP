@@ -5,21 +5,21 @@ import org.json.JSONObject;
 public class CourierProperties {
 
     private String name;
-    private long time;
+    private long orderHandlingTime;
     private int bagCapacity;
 
     public CourierProperties(JSONObject jsonObject) {
         name = jsonObject.getString("name");
-        time = jsonObject.getLong("productivity");
-        bagCapacity = jsonObject.getInt("bag_capacity");
+        orderHandlingTime = jsonObject.getLong("orderHandlingTime");
+        bagCapacity = jsonObject.getInt("bagCapacity");
     }
 
     public String getName() {
         return name;
     }
 
-    public long getTime() {
-        return time;
+    public long getOrderHandlingTime() {
+        return orderHandlingTime;
     }
 
     public int getBagCapacity() {

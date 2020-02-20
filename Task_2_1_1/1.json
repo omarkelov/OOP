@@ -1,19 +1,27 @@
 {
-  "storage_capacity": 5,
+  "workingTime": 300,
+  "storageCapacity": 5,
+  "operators": [
+    {
+      "name": "Operator_1",
+      "orderHandlingTimeMin": 5,
+      "orderHandlingTimeMax": 25
+    }
+  ],
   "cooks": [
     {
       "name": "Cook_1",
-      "productivity": 10
+      "orderHandlingTime": 10
     }, {
       "name": "Cook_2",
-      "productivity": 50
+      "orderHandlingTime": 50
     }
   ],
   "couriers": [
     {
       "name": "Courier_1",
-      "productivity": 30,
-      "bag_capacity": 2
+      "orderHandlingTime": 30,
+      "bagCapacity": 2
     }
   ]
 }

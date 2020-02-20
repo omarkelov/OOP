@@ -15,11 +15,11 @@ public class Cook extends Worker {
     private final BlockingQueue<Order> newOrders;
     private final BlockingQueue<Order> storedOrders;
 
-    public Cook(Log log, long spinningDebugTime, CookProperties cookProperties, BlockingQueue<Order> newOrders, BlockingQueue<Order> storedOrders) {
-        super(spinningDebugTime, cookProperties.getName());
+    public Cook(Log log, CookProperties cookProperties, BlockingQueue<Order> newOrders, BlockingQueue<Order> storedOrders) {
+        super(log, cookProperties.getName());
 
         this.log = log;
-        time = cookProperties.getTime();
+        time = cookProperties.getOrderHandlingTime();
         this.newOrders = newOrders;
         this.storedOrders = storedOrders;
     }

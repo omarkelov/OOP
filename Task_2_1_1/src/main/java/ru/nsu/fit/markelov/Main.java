@@ -21,10 +21,9 @@ public class Main {
                 FileWriter fileWriter = new FileWriter(LOG_FILE_NAME);
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)
         ) {
-            String jsonStr = new String(Files.readAllBytes(Paths.get(JSON_FILE_NAME)), StandardCharsets.UTF_8);
             new Pizzeria(
-                    new PizzeriaProperties(new JSONObject(jsonStr)),
-                    new WriterLog(bufferedWriter)
+                new PizzeriaProperties(new JSONObject(new String(Files.readAllBytes(Paths.get(JSON_FILE_NAME))))),
+                new WriterLog(bufferedWriter)
             );
         } catch (IOException e) {
             System.out.println(e.getMessage());

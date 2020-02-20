@@ -8,12 +8,21 @@ import java.util.List;
 
 public class PizzeriaProperties {
 
+    private int workingTime;
     private int storageCapacity;
+    private List<OperatorProperties> operatorPropertiesList;
     private List<CookProperties> cookPropertiesList;
     private List<CourierProperties> courierPropertiesList;
 
     public PizzeriaProperties(JSONObject jsonObject) {
-        storageCapacity = jsonObject.getInt("storage_capacity");
+        workingTime = jsonObject.getInt("workingTime");
+        storageCapacity = jsonObject.getInt("storageCapacity");
+
+        operatorPropertiesList = new ArrayList<>();
+        JSONArray jsonOperators = jsonObject.getJSONArray("operators");
+        for (int i = 0; i < jsonOperators.length(); i++) {
+            operatorPropertiesList.add(new OperatorProperties(jsonOperators.getJSONObject(i)));
+        }
 
         cookPropertiesList = new ArrayList<>();
         JSONArray jsonCooks = jsonObject.getJSONArray("cooks");
@@ -28,8 +37,16 @@ public class PizzeriaProperties {
         }
     }
 
+    public int getWorkingTime() {
+        return workingTime;
+    }
+
     public int getStorageCapacity() {
         return storageCapacity;
+    }
+
+    public List<OperatorProperties> getOperatorPropertiesList() {
+        return operatorPropertiesList;
     }
 
     public List<CookProperties> getCookPropertiesList() {

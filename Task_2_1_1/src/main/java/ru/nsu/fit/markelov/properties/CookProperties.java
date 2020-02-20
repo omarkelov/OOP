@@ -5,18 +5,18 @@ import org.json.JSONObject;
 public class CookProperties {
 
     private String name;
-    private long time;
+    private long orderHandlingTime;
 
     public CookProperties(JSONObject jsonObject) {
         name = jsonObject.getString("name");
-        time = jsonObject.getLong("productivity");
+        orderHandlingTime = jsonObject.getLong("orderHandlingTime");
     }
 
     public String getName() {
         return name;
     }
 
-    public long getTime() {
-        return time;
+    public long getOrderHandlingTime() {
+        return orderHandlingTime;
     }
 }

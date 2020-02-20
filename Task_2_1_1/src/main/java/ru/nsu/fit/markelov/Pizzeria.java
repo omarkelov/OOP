@@ -3,6 +3,7 @@ package ru.nsu.fit.markelov;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.properties.CookProperties;
 import ru.nsu.fit.markelov.properties.CourierProperties;
+import ru.nsu.fit.markelov.properties.OperatorProperties;
 import ru.nsu.fit.markelov.properties.PizzeriaProperties;
 import ru.nsu.fit.markelov.workers.Cook;
 import ru.nsu.fit.markelov.workers.Courier;
@@ -15,8 +16,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Pizzeria {
 
-    public static final long WORKING_DAY_TIME = 1000;
-
     public Pizzeria(PizzeriaProperties pizzeriaProperties, Log log) {
         BlockingQueue<Order> newOrders = new LinkedBlockingQueue<>();
         BlockingQueue<Order> storedOrders = new LinkedBlockingQueue<>(pizzeriaProperties.getStorageCapacity());
@@ -24,26 +23,30 @@ public class Pizzeria {
 
         ArrayList<Worker>workers = new ArrayList<>();
 
-        workers.add(new Operator(log, 100, "Operator_1", newOrders));
+        for (OperatorProperties operatorProperties : pizzeriaProperties.getOperatorPropertiesList()) {
+            workers.add(new Operator(log, operatorProperties, newOrders));
+        }
 
         for (CookProperties cookProperties : pizzeriaProperties.getCookPropertiesList()) {
-            workers.add(new Cook(log, 200, cookProperties, newOrders, storedOrders));
+            workers.add(new Cook(log, cookProperties, newOrders, storedOrders));
         }
 
         for (CourierProperties courierProperties : pizzeriaProperties.getCourierPropertiesList()) {
-            workers.add(new Courier(log, 300, courierProperties, storedOrders, finishedOrders));
+            workers.add(new Courier(log, courierProperties, storedOrders, finishedOrders));
         }
 
-        workers.forEach(Worker::startWorkingDay);
-
-        workers.forEach(worker -> {
-            try {
-                worker.getThread().join(WORKING_DAY_TIME);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        try {
+            for (Worker worker : workers) {
+                worker.startWorkingDay();
             }
-        });
 
-        workers.forEach(Worker::finishWorkingDay);
+            Thread.sleep(pizzeriaProperties.getWorkingTime());
+
+            for (Worker worker : workers) {
+                worker.finishWorkingDay();
+            }
+        } catch (InterruptedException e) {
+            log.e("Main thread is interrupted.");
+        }
     }
 }

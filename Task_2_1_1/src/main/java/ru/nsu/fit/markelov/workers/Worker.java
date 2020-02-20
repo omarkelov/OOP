@@ -1,14 +1,17 @@
 package ru.nsu.fit.markelov.workers;
 
+import ru.nsu.fit.markelov.log.Log;
+
 public abstract class Worker {
 
+    private Log log;
+
     private String name;
-    private long spinningDebugTime;
 
     private Thread thread;
 
-    public Worker(long spinningDebugTime, String name) {
-        this.spinningDebugTime = spinningDebugTime;
+    public Worker(Log log, String name) {
+        this.log = log;
         this.name = name;
     }
 
@@ -17,28 +20,26 @@ public abstract class Worker {
         thread.start();
     }
 
-    public void finishWorkingDay() {
+    public void finishWorkingDay() throws InterruptedException {
         thread.interrupt();
+        thread.join();
     }
 
     private void runThread() {
-        long endTime = System.currentTimeMillis() + spinningDebugTime;
-        while (System.currentTimeMillis() < endTime) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 handleNextOrder();
             } catch (InterruptedException e) {
-                System.out.println(name + " is interrupted");
+                Thread.currentThread().interrupt();
+                log.d(name + " is interrupted.");
             }
         }
+        log.i(name + " has finished the working day.");
     }
 
     protected abstract void handleNextOrder() throws InterruptedException;
 
     public String getName() {
         return name;
-    }
-
-    public Thread getThread() {
-        return thread;
     }
 }
