@@ -2,6 +2,7 @@ package ru.nsu.fit.markelov.workers;
 
 import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
+import ru.nsu.fit.markelov.properties.CourierProperties;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -19,12 +20,12 @@ public class Courier extends Worker {
     private ArrayList<Order> bagOrders = new ArrayList<>();
     private StringBuilder stringBuilder = new StringBuilder();
 
-    public Courier(Log log, long spinningDebugTime, String name, long time, int bagCapacity, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders) {
-        super(spinningDebugTime, name);
+    public Courier(Log log, long spinningDebugTime, CourierProperties courierProperties, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders) {
+        super(spinningDebugTime, courierProperties.getName());
 
         this.log = log;
-        this.time = time;
-        this.bagCapacity = bagCapacity;
+        time = courierProperties.getTime();
+        bagCapacity = courierProperties.getBagCapacity();
         this.storedOrders = storedOrders;
         this.finishedOrders = finishedOrders;
     }

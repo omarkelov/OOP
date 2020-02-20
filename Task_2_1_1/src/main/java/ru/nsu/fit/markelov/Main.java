@@ -1,6 +1,8 @@
 package ru.nsu.fit.markelov;
 
+import org.json.JSONObject;
 import ru.nsu.fit.markelov.log.WriterLog;
+import ru.nsu.fit.markelov.properties.PizzeriaProperties;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,13 +13,17 @@ import java.nio.file.Paths;
 
 public class Main {
 
+    public static final String LOG_FILE_NAME = "log.txt";
+    public static final String JSON_FILE_NAME = "1.json";
+
     public static void main(String[] args) {
         try (
-                FileWriter fileWriter = new FileWriter("log.txt");
-                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                FileWriter fileWriter = new FileWriter(LOG_FILE_NAME);
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)
         ) {
+            String jsonStr = new String(Files.readAllBytes(Paths.get(JSON_FILE_NAME)), StandardCharsets.UTF_8);
             new Pizzeria(
-                    new String(Files.readAllBytes(Paths.get("1.json")), StandardCharsets.UTF_8),
+                    new PizzeriaProperties(new JSONObject(jsonStr)),
                     new WriterLog(bufferedWriter)
             );
         } catch (IOException e) {

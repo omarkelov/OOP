@@ -2,6 +2,7 @@ package ru.nsu.fit.markelov.workers;
 
 import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
+import ru.nsu.fit.markelov.properties.CookProperties;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -14,11 +15,11 @@ public class Cook extends Worker {
     private final BlockingQueue<Order> newOrders;
     private final BlockingQueue<Order> storedOrders;
 
-    public Cook(Log log, long spinningDebugTime, String name, long time, BlockingQueue<Order> newOrders, BlockingQueue<Order> storedOrders) {
-        super(spinningDebugTime, name);
+    public Cook(Log log, long spinningDebugTime, CookProperties cookProperties, BlockingQueue<Order> newOrders, BlockingQueue<Order> storedOrders) {
+        super(spinningDebugTime, cookProperties.getName());
 
         this.log = log;
-        this.time = time;
+        time = cookProperties.getTime();
         this.newOrders = newOrders;
         this.storedOrders = storedOrders;
     }
