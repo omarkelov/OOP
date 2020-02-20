@@ -1,8 +1,8 @@
 package ru.nsu.fit.markelov;
 
 import ru.nsu.fit.markelov.log.Log;
-import ru.nsu.fit.markelov.log.SimpleLog;
 import ru.nsu.fit.markelov.log.StaticLog;
+import ru.nsu.fit.markelov.log.SimpleLog;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

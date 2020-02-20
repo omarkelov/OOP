@@ -2,7 +2,6 @@ package ru.nsu.fit.markelov.workers;
 
 import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
-import ru.nsu.fit.markelov.log.StaticLog;
 
 import java.util.concurrent.BlockingQueue;
 

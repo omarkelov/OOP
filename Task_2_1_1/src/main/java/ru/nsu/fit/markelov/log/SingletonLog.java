@@ -12,7 +12,7 @@ public class SingletonLog implements Log {
     private Writer writer;
     private long startTime;
 
-    public static SingletonLog getInstance() {
+    public static synchronized SingletonLog getInstance() {
         if (log == null) {
             log = new SingletonLog();
             log.startTime = System.currentTimeMillis();
