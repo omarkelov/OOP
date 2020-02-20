@@ -2,12 +2,13 @@ package ru.nsu.fit.markelov.workers;
 
 import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
-import ru.nsu.fit.markelov.log.StaticLog;
 
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 public class Operator extends Worker {
+
+    private Log log;
 
     private Random random;
     private int id;
@@ -15,11 +16,12 @@ public class Operator extends Worker {
     private final BlockingQueue<Order> newOrders;
 
     public Operator(Log log, long spinningDebugTime, String name, BlockingQueue<Order> newOrders) {
-        super(log, spinningDebugTime, name);
+        super(spinningDebugTime, name);
 
         random = new Random(1);
         id = 1;
 
+        this.log = log;
         this.newOrders = newOrders;
     }
 
@@ -33,6 +35,6 @@ public class Operator extends Worker {
 
         // put the order
         newOrders.put(order);
-        log(order.getId() + " is put to newOrders by " + getWorkerName());
+        log.i(order.getId() + " is put to newOrders by " + getName());
     }
 }

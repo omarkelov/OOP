@@ -8,6 +8,8 @@ import java.util.concurrent.BlockingQueue;
 
 public class Courier extends Worker {
 
+    private Log log;
+
     private long time;
     private int bagCapacity;
 
@@ -18,8 +20,9 @@ public class Courier extends Worker {
     private StringBuilder stringBuilder = new StringBuilder();
 
     public Courier(Log log, long spinningDebugTime, String name, long time, int bagCapacity, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders) {
-        super(log, spinningDebugTime, name);
+        super(spinningDebugTime, name);
 
+        this.log = log;
         this.time = time;
         this.bagCapacity = bagCapacity;
         this.storedOrders = storedOrders;
@@ -40,7 +43,7 @@ public class Courier extends Worker {
         }
 
         if (stringBuilder.length() > 0) {
-            log(stringBuilder.toString() + "are taken from storedOrders by " + getWorkerName());
+            log.i(stringBuilder.toString() + "are taken from storedOrders by " + getName());
         }
 
         // work with the order
@@ -57,7 +60,7 @@ public class Courier extends Worker {
         }
 
         if (stringBuilder.length() > 0) {
-            log(stringBuilder.toString() + "are put to finishedOrders by " + getWorkerName());
+            log.i(stringBuilder.toString() + "are put to finishedOrders by " + getName());
         }
 
         bagOrders.clear();

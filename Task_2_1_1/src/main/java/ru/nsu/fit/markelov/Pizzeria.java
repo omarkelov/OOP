@@ -42,16 +42,16 @@ public class Pizzeria {
                     storedOrders, finishedOrders));
         }
 
-        workers.forEach(Thread::start);
+        workers.forEach(Worker::startWorkingDay);
 
         workers.forEach(worker -> {
             try {
-                worker.join(WORKING_DAY_TIME);
+                worker.getThread().join(WORKING_DAY_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
 
-        workers.forEach(Thread::interrupt);
+        workers.forEach(Worker::finishWorkingDay);
     }
 }

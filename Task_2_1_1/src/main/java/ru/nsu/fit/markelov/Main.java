@@ -1,8 +1,6 @@
 package ru.nsu.fit.markelov;
 
-import ru.nsu.fit.markelov.log.Log;
-import ru.nsu.fit.markelov.log.StaticLog;
-import ru.nsu.fit.markelov.log.SimpleLog;
+import ru.nsu.fit.markelov.log.WriterLog;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,19 +13,12 @@ public class Main {
 
     public static void main(String[] args) {
         try (
-                FileWriter fileWriter = new FileWriter("simpleLog.txt");
-                FileWriter staticFileWriter = new FileWriter("staticLog.txt");
-                FileWriter singletonFileWriter = new FileWriter("singletonLog.txt");
+                FileWriter fileWriter = new FileWriter("log.txt");
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-                BufferedWriter staticBufferedWriter = new BufferedWriter(staticFileWriter);
-                BufferedWriter singletonBufferedWriter = new BufferedWriter(singletonFileWriter)
         ) {
-            StaticLog.init(staticBufferedWriter);
-            Log.getInstance().setWriter(singletonBufferedWriter);
-
             new Pizzeria(
                     new String(Files.readAllBytes(Paths.get("1.json")), StandardCharsets.UTF_8),
-                    new SimpleLog(bufferedWriter)
+                    new WriterLog(bufferedWriter)
             );
         } catch (IOException e) {
             System.out.println(e.getMessage());

@@ -7,14 +7,17 @@ import java.util.concurrent.BlockingQueue;
 
 public class Cook extends Worker {
 
+    private Log log;
+
     private long time;
 
     private final BlockingQueue<Order> newOrders;
     private final BlockingQueue<Order> storedOrders;
 
     public Cook(Log log, long spinningDebugTime, String name, long time, BlockingQueue<Order> newOrders, BlockingQueue<Order> storedOrders) {
-        super(log, spinningDebugTime, name);
+        super(spinningDebugTime, name);
 
+        this.log = log;
         this.time = time;
         this.newOrders = newOrders;
         this.storedOrders = storedOrders;
@@ -24,14 +27,14 @@ public class Cook extends Worker {
     protected void handleNextOrder() throws InterruptedException {
         // take the order
         Order order = newOrders.take().setCook(this);
-        log(order.getId() + " is taken from newOrders by " + getWorkerName());
+        log.i(order.getId() + " is taken from newOrders by " + getName());
 
         // work with the order
         Thread.sleep(time);
-        log(order.getId() + " is cooked by " + getWorkerName());
+        log.i(order.getId() + " is cooked by " + getName());
 
         // put the order
         storedOrders.put(order);
-        log(order.getId() + " is put to storedOrders by " + getWorkerName());
+        log.i(order.getId() + " is put to storedOrders by " + getName());
     }
 }
