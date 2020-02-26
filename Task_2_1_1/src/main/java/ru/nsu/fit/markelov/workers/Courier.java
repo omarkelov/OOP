@@ -11,7 +11,7 @@ public class Courier extends Worker {
 
     private Log log;
 
-    private long time;
+    private long orderHandlingTime;
     private int bagCapacity;
 
     private final BlockingQueue<Order> storedOrders;
@@ -20,14 +20,14 @@ public class Courier extends Worker {
     private ArrayList<Order> bagOrders = new ArrayList<>();
     private StringBuilder stringBuilder = new StringBuilder();
 
-    public Courier(Log log, CourierProperties courierProperties, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders) {
-        super(log, courierProperties.getName());
+    public Courier(CourierProperties courierProperties, BlockingQueue<Order> storedOrders, BlockingQueue<Order> finishedOrders, Log log) {
+        super(courierProperties.getName(), log);
 
-        this.log = log;
-        time = courierProperties.getOrderHandlingTime();
+        orderHandlingTime = courierProperties.getOrderHandlingTime();
         bagCapacity = courierProperties.getBagCapacity();
         this.storedOrders = storedOrders;
         this.finishedOrders = finishedOrders;
+        this.log = log;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Courier extends Worker {
             while (bagOrders.size() < bagCapacity && !storedOrders.isEmpty()) {
                 Order order = storedOrders.take().setCourier(this);
                 bagOrders.add(order);
-                stringBuilder.append(order.getId()).append(", ");
+                stringBuilder.append(order.getName()).append(", ");
             }
         }
 
@@ -48,7 +48,7 @@ public class Courier extends Worker {
         }
 
         // work with the order
-        Thread.sleep(bagOrders.size() * time);
+        Thread.sleep(bagOrders.size() * orderHandlingTime);
 
         // put the order
         stringBuilder.setLength(0);
@@ -56,7 +56,7 @@ public class Courier extends Worker {
         synchronized (finishedOrders) {
             for (Order order : bagOrders) {
                 finishedOrders.put(order);
-                stringBuilder.append(order.getId()).append(", ");
+                stringBuilder.append(order.getName()).append(", ");
             }
         }
 

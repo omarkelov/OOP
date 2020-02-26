@@ -11,7 +11,7 @@ public class PizzeriaProperties {
     private int workingTime;
     private int storageCapacity;
     private List<OperatorProperties> operatorPropertiesList;
-    private List<CookProperties> cookPropertiesList;
+    private List<BakerProperties> bakerPropertiesList;
     private List<CourierProperties> courierPropertiesList;
 
     public PizzeriaProperties(JSONObject jsonObject) {
@@ -24,10 +24,10 @@ public class PizzeriaProperties {
             operatorPropertiesList.add(new OperatorProperties(jsonOperators.getJSONObject(i)));
         }
 
-        cookPropertiesList = new ArrayList<>();
-        JSONArray jsonCooks = jsonObject.getJSONArray("cooks");
-        for (int i = 0; i < jsonCooks.length(); i++) {
-            cookPropertiesList.add(new CookProperties(jsonCooks.getJSONObject(i)));
+        bakerPropertiesList = new ArrayList<>();
+        JSONArray jsonBakers = jsonObject.getJSONArray("bakers");
+        for (int i = 0; i < jsonBakers.length(); i++) {
+            bakerPropertiesList.add(new BakerProperties(jsonBakers.getJSONObject(i)));
         }
 
         courierPropertiesList = new ArrayList<>();
@@ -49,8 +49,8 @@ public class PizzeriaProperties {
         return operatorPropertiesList;
     }
 
-    public List<CookProperties> getCookPropertiesList() {
-        return cookPropertiesList;
+    public List<BakerProperties> getBakerPropertiesList() {
+        return bakerPropertiesList;
     }
 
     public List<CourierProperties> getCourierPropertiesList() {

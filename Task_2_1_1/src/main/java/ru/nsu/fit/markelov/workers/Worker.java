@@ -10,9 +10,9 @@ public abstract class Worker {
 
     private Thread thread;
 
-    public Worker(Log log, String name) {
-        this.log = log;
+    public Worker(String name, Log log) {
         this.name = name;
+        this.log = log;
     }
 
     public void startWorkingDay() {

@@ -1,23 +1,29 @@
 package ru.nsu.fit.markelov;
 
-import ru.nsu.fit.markelov.workers.Cook;
+import ru.nsu.fit.markelov.workers.Baker;
 import ru.nsu.fit.markelov.workers.Courier;
 import ru.nsu.fit.markelov.workers.Operator;
 
 public class Order {
 
-    private String id;
+    private int id;
+    private String name;
 
     private Operator operator;
-    private Cook cook;
+    private Baker baker;
     private Courier courier;
 
-    public Order(String id) {
+    public Order(int id) {
         this.id = id;
+        name = "Order_" + id;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Operator getOperator() {
@@ -30,12 +36,12 @@ public class Order {
         return this;
     }
 
-    public Cook getCook() {
-        return cook;
+    public Baker getBaker() {
+        return baker;
     }
 
-    public Order setCook(Cook cook) {
-        this.cook = cook;
+    public Order setBaker(Baker baker) {
+        this.baker = baker;
 
         return this;
     }

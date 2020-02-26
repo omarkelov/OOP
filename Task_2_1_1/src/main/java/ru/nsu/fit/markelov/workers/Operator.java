@@ -3,8 +3,8 @@ package ru.nsu.fit.markelov.workers;
 import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.properties.OperatorProperties;
+import ru.nsu.fit.markelov.util.UniqueIntGenerator;
 
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -15,31 +15,30 @@ public class Operator extends Worker {
     private long orderHandlingTimeMin;
     private long orderHandlingTimeMax;
 
-    private int id; ////////////////////////////////////////////////////////////////////////////////
+    UniqueIntGenerator idGenerator;
 
     private final BlockingQueue<Order> newOrders;
 
-    public Operator(Log log, OperatorProperties operatorProperties, BlockingQueue<Order> newOrders) {
-        super(log, operatorProperties.getName());
+    public Operator(OperatorProperties operatorProperties, UniqueIntGenerator idGenerator, BlockingQueue<Order> newOrders, Log log) {
+        super(operatorProperties.getName(), log);
 
-        id = 1;
-
-        this.log = log;
         orderHandlingTimeMin = operatorProperties.getOrderHandlingTimeMin();
         orderHandlingTimeMax = operatorProperties.getOrderHandlingTimeMax();
+        this.idGenerator = idGenerator;
         this.newOrders = newOrders;
+        this.log = log;
     }
 
     @Override
     protected void handleNextOrder() throws InterruptedException {
         // take the order
-        Order order = new Order("Order_" + id++).setOperator(this);
+        Order order = new Order(idGenerator.getNextId()).setOperator(this);
 
         // work with the order
         Thread.sleep(ThreadLocalRandom.current().nextLong(orderHandlingTimeMin, orderHandlingTimeMax));
 
         // put the order
         newOrders.put(order);
-        log.i(order.getId() + " is put to newOrders by " + getName());
+        log.i(order.getName() + " is put to newOrders by " + getName());
     }
 }

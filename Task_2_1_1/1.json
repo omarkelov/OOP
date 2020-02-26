@@ -8,12 +8,12 @@
       "orderHandlingTimeMax": 25
     }
   ],
-  "cooks": [
+  "bakers": [
     {
-      "name": "Cook_1",
+      "name": "Baker_1",
       "orderHandlingTime": 10
     }, {
-      "name": "Cook_2",
+      "name": "Baker_2",
       "orderHandlingTime": 50
     }
   ],
