@@ -1,59 +1,104 @@
 package ru.nsu.fit.markelov.properties;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import ru.nsu.fit.markelov.Pizzeria;
+import ru.nsu.fit.markelov.validation.Validatable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-public class PizzeriaProperties {
+import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
+import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.POSITIVE;
+import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
 
-    private int workingTime;
+/**
+ * The <code>PizzeriaProperties</code> class is used for reading the properties of
+ * <code>Pizzeria</code> from .json file.
+ *
+ * @author Oleg Markelov
+ * @see Pizzeria
+ */
+public class PizzeriaProperties implements Validatable<PizzeriaProperties> {
+
+    private long workingTime;
+    private int newOrdersCapacity;
     private int storageCapacity;
-    private List<OperatorProperties> operatorPropertiesList;
-    private List<BakerProperties> bakerPropertiesList;
-    private List<CourierProperties> courierPropertiesList;
+    private OperatorProperties[] operatorsProperties;
+    private BakerProperties[] bakersProperties;
+    private CourierProperties[] couriersProperties;
 
-    public PizzeriaProperties(JSONObject jsonObject) {
-        workingTime = jsonObject.getInt("workingTime");
-        storageCapacity = jsonObject.getInt("storageCapacity");
+    /**
+     * Validates this object throwing an exception in case it is invalid.
+     * <p>
+     * Checks operatorsProperties, bakersProperties and couriersProperties for null and tries to
+     * validate each of them.
+     * <p>
+     * Checks workingTime, newOrdersCapacity and storageCapacity to be positive.
+     *
+     * @return the object itself.
+     * @throws NullPointerException     if any validating parameter is null.
+     * @throws IllegalArgumentException if any validating parameter is illegal.
+     */
+    @Override
+    public PizzeriaProperties validate() {
+        Objects.requireNonNull(operatorsProperties,
+            buildMessage(PizzeriaProperties.class, "operatorsProperties", NOT_NULL));
 
-        operatorPropertiesList = new ArrayList<>();
-        JSONArray jsonOperators = jsonObject.getJSONArray("operators");
-        for (int i = 0; i < jsonOperators.length(); i++) {
-            operatorPropertiesList.add(new OperatorProperties(jsonOperators.getJSONObject(i)));
+        Objects.requireNonNull(bakersProperties,
+            buildMessage(PizzeriaProperties.class, "bakersProperties", NOT_NULL));
+
+        Objects.requireNonNull(couriersProperties,
+            buildMessage(PizzeriaProperties.class, "couriersProperties", NOT_NULL));
+
+        if (workingTime <= 0) {
+            throw new IllegalArgumentException(
+                buildMessage(PizzeriaProperties.class, "workingTime", POSITIVE));
         }
 
-        bakerPropertiesList = new ArrayList<>();
-        JSONArray jsonBakers = jsonObject.getJSONArray("bakers");
-        for (int i = 0; i < jsonBakers.length(); i++) {
-            bakerPropertiesList.add(new BakerProperties(jsonBakers.getJSONObject(i)));
+        if (newOrdersCapacity <= 0) {
+            throw new IllegalArgumentException(
+                buildMessage(PizzeriaProperties.class, "newOrdersCapacity", POSITIVE));
         }
 
-        courierPropertiesList = new ArrayList<>();
-        JSONArray jsonCouriers = jsonObject.getJSONArray("couriers");
-        for (int i = 0; i < jsonCouriers.length(); i++) {
-            courierPropertiesList.add(new CourierProperties(jsonCouriers.getJSONObject(i)));
+        if (storageCapacity <= 0) {
+            throw new IllegalArgumentException(
+                buildMessage(PizzeriaProperties.class, "storageCapacity", POSITIVE));
         }
+
+        for (OperatorProperties operatorProperties : operatorsProperties) {
+            operatorProperties.validate();
+        }
+
+        for (BakerProperties bakerProperties : bakersProperties) {
+            bakerProperties.validate();
+        }
+
+        for (CourierProperties courierProperties : couriersProperties) {
+            courierProperties.validate();
+        }
+
+        return this;
     }
 
-    public int getWorkingTime() {
+    public long getWorkingTime() {
         return workingTime;
+    }
+
+    public int getNewOrdersCapacity() {
+        return newOrdersCapacity;
     }
 
     public int getStorageCapacity() {
         return storageCapacity;
     }
 
-    public List<OperatorProperties> getOperatorPropertiesList() {
-        return operatorPropertiesList;
+    public OperatorProperties[] getOperatorsProperties() {
+        return operatorsProperties;
     }
 
-    public List<BakerProperties> getBakerPropertiesList() {
-        return bakerPropertiesList;
+    public BakerProperties[] getBakersProperties() {
+        return bakersProperties;
     }
 
-    public List<CourierProperties> getCourierPropertiesList() {
-        return courierPropertiesList;
+    public CourierProperties[] getCouriersProperties() {
+        return couriersProperties;
     }
 }

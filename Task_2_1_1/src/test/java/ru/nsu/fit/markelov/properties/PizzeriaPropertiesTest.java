@@ -1,14 +1,9 @@
-package ru.nsu.fit.markelov;
+package ru.nsu.fit.markelov.properties;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import org.junit.Assert;
 import org.junit.Test;
-import ru.nsu.fit.markelov.log.Log;
-import ru.nsu.fit.markelov.log.SystemLog;
-import ru.nsu.fit.markelov.properties.PizzeriaProperties;
-import ru.nsu.fit.markelov.util.IterativeIntGenerator;
-import ru.nsu.fit.markelov.util.UniqueIntGenerator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,12 +12,7 @@ import java.nio.file.Paths;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.POSITIVE;
 
-public class PizzeriaTest {
-
-    private Log log = new SystemLog();
-
-    private UniqueIntGenerator idGenerator = new IterativeIntGenerator();
-
+public class PizzeriaPropertiesTest {
     @Test
     public void testValidData() {
         String jsonFileName = "src/test/resources/properties/valid.json";
@@ -30,7 +20,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (IOException|JsonParseException|NullPointerException|IllegalArgumentException e) {
             Assert.fail();
         }
@@ -54,61 +44,6 @@ public class PizzeriaTest {
     }
 
     @Test
-    public void testNullProperties() {
-        boolean exceptionCaught = false;
-
-        try {
-            new Pizzeria(null, log, idGenerator);
-        } catch (NullPointerException e) {
-            if (e.getMessage().endsWith(NOT_NULL)) {
-                exceptionCaught = true;
-            }
-        }
-
-        Assert.assertTrue(exceptionCaught);
-    }
-
-    @Test
-    public void testNullLog() {
-        String jsonFileName = "src/test/resources/properties/valid.json";
-        boolean exceptionCaught = false;
-
-        try {
-            String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
-            PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, null, idGenerator);
-        } catch (NullPointerException e) {
-            if (e.getMessage().endsWith(NOT_NULL)) {
-                exceptionCaught = true;
-            }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
-            Assert.fail();
-        }
-
-        Assert.assertTrue(exceptionCaught);
-    }
-
-    @Test
-    public void testNullIdGenerator() {
-        String jsonFileName = "src/test/resources/properties/valid.json";
-        boolean exceptionCaught = false;
-
-        try {
-            String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
-            PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, null);
-        } catch (NullPointerException e) {
-            if (e.getMessage().endsWith(NOT_NULL)) {
-                exceptionCaught = true;
-            }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
-            Assert.fail();
-        }
-
-        Assert.assertTrue(exceptionCaught);
-    }
-
-    @Test
     public void testNullOperators() {
         String jsonFileName = "src/test/resources/properties/nullOperators.json";
         boolean exceptionCaught = false;
@@ -116,7 +51,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (NullPointerException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
@@ -136,7 +71,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (NullPointerException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
@@ -156,7 +91,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (NullPointerException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
@@ -176,7 +111,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (IllegalArgumentException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
@@ -196,7 +131,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (IllegalArgumentException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
@@ -216,7 +151,7 @@ public class PizzeriaTest {
         try {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             PizzeriaProperties pizzeriaProperties = new Gson().fromJson(json, PizzeriaProperties.class);
-            new Pizzeria(pizzeriaProperties, log, idGenerator);
+            pizzeriaProperties.validate();
         } catch (IllegalArgumentException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;

@@ -1,58 +1,43 @@
 package ru.nsu.fit.markelov;
 
-import ru.nsu.fit.markelov.workers.Baker;
-import ru.nsu.fit.markelov.workers.Courier;
-import ru.nsu.fit.markelov.workers.Operator;
-
+/**
+ * The <code>Order</code> class is used as an abstraction of a pizza order in <code>Pizzeria</code>
+ * class. It provides two methods: <code>getId()</code> and <code>getName()</code>.
+ *
+ * @author Oleg Markelov
+ * @see    Pizzeria
+ */
 public class Order {
 
     private int id;
     private String name;
 
-    private Operator operator;
-    private Baker baker;
-    private Courier courier;
-
+    /**
+     * Constructs a new <code>Order</code> object with specified id and corresponding name:
+     * "Order_<id>".
+     *
+     * @param id a unique id of the order.
+     */
     public Order(int id) {
         this.id = id;
         name = "Order_" + id;
     }
 
+    /**
+     * Returns the unique id of the order.
+     *
+     * @return the unique id of the order.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns the name of the order.
+     *
+     * @return the name of the order.
+     */
     public String getName() {
         return name;
-    }
-
-    public Operator getOperator() {
-        return operator;
-    }
-
-    public Order setOperator(Operator operator) {
-        this.operator = operator;
-
-        return this;
-    }
-
-    public Baker getBaker() {
-        return baker;
-    }
-
-    public Order setBaker(Baker baker) {
-        this.baker = baker;
-
-        return this;
-    }
-
-    public Courier getCourier() {
-        return courier;
-    }
-
-    public Order setCourier(Courier courier) {
-        this.courier = courier;
-
-        return this;
     }
 }
