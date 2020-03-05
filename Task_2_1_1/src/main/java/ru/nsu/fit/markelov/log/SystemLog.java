@@ -15,7 +15,7 @@ package ru.nsu.fit.markelov.log;
 public class SystemLog extends AbstractLog {
     /**
      * Writes a message to the standard output in the next format:
-     * "<logLevel>: <time> ms -- <message>".
+     * "[logLevel]: [time] ms -- [message]".
      *
      * @param logLevel log level.
      * @param time     time in milliseconds since <code>AbstractLog</code> object creation.

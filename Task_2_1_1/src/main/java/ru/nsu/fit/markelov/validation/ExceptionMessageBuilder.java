@@ -16,7 +16,7 @@ public class ExceptionMessageBuilder {
 
     /**
      * Builds and returns an error message in the next format:
-     * 'Error in "<className>": <message>.'
+     * 'Error in "[className]": [message].'
      * <p>
      * If one of the input parameters is <code>null</code> an error message is "Unknown error."
      *
@@ -34,7 +34,7 @@ public class ExceptionMessageBuilder {
 
     /**
      * Builds and returns an error message in the next format:
-     * 'Error in "<className>": "<parameter>" <message>.'
+     * 'Error in "[className]": "[parameter]" [message].'
      * <p>
      * If one of the input parameters is <code>null</code> an error message is "Unknown error."
      *
