@@ -8,9 +8,9 @@ import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.log.SystemLog;
 import ru.nsu.fit.markelov.properties.OperatorProperties;
-import ru.nsu.fit.markelov.properties.PizzeriaProperties;
 import ru.nsu.fit.markelov.util.IterativeIntGenerator;
 import ru.nsu.fit.markelov.util.UniqueIntGenerator;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +40,7 @@ public class OperatorTest {
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             Operator operator = new Operator(operatorProperties, idGenerator, newOrders, log);
             Assert.assertEquals("Operator_1", operator.getName());
-        } catch (IOException|JsonParseException|NullPointerException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException|IllegalInputException e) {
             Assert.fail();
         }
     }
@@ -51,7 +51,7 @@ public class OperatorTest {
 
         try {
             new Operator(null, idGenerator, newOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
@@ -69,11 +69,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, null, newOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -89,11 +89,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, null, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -109,11 +109,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, newOrders, null);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -129,11 +129,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, newOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -149,11 +149,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, newOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_EMPTY)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -169,11 +169,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, newOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -189,11 +189,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, newOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -209,11 +209,11 @@ public class OperatorTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             new Operator(operatorProperties, idGenerator, newOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(GREATER)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 

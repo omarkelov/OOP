@@ -8,6 +8,7 @@ import ru.nsu.fit.markelov.log.SystemLog;
 import ru.nsu.fit.markelov.log.WriterLog;
 import ru.nsu.fit.markelov.properties.PizzeriaProperties;
 import ru.nsu.fit.markelov.util.IterativeIntGenerator;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,7 +68,7 @@ public class PizzeriaApplication implements Callable<Integer> {
             );
         } catch (IOException e) {
             System.out.println(buildMessage(PizzeriaApplication.class, e.getMessage()));
-        } catch (JsonParseException|NullPointerException|IllegalArgumentException e) {
+        } catch (JsonParseException|IllegalInputException e) {
             System.out.println(e.getMessage());
         }
     }

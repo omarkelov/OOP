@@ -1,14 +1,14 @@
 package ru.nsu.fit.markelov.properties;
 
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 import ru.nsu.fit.markelov.workers.Baker;
-
-import java.util.Objects;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_EMPTY;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.POSITIVE;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>BakerProperties</code> class is used for reading the properties of <code>Baker</code>
@@ -30,21 +30,20 @@ public class BakerProperties implements Validatable<BakerProperties> {
      * Checks orderHandlingTime to be positive.
      *
      * @return the object itself.
-     * @throws NullPointerException     if any validating parameter is null.
-     * @throws IllegalArgumentException if any validating parameter is illegal.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      */
     @Override
-    public BakerProperties validate() {
-        Objects.requireNonNull(name,
+    public BakerProperties validate() throws IllegalInputException {
+        requireNonNull(name,
             buildMessage(BakerProperties.class, "name", NOT_NULL));
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(BakerProperties.class, "name", NOT_EMPTY));
         }
 
         if (orderHandlingTime <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(BakerProperties.class, "orderHandlingTime", POSITIVE));
         }
 

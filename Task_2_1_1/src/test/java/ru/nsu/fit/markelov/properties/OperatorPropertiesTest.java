@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import org.junit.Assert;
 import org.junit.Test;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class OperatorPropertiesTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             operatorProperties.validate();
-        } catch (IOException|JsonParseException|NullPointerException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException|IllegalInputException e) {
             Assert.fail();
         }
     }
@@ -37,11 +38,11 @@ public class OperatorPropertiesTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             operatorProperties.validate();
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -57,11 +58,11 @@ public class OperatorPropertiesTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             operatorProperties.validate();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_EMPTY)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -77,11 +78,11 @@ public class OperatorPropertiesTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             operatorProperties.validate();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -97,11 +98,11 @@ public class OperatorPropertiesTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             operatorProperties.validate();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -117,11 +118,11 @@ public class OperatorPropertiesTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             OperatorProperties operatorProperties = new Gson().fromJson(json, OperatorProperties.class);
             operatorProperties.validate();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(GREATER)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 

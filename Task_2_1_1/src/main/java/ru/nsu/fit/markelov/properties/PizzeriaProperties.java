@@ -1,13 +1,13 @@
 package ru.nsu.fit.markelov.properties;
 
 import ru.nsu.fit.markelov.Pizzeria;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
-
-import java.util.Objects;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.POSITIVE;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>PizzeriaProperties</code> class is used for reading the properties of
@@ -34,32 +34,31 @@ public class PizzeriaProperties implements Validatable<PizzeriaProperties> {
      * Checks workingTime, newOrdersCapacity and storageCapacity to be positive.
      *
      * @return the object itself.
-     * @throws NullPointerException     if any validating parameter is null.
-     * @throws IllegalArgumentException if any validating parameter is illegal.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      */
     @Override
-    public PizzeriaProperties validate() {
-        Objects.requireNonNull(operatorsProperties,
+    public PizzeriaProperties validate() throws IllegalInputException {
+        requireNonNull(operatorsProperties,
             buildMessage(PizzeriaProperties.class, "operatorsProperties", NOT_NULL));
 
-        Objects.requireNonNull(bakersProperties,
+        requireNonNull(bakersProperties,
             buildMessage(PizzeriaProperties.class, "bakersProperties", NOT_NULL));
 
-        Objects.requireNonNull(couriersProperties,
+        requireNonNull(couriersProperties,
             buildMessage(PizzeriaProperties.class, "couriersProperties", NOT_NULL));
 
         if (workingTime <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(PizzeriaProperties.class, "workingTime", POSITIVE));
         }
 
         if (newOrdersCapacity <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(PizzeriaProperties.class, "newOrdersCapacity", POSITIVE));
         }
 
         if (storageCapacity <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(PizzeriaProperties.class, "storageCapacity", POSITIVE));
         }
 

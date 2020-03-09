@@ -8,6 +8,7 @@ import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.log.SystemLog;
 import ru.nsu.fit.markelov.properties.BakerProperties;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +36,7 @@ public class BakerTest {
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             Baker baker = new Baker(bakerProperties, newOrders, storedOrders, log);
             Assert.assertEquals("Baker_1", baker.getName());
-        } catch (IOException|JsonParseException|NullPointerException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException|IllegalInputException e) {
             Assert.fail();
         }
     }
@@ -46,7 +47,7 @@ public class BakerTest {
 
         try {
             new Baker(null, newOrders, storedOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
@@ -64,11 +65,11 @@ public class BakerTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             new Baker(bakerProperties, null, storedOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -84,11 +85,11 @@ public class BakerTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             new Baker(bakerProperties, newOrders, null, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -104,11 +105,11 @@ public class BakerTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             new Baker(bakerProperties, newOrders, storedOrders, null);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -124,11 +125,11 @@ public class BakerTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             new Baker(bakerProperties, newOrders, storedOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -144,11 +145,11 @@ public class BakerTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             new Baker(bakerProperties, newOrders, storedOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_EMPTY)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -164,11 +165,11 @@ public class BakerTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             BakerProperties bakerProperties = new Gson().fromJson(json, BakerProperties.class);
             new Baker(bakerProperties, newOrders, storedOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 

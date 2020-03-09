@@ -1,14 +1,14 @@
 package ru.nsu.fit.markelov.properties;
 
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 import ru.nsu.fit.markelov.workers.Courier;
-
-import java.util.Objects;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_EMPTY;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.POSITIVE;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>CourierProperties</code> class is used for reading the properties of
@@ -31,26 +31,25 @@ public class CourierProperties implements Validatable<CourierProperties> {
      * Checks orderHandlingTime and bagCapacity to be positive.
      *
      * @return the object itself.
-     * @throws NullPointerException     if any validating parameter is null.
-     * @throws IllegalArgumentException if any validating parameter is illegal.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      */
     @Override
-    public CourierProperties validate()  {
-        Objects.requireNonNull(name,
+    public CourierProperties validate() throws IllegalInputException {
+        requireNonNull(name,
             buildMessage(CourierProperties.class, "name", NOT_NULL));
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(CourierProperties.class, "name", NOT_EMPTY));
         }
 
         if (orderHandlingTime <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(CourierProperties.class, "orderHandlingTime", POSITIVE));
         }
 
         if (bagCapacity <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(CourierProperties.class, "bagCapacity", POSITIVE));
         }
 

@@ -4,13 +4,14 @@ import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.Pizzeria;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.properties.BakerProperties;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>Baker</code> class is used as an abstraction of a baker in <code>Pizzeria</code> class.
@@ -45,25 +46,24 @@ public class Baker extends Worker {
      * @param newOrders       a synchronized queue for taking new order from it.
      * @param storedOrders    a synchronized queue for putting baked orders into it.
      * @param log             log for sending messages about the current status of an order.
-     * @throws NullPointerException     if any input parameter is null.
-     * @throws IllegalArgumentException if any Validatable input parameter is invalid.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      * @see Validatable
      */
     public Baker(BakerProperties bakerProperties, BlockingQueue<Order> newOrders,
-                 BlockingQueue<Order> storedOrders, Log log) {
+                 BlockingQueue<Order> storedOrders, Log log) throws IllegalInputException {
         // super(bakerProperties.getName(), log);
         super(
-            Objects.requireNonNull(bakerProperties,
+            requireNonNull(bakerProperties,
                 buildMessage(Operator.class, "bakerProperties", NOT_NULL)).validate().getName(),
 
-            Objects.requireNonNull(log,
+            requireNonNull(log,
                 buildMessage(Operator.class, "log", NOT_NULL))
         );
 
-        this.newOrders = Objects.requireNonNull(newOrders,
+        this.newOrders = requireNonNull(newOrders,
             buildMessage(Baker.class, "newOrders", NOT_NULL));
 
-        this.storedOrders = Objects.requireNonNull(storedOrders,
+        this.storedOrders = requireNonNull(storedOrders,
             buildMessage(Baker.class, "storedOrders", NOT_NULL));
 
         this.log = log;

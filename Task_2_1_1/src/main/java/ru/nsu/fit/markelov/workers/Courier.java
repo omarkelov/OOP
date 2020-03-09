@@ -4,14 +4,15 @@ import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.Pizzeria;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.properties.CourierProperties;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 
-import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.BlockingQueue;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>Courier</code> class is used as an abstraction of a courier in <code>Pizzeria</code>
@@ -44,21 +45,21 @@ public class Courier extends Worker {
      * @param courierProperties courier properties.
      * @param storedOrders      a synchronized queue for taking baked orders from it.
      * @param log               log for sending messages about the current status of an order.
-     * @throws NullPointerException     if any input parameter is null.
-     * @throws IllegalArgumentException if any Validatable input parameter is invalid.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      * @see Validatable
      */
-    public Courier(CourierProperties courierProperties, BlockingQueue<Order> storedOrders, Log log) {
+    public Courier(CourierProperties courierProperties,
+                   BlockingQueue<Order> storedOrders, Log log) throws IllegalInputException {
         // super(courierProperties.getName(), log);
         super(
-            Objects.requireNonNull(courierProperties,
+            requireNonNull(courierProperties,
                 buildMessage(Courier.class, "courierProperties", NOT_NULL)).validate().getName(),
 
-            Objects.requireNonNull(log,
+            requireNonNull(log,
                 buildMessage(Courier.class, "log", NOT_NULL))
         );
 
-        this.storedOrders = Objects.requireNonNull(storedOrders,
+        this.storedOrders = requireNonNull(storedOrders,
             buildMessage(Operator.class, "storedOrders", NOT_NULL));
 
         this.log = log;
@@ -80,7 +81,7 @@ public class Courier extends Worker {
         int bagSize = 0;
 
         // taking the order(s)
-        synchronized (storedOrders) { //????????????????????????????????????????????????????????????
+        synchronized (storedOrders) {
             while (bagSize < bagCapacity && !storedOrders.isEmpty()) {
                 Order order = storedOrders.take();
                 orderNames.add(order.getName());

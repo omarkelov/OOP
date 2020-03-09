@@ -1,14 +1,14 @@
 package ru.nsu.fit.markelov.properties;
 
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 import ru.nsu.fit.markelov.workers.Operator;
-
-import java.util.Objects;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_EMPTY;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.POSITIVE;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>OperatorProperties</code> class is used for reading the properties of
@@ -34,31 +34,30 @@ public class OperatorProperties implements Validatable<OperatorProperties> {
      * Checks orderHandlingTimeMin and orderHandlingTimeMax to be positive.
      *
      * @return the object itself.
-     * @throws NullPointerException     if any validating parameter is null.
-     * @throws IllegalArgumentException if any validating parameter is illegal.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      */
     @Override
-    public OperatorProperties validate() {
-        Objects.requireNonNull(name,
+    public OperatorProperties validate() throws IllegalInputException {
+        requireNonNull(name,
             buildMessage(OperatorProperties.class, "name", NOT_NULL));
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(OperatorProperties.class, "name", NOT_EMPTY));
         }
 
         if (orderHandlingTimeMin <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(OperatorProperties.class, "orderHandlingTimeMin", POSITIVE));
         }
 
         if (orderHandlingTimeMax <= 0) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(OperatorProperties.class, "orderHandlingTimeMin", POSITIVE));
         }
 
         if (orderHandlingTimeMax <= orderHandlingTimeMin) {
-            throw new IllegalArgumentException(
+            throw new IllegalInputException(
                 buildMessage(OperatorProperties.class, GREATER));
         }
 

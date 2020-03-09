@@ -3,11 +3,11 @@ package ru.nsu.fit.markelov.workers;
 import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.Pizzeria;
 import ru.nsu.fit.markelov.log.Log;
-
-import java.util.Objects;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>Worker</code> class is used as an abstraction of a worker in <code>Pizzeria</code>
@@ -40,11 +40,11 @@ public abstract class Worker {
      * @param log  log for sending messages about the current status of an order.
      * @throws NullPointerException if any input parameter is null.
      */
-    public Worker(String name, Log log) {
-        this.name = Objects.requireNonNull(name,
+    public Worker(String name, Log log) throws IllegalInputException {
+        this.name = requireNonNull(name,
             buildMessage(Worker.class, "name", NOT_NULL));
 
-        this.log = Objects.requireNonNull(log,
+        this.log = requireNonNull(log,
             buildMessage(Worker.class, "log", NOT_NULL));
     }
 

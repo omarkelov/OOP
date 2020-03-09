@@ -8,6 +8,7 @@ import ru.nsu.fit.markelov.Order;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.log.SystemLog;
 import ru.nsu.fit.markelov.properties.CourierProperties;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +35,7 @@ public class CourierTest {
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             Courier courier = new Courier(courierProperties, storedOrders, log);
             Assert.assertEquals("Courier_1", courier.getName());
-        } catch (IOException|JsonParseException|NullPointerException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException|IllegalInputException e) {
             Assert.fail();
         }
     }
@@ -45,7 +46,7 @@ public class CourierTest {
 
         try {
             new Courier(null, storedOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
@@ -63,11 +64,11 @@ public class CourierTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             new Courier(courierProperties, null, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -83,11 +84,11 @@ public class CourierTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             new Courier(courierProperties, storedOrders, null);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -103,11 +104,11 @@ public class CourierTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             new Courier(courierProperties, storedOrders, log);
-        } catch (NullPointerException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_NULL)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|IllegalArgumentException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -123,11 +124,11 @@ public class CourierTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             new Courier(courierProperties, storedOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(NOT_EMPTY)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -143,11 +144,11 @@ public class CourierTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             new Courier(courierProperties, storedOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 
@@ -163,11 +164,11 @@ public class CourierTest {
             String json = new String(Files.readAllBytes(Paths.get(jsonFileName)));
             CourierProperties courierProperties = new Gson().fromJson(json, CourierProperties.class);
             new Courier(courierProperties, storedOrders, log);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalInputException e) {
             if (e.getMessage().endsWith(POSITIVE)) {
                 exceptionCaught = true;
             }
-        } catch (IOException|JsonParseException|NullPointerException e) {
+        } catch (IOException|JsonParseException e) {
             Assert.fail();
         }
 

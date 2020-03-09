@@ -5,14 +5,15 @@ import ru.nsu.fit.markelov.Pizzeria;
 import ru.nsu.fit.markelov.log.Log;
 import ru.nsu.fit.markelov.properties.OperatorProperties;
 import ru.nsu.fit.markelov.util.UniqueIntGenerator;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>Operator</code> class is used as an abstraction of an operator in <code>Pizzeria</code>
@@ -48,26 +49,25 @@ public class Operator extends Worker {
      * @param idGenerator        id generator for the order id generating.
      * @param newOrders          a synchronized queue for putting new order into it.
      * @param log                log for sending messages about the current status of an order.
-     * @throws NullPointerException     if any input parameter is null.
-     * @throws IllegalArgumentException if any Validatable input parameter is invalid.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      * @see UniqueIntGenerator
      * @see Validatable
      */
     public Operator(OperatorProperties operatorProperties, UniqueIntGenerator idGenerator,
-                    BlockingQueue<Order> newOrders, Log log) {
+                    BlockingQueue<Order> newOrders, Log log) throws IllegalInputException {
         // super(operatorProperties.getName(), log);
         super(
-            Objects.requireNonNull(operatorProperties,
+            requireNonNull(operatorProperties,
                 buildMessage(Operator.class, "operatorProperties", NOT_NULL)).validate().getName(),
 
-            Objects.requireNonNull(log,
+            requireNonNull(log,
                 buildMessage(Operator.class, "log", NOT_NULL))
         );
 
-        this.idGenerator = Objects.requireNonNull(idGenerator,
+        this.idGenerator = requireNonNull(idGenerator,
             buildMessage(Operator.class, "idGenerator", NOT_NULL));
 
-        this.newOrders = Objects.requireNonNull(newOrders,
+        this.newOrders = requireNonNull(newOrders,
             buildMessage(Operator.class, "newOrders", NOT_NULL));
 
         this.log = log;

@@ -11,8 +11,7 @@ public interface Validatable<T> {
      * Validates and returns this object. Throws an exception in case it is invalid.
      *
      * @return the object itself.
-     * @throws NullPointerException     if any validating parameter is null.
-     * @throws IllegalArgumentException if any validating parameter is illegal.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      */
-    T validate() throws NullPointerException, IllegalArgumentException;
+    T validate() throws IllegalInputException;
 }

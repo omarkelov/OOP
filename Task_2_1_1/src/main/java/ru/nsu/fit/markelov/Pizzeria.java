@@ -6,6 +6,7 @@ import ru.nsu.fit.markelov.properties.CourierProperties;
 import ru.nsu.fit.markelov.properties.OperatorProperties;
 import ru.nsu.fit.markelov.properties.PizzeriaProperties;
 import ru.nsu.fit.markelov.util.UniqueIntGenerator;
+import ru.nsu.fit.markelov.validation.IllegalInputException;
 import ru.nsu.fit.markelov.validation.Validatable;
 import ru.nsu.fit.markelov.workers.Baker;
 import ru.nsu.fit.markelov.workers.Courier;
@@ -13,12 +14,12 @@ import ru.nsu.fit.markelov.workers.Operator;
 import ru.nsu.fit.markelov.workers.Worker;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.NOT_NULL;
 import static ru.nsu.fit.markelov.validation.ExceptionMessageBuilder.buildMessage;
+import static ru.nsu.fit.markelov.validation.IllegalInputException.requireNonNull;
 
 /**
  * The <code>Pizzeria</code> class is used for simulating the working day in pizzeria. There are
@@ -58,18 +59,18 @@ public class Pizzeria {
      * @param pizzeriaProperties pizzeria properties.
      * @param log                log for sending messages about the current status of an order.
      * @param idGenerator        id generator used by operators.
-     * @throws NullPointerException     if any input parameter is null.
-     * @throws IllegalArgumentException if any Validatable input parameter is invalid.
+     * @throws IllegalInputException if any validating parameter is null or illegal.
      * @see Validatable
      */
-    public Pizzeria(PizzeriaProperties pizzeriaProperties, Log log, UniqueIntGenerator idGenerator) {
-        this.pizzeriaProperties = Objects.requireNonNull(pizzeriaProperties,
+    public Pizzeria(PizzeriaProperties pizzeriaProperties, Log log,
+                    UniqueIntGenerator idGenerator) throws IllegalInputException {
+        this.pizzeriaProperties = requireNonNull(pizzeriaProperties,
             buildMessage(Pizzeria.class, "pizzeriaProperties", NOT_NULL));
 
-        this.log = Objects.requireNonNull(log,
+        this.log = requireNonNull(log,
             buildMessage(Pizzeria.class, "log", NOT_NULL));
 
-        this.idGenerator = Objects.requireNonNull(idGenerator,
+        this.idGenerator = requireNonNull(idGenerator,
             buildMessage(Pizzeria.class, "idGenerator", NOT_NULL));
 
         pizzeriaProperties.validate();
@@ -78,7 +79,7 @@ public class Pizzeria {
         simulate();
     }
 
-    private void init() {
+    private void init() throws IllegalInputException {
         newOrders = new LinkedBlockingQueue<>(pizzeriaProperties.getNewOrdersCapacity());
         storedOrders = new LinkedBlockingQueue<>(pizzeriaProperties.getStorageCapacity());
 
