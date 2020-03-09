@@ -1,0 +1,19 @@
+{
+  "workingTime": 300,
+  "newOrdersCapacity": 50,
+  "storageCapacity": 5,
+  "operatorsProperties": [
+    {
+      "name": "Operator_1",
+      "orderHandlingTimeMin": 5,
+      "orderHandlingTimeMax": 25
+    }
+  ],
+  "couriersProperties": [
+    {
+      "name": "Courier_1",
+      "orderHandlingTime": 30,
+      "bagCapacity": 2
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "workingTime": 300,
+  "newOrdersCapacity": 50,
+  "storageCapacity": 5,
+  "operatorsProperties": [
+    {
+      "name": "Operator_1",
+      "orderHandlingTimeMin": 5,
+      "orderHandlingTimeMax": 25
+    }, {
+      "name": "Operator_2",
+      "orderHandlingTimeMin": 50,
+      "orderHandlingTimeMax": 75
+    }
+  ],
+  "bakersProperties": [
+    {
+      "name": "Baker_1",
+      "orderHandlingTime": 10
+    }, {
+      "name": "Baker_2",
+      "orderHandlingTime": 50
+    }, {
+      "name": "Baker_3",
+      "orderHandlingTime": 20
+    }, {
+      "name": "Baker_4",
+      "orderHandlingTime": 30
+    }
+  ],
+  "couriersProperties": [
+    {
+      "name": "Courier_1",
+      "orderHandlingTime": 30,
+      "bagCapacity": 2
+    }, {
+      "name": "Courier_2",
+      "orderHandlingTime": 20,
+      "bagCapacity": 6
+    }
+  ]
+}
