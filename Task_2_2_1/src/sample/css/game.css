@@ -1,0 +1,27 @@
+GridPane {
+    -fx-alignment: center;
+}
+
+.outer {
+    -fx-background-color: #578a34;
+}
+
+.inner {
+    -fx-background-color: #aad750;
+}
+
+.dark {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.snake {
+    -fx-background-color: #4774ea;
+}
+
+.dead-snake {
+    -fx-background-color: red;
+}
+
+.head {
+    -fx-background-color: #302cd2;
+}

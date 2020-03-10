@@ -1,0 +1,7 @@
+VBox {
+    -fx-pref-width: 720px;
+    -fx-pref-height: 400px;
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+    -fx-font-size: 20px;
+}
