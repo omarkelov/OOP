@@ -36,7 +36,7 @@ public class Cell {
         regions[row][column].getStyleClass().add(className);
     }
 
-    public void erase(Region[][] regions, String className) {
-        regions[row][column].getStyleClass().remove(className);
+    public void erase(Region[][] regions) {
+        regions[row][column].getStyleClass().removeIf(className -> !className.equals("dark"));
     }
 }

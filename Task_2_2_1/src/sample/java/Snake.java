@@ -39,7 +39,7 @@ public class Snake {
 
     public void removeTail(Region[][] regions) {
         Cell tailCell = snakeCells.removeLast();
-        tailCell.erase(regions, "snake");
+        tailCell.erase(regions);
     }
 
     public Cell getNewHeadCell() {
