@@ -1,4 +1,4 @@
-package sample.java;
+package sample.java.controllers;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
@@ -8,16 +8,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import sample.SnakeGame;
+import sample.java.Cell;
+import sample.java.Snake;
 
 import java.util.concurrent.TimeUnit;
 
-public class GameController {
+public class GameController extends Controller {
 
-    public static void setAsNewScene() {
-        GameController gameController = new GameController();
-        SnakeGame.getInstance().changeScene("game", gameController);
-        gameController.init();
-    }
+    private static final String FXML_FILE_NAME = "game.fxml";
 
     @FXML private GridPane outer;
     @FXML private GridPane inner;
@@ -93,7 +91,13 @@ public class GameController {
         }, 500, 200, TimeUnit.MILLISECONDS);
     }
 
-    public void init() {
+    @Override
+    public void runAfterSceneSet() {
         inner.requestFocus();
+    }
+
+    @Override
+    public String getFXMLFileName() {
+        return FXML_FILE_NAME;
     }
 }

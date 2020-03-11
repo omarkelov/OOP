@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import sample.java.GameController;
-import sample.java.MenuController;
+import sample.java.controllers.Controller;
+import sample.java.controllers.GameController;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,8 +35,8 @@ public class SnakeGame extends Application {
         stage = primaryStage;
         executor = Executors.newSingleThreadScheduledExecutor();
 
-//        MenuController.setAsNewScene();
-        GameController.setAsNewScene();
+//        changeScene(new MenuController());
+        changeScene(new GameController());
 
         primaryStage.show();
     }
@@ -46,11 +46,11 @@ public class SnakeGame extends Application {
         executor.shutdown();
     }
 
-    public void changeScene(String fxmlName, Object object) {
+    public void changeScene(Controller controller) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("fxml/" + fxmlName + ".fxml"));
-            fxmlLoader.setController(object);
+            fxmlLoader.setLocation(getClass().getResource("fxml/" + controller.getFXMLFileName()));
+            fxmlLoader.setController(controller);
             Parent root = fxmlLoader.load();
 
             if (stage.getScene() == null) {
@@ -59,6 +59,8 @@ public class SnakeGame extends Application {
             } else {
                 stage.getScene().setRoot(root);
             }
+
+            controller.runAfterSceneSet();
         } catch (Exception e) {
             e.printStackTrace();
             /*Alert alert = new Alert(Alert.AlertType.ERROR);
