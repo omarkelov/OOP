@@ -1,4 +1,4 @@
-package sample.java;
+package sample.java.gameobjects;
 
 import javafx.scene.layout.Region;
 
@@ -7,6 +7,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Snake {
+
+    private static final String SNAKE_CLASS_NAME = "snake";
+    private static final String HEAD_CLASS_NAME = "head";
+    private static final String DEAD_SNAKE_CLASS_NAME = "dead-snake";
 
     private enum Direction {
         UP, RIGHT, DOWN, LEFT;
@@ -27,13 +31,26 @@ public class Snake {
         snakeCells.addFirst(new Cell(0, 2));
 
         for (Cell cell : snakeCells) {
-            cell.draw(regions, "snake");
+            cell.draw(regions, SNAKE_CLASS_NAME);
         }
+    }
+
+    public boolean isColliding(Cell cell) {
+        boolean colliding = false;
+
+        for (Cell snakeCell : snakeCells) {
+            if (snakeCell.hasSamePosition(cell)) {
+                colliding = true;
+                break;
+            }
+        }
+
+        return colliding;
     }
 
     public void kill(Region[][] regions) {
         for (Cell cell : snakeCells) {
-            cell.draw(regions, "dead-snake");
+            cell.draw(regions, DEAD_SNAKE_CLASS_NAME);
         }
     }
 
@@ -59,7 +76,8 @@ public class Snake {
     }
 
     public void addHead(Region[][] regions, Cell cell) {
-        cell.draw(regions, "snake");
+        snakeCells.getFirst().draw(regions, SNAKE_CLASS_NAME);
+        cell.draw(regions, HEAD_CLASS_NAME);
         snakeCells.addFirst(cell);
     }
 

@@ -25,3 +25,7 @@ GridPane {
 .head {
     -fx-background-color: #302cd2;
 }
+
+.food {
+    -fx-background-color: red;
+}

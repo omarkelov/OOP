@@ -8,9 +8,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import sample.SnakeGame;
-import sample.java.Cell;
-import sample.java.Snake;
+import sample.java.gameobjects.Cell;
+import sample.java.gameobjects.Food;
+import sample.java.gameobjects.Snake;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class GameController extends Controller {
@@ -26,6 +28,7 @@ public class GameController extends Controller {
     private Region[][] regions;
 
     Snake snake;
+    Food food;
 
     @FXML
     private void initialize() {
@@ -78,6 +81,9 @@ public class GameController extends Controller {
             }
         });
 
+
+        food = generateFood();
+
         SnakeGame.getInstance().getExecutor().scheduleWithFixedDelay(() -> {
             snake.updateDirection();
             Cell newHeadCell = snake.getNewHeadCell();
@@ -86,9 +92,30 @@ public class GameController extends Controller {
                 SnakeGame.getInstance().getExecutor().shutdown();
                 return;
             }
-            snake.removeTail(regions);
+
+            boolean isFoodEaten = food.isColliding(newHeadCell);
+
+            if (!isFoodEaten) {
+                snake.removeTail(regions);
+            }
+
             snake.addHead(regions, newHeadCell);
-        }, 500, 200, TimeUnit.MILLISECONDS);
+
+            if (isFoodEaten) {
+                food = generateFood();
+            }
+        }, 500, 120, TimeUnit.MILLISECONDS);
+    }
+
+    private Food generateFood() {
+        Cell cell = new Cell(-1, -1);
+        do {
+            cell.setRow(ThreadLocalRandom.current().nextInt(h))
+                .setColumn(ThreadLocalRandom.current().nextInt(w));
+
+        } while (snake.isColliding(cell));
+
+        return new Food(regions, cell);
     }
 
     @Override

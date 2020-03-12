@@ -1,4 +1,4 @@
-package sample.java;
+package sample.java.gameobjects;
 
 import javafx.scene.layout.Region;
 
@@ -33,10 +33,15 @@ public class Cell {
     }
 
     public void draw(Region[][] regions, String className) {
+        erase(regions);
         regions[row][column].getStyleClass().add(className);
     }
 
     public void erase(Region[][] regions) {
         regions[row][column].getStyleClass().removeIf(className -> !className.equals("dark"));
+    }
+
+    public boolean hasSamePosition(Cell cell) {
+        return row == cell.row && column == cell.column;
     }
 }
