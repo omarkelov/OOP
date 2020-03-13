@@ -13,23 +13,35 @@ import javafx.scene.layout.RowConstraints;
 import sample.SnakeGame;
 import sample.java.game.World;
 import sample.java.game.WorldProperties;
+import sample.java.observer.EventListener;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class GameController implements Controller {
+import static sample.SnakeGame.APP_CLOSING;
+import static sample.SnakeGame.SNAKE_DEATH;
+
+public class GameController implements Controller, EventListener {
 
     private static final String FXML_FILE_NAME = "game.fxml";
+
+    private ScheduledExecutorService executor;
 
     @FXML private GridPane wrapper;
     @FXML private GridPane playingField;
 
-//    private Region[][] regions;
     private WorldProperties worldProperties;
     private World world;
 
     private boolean gameStarted; // change to states?
     private boolean gamePaused; // change to states?
     private boolean gameFinished; // change to states?
+
+    public GameController() {
+        SnakeGame.getInstance().getEventManager().subscribe(APP_CLOSING, this);
+        SnakeGame.getInstance().getEventManager().subscribe(SNAKE_DEATH, this);
+    }
 
     @FXML
     private void initialize() {
@@ -58,7 +70,7 @@ public class GameController implements Controller {
     }
 
     private void initGame() {
-        SnakeGame.getInstance().initExecutor();
+        System.out.println("initGame");
 
         int w = worldProperties.getWidth();
         int h = worldProperties.getHeight();
@@ -126,6 +138,8 @@ public class GameController implements Controller {
 
     private void startGameIfNotStarted() {
         if (!gameStarted) {
+            System.out.println("startGame");
+
             activateGame();
             gameStarted = true;
         }
@@ -136,8 +150,10 @@ public class GameController implements Controller {
             return;
         }
 
+        System.out.println("resetGame");
+
         playingField.getChildren().clear();
-        SnakeGame.getInstance().getExecutor().shutdownNow();
+        executor.shutdownNow();
 
         initGame();
     }
@@ -147,7 +163,9 @@ public class GameController implements Controller {
             return;
         }
 
-        SnakeGame.getInstance().getExecutor().shutdown();
+        System.out.println("pauseGame");
+
+        executor.shutdown();
         gamePaused = true;
     }
 
@@ -156,30 +174,55 @@ public class GameController implements Controller {
             return;
         }
 
+        System.out.println("unpauseGame");
+
         activateGame();
         gamePaused = false;
     }
 
     private void activateGame() {
-        SnakeGame.getInstance().initExecutor();
-        SnakeGame.getInstance().getExecutor().scheduleWithFixedDelay(() -> world.update(),
-            0, 150, TimeUnit.MILLISECONDS);
-    }
+        System.out.println("activateGame");
 
-    /*private class WorldUpdateTask implements Runnable {
-        @Override
-        public void run() {
-            world.update();
-        }
-    }*/
+        executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
+    }
 
     @Override
     public void runAfterSceneSet(Scene scene) {
+        System.out.println("runAfterSceneSet");
+
         scene.setOnKeyPressed(new KeyPressedEventHandler());
     }
 
     @Override
     public String getFXMLFileName() {
         return FXML_FILE_NAME;
+    }
+
+    @Override
+    public void dispose() {
+        System.out.println("dispose");
+        SnakeGame.getInstance().getEventManager().unsubscribe(APP_CLOSING, this);
+        SnakeGame.getInstance().getEventManager().unsubscribe(SNAKE_DEATH, this);
+        if (executor != null) {
+            executor.shutdown();
+        }
+    }
+
+    @Override
+    public void onEvent(String eventType) {
+        switch (eventType) {
+            case SNAKE_DEATH:
+                System.out.println("event: SNAKE_DEATH");
+                executor.shutdown();
+                gameFinished = true;
+                break;
+            case APP_CLOSING:
+                System.out.println("event: APP_CLOSING");
+                if (executor != null) {
+                    executor.shutdown();
+                }
+                break;
+        }
     }
 }

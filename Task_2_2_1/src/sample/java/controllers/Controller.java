@@ -4,5 +4,6 @@ import javafx.scene.Scene;
 
 public interface Controller {
     default void runAfterSceneSet(Scene scene) {}
+    default void dispose() {}
     String getFXMLFileName();
 }

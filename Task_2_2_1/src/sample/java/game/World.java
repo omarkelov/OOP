@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static sample.SnakeGame.SNAKE_DEATH;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.DOWN;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.LEFT;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.RIGHT;
@@ -69,12 +70,8 @@ public class World {
             obstacle.isColliding(newHeadCell)
         ) {
             snake.kill();
-            //
-            //
-            SnakeGame.getInstance().getExecutor().shutdown();
-//            gameFinished = true;
-            //
-            //
+            SnakeGame.getInstance().getEventManager().notify(SNAKE_DEATH);
+
             return;
         }
 

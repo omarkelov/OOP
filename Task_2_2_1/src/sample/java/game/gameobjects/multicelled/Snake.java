@@ -2,6 +2,7 @@ package sample.java.game.gameobjects.multicelled;
 
 import javafx.scene.layout.Region;
 import sample.java.game.Cell;
+import sample.java.observer.EventManager;
 
 import java.util.Collection;
 import java.util.Deque;
