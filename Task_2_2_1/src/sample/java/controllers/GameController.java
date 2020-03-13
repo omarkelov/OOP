@@ -2,54 +2,67 @@ package sample.java.controllers;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import sample.SnakeGame;
-import sample.java.gameobjects.Cell;
-import sample.java.gameobjects.Food;
-import sample.java.gameobjects.Snake;
+import sample.java.game.World;
+import sample.java.game.WorldProperties;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class GameController extends Controller {
+public class GameController implements Controller {
 
     private static final String FXML_FILE_NAME = "game.fxml";
 
-    @FXML private GridPane outer;
-    @FXML private GridPane inner;
+    @FXML private GridPane wrapper;
+    @FXML private GridPane playingField;
 
-    private int w = 32;
-    private int h = 18;
+//    private Region[][] regions;
+    private WorldProperties worldProperties;
+    private World world;
 
-    private Region[][] regions;
-
-    Snake snake;
-    Food food;
+    private boolean gameStarted; // change to states?
+    private boolean gamePaused; // change to states?
+    private boolean gameFinished; // change to states?
 
     @FXML
     private void initialize() {
+        worldProperties = new WorldProperties();
+        int w = worldProperties.getWidth();
+        int h = worldProperties.getHeight();
+
         final NumberBinding cellSize = Bindings
-            .when(Bindings.greaterThan(outer.widthProperty().divide(outer.heightProperty()), (double) w / h))
-            .then(outer.heightProperty().divide(h))
-            .otherwise(outer.widthProperty().divide(w));
+            .when(Bindings.greaterThan(wrapper.widthProperty().divide(wrapper.heightProperty()), (double) w / h))
+            .then(wrapper.heightProperty().divide(h))
+            .otherwise(wrapper.widthProperty().divide(w));
 
         for (int i = 0; i < w; i++) {
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.prefWidthProperty().bind(cellSize);
-            inner.getColumnConstraints().add(columnConstraints);
+            playingField.getColumnConstraints().add(columnConstraints);
         }
 
         for (int j = 0; j < h; j++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.prefHeightProperty().bind(cellSize);
-            inner.getRowConstraints().add(rowConstraints);
+            playingField.getRowConstraints().add(rowConstraints);
         }
 
-        regions = new Region[h][w];
+        initGame();
+    }
+
+    private void initGame() {
+        SnakeGame.getInstance().initExecutor();
+
+        int w = worldProperties.getWidth();
+        int h = worldProperties.getHeight();
+        Region[][] regions = new Region[h][w];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 Region region = new Region();
@@ -58,69 +71,111 @@ public class GameController extends Controller {
                     region.getStyleClass().add("dark");
                 }
 
-                inner.add(region, j, i);
+                playingField.add(region, j, i);
                 regions[i][j] = region;
             }
         }
 
-        snake = new Snake(regions);
-        inner.setOnKeyPressed(keyEvent -> {
+        gameStarted = false;
+        gamePaused = false;
+        gameFinished = false;
+
+        world = new World(regions, worldProperties);
+    }
+
+    private class KeyPressedEventHandler implements EventHandler<KeyEvent> {
+        @Override
+        public void handle(KeyEvent keyEvent) {
             switch (keyEvent.getCode()) {
-                case W: case UP:
-                    snake.moveUp();
+                case R:
+                    resetGame();
                     break;
-                case S: case DOWN:
-                    snake.moveDown();
-                    break;
-                case D: case RIGHT:
-                    snake.moveRight();
-                    break;
-                case A: case LEFT:
-                    snake.moveLeft();
+                case P:
+                    if (!gamePaused) {
+                        pauseGame();
+                    } else {
+                        unpauseGame();
+                    }
                     break;
             }
-        });
 
-
-        food = generateFood();
-
-        SnakeGame.getInstance().getExecutor().scheduleWithFixedDelay(() -> {
-            snake.updateDirection();
-            Cell newHeadCell = snake.getNewHeadCell();
-            if (newHeadCell.getColumn() < 0 || newHeadCell.getColumn() >= w || newHeadCell.getRow() < 0 || newHeadCell.getRow() >= h) {
-                snake.kill(regions);
-                SnakeGame.getInstance().getExecutor().shutdown();
+            if (gamePaused) {
                 return;
             }
 
-            boolean isFoodEaten = food.isColliding(newHeadCell);
-
-            if (!isFoodEaten) {
-                snake.removeTail(regions);
+            switch (keyEvent.getCode()) {
+                case W: case UP:
+                    world.moveSnakeUp();
+                    startGameIfNotStarted();
+                    break;
+                case S: case DOWN:
+                    world.moveSnakeDown();
+                    startGameIfNotStarted();
+                    break;
+                case D: case RIGHT:
+                    world.moveSnakeRight();
+                    startGameIfNotStarted();
+                    break;
+                case A: case LEFT:
+                    world.moveSnakeLeft();
+                    startGameIfNotStarted();
+                    break;
             }
-
-            snake.addHead(regions, newHeadCell);
-
-            if (isFoodEaten) {
-                food = generateFood();
-            }
-        }, 500, 120, TimeUnit.MILLISECONDS);
+        }
     }
 
-    private Food generateFood() {
-        Cell cell = new Cell(-1, -1);
-        do {
-            cell.setRow(ThreadLocalRandom.current().nextInt(h))
-                .setColumn(ThreadLocalRandom.current().nextInt(w));
-
-        } while (snake.isColliding(cell));
-
-        return new Food(regions, cell);
+    private void startGameIfNotStarted() {
+        if (!gameStarted) {
+            activateGame();
+            gameStarted = true;
+        }
     }
+
+    private void resetGame() {
+        if (!gameStarted) {
+            return;
+        }
+
+        playingField.getChildren().clear();
+        SnakeGame.getInstance().getExecutor().shutdownNow();
+
+        initGame();
+    }
+
+    private void pauseGame() {
+        if (!gameStarted || gameFinished) {
+            return;
+        }
+
+        SnakeGame.getInstance().getExecutor().shutdown();
+        gamePaused = true;
+    }
+
+    private void unpauseGame() {
+        if (!gameStarted || gameFinished) {
+            return;
+        }
+
+        activateGame();
+        gamePaused = false;
+    }
+
+    private void activateGame() {
+        SnakeGame.getInstance().initExecutor();
+        SnakeGame.getInstance().getExecutor().scheduleWithFixedDelay(() -> world.update(),
+            0, 150, TimeUnit.MILLISECONDS);
+    }
+
+    /*private class WorldUpdateTask implements Runnable {
+        @Override
+        public void run() {
+            world.update();
+        }
+    }*/
 
     @Override
-    public void runAfterSceneSet() {
-        inner.requestFocus();
+    public void runAfterSceneSet(Scene scene) {
+        scene.setOnKeyPressed(new KeyPressedEventHandler());
     }
 
     @Override

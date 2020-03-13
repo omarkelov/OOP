@@ -1,18 +1,20 @@
-package sample.java.gameobjects;
+package sample.java.game.gameobjects.multicelled;
 
 import javafx.scene.layout.Region;
+import sample.java.game.Cell;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Snake {
+public class Snake extends MultiCelledGameObject {
 
     private static final String SNAKE_CLASS_NAME = "snake";
     private static final String HEAD_CLASS_NAME = "head";
     private static final String DEAD_SNAKE_CLASS_NAME = "dead-snake";
 
-    private enum Direction {
+    public enum Direction {
         UP, RIGHT, DOWN, LEFT;
     }
 
@@ -21,42 +23,26 @@ public class Snake {
 
     private Deque<Cell> snakeCells;
 
-    public Snake(Region[][] regions) {
+    public Snake(Region[][] regions, Deque<Cell> snakeCells) {
+        super(regions);
+        this.snakeCells = snakeCells;
+
         direction = Direction.RIGHT;
         directionQueue = new LinkedList<>();
 
-        snakeCells = new LinkedList<>();
-        snakeCells.addFirst(new Cell(0, 0));
-        snakeCells.addFirst(new Cell(0, 1));
-        snakeCells.addFirst(new Cell(0, 2));
+        drawObjectCells(SNAKE_CLASS_NAME);
+        snakeCells.getFirst().draw(getRegions(), HEAD_CLASS_NAME);
+    }
 
+    public void kill() {
         for (Cell cell : snakeCells) {
-            cell.draw(regions, SNAKE_CLASS_NAME);
+            cell.draw(getRegions(), DEAD_SNAKE_CLASS_NAME);
         }
     }
 
-    public boolean isColliding(Cell cell) {
-        boolean colliding = false;
-
-        for (Cell snakeCell : snakeCells) {
-            if (snakeCell.hasSamePosition(cell)) {
-                colliding = true;
-                break;
-            }
-        }
-
-        return colliding;
-    }
-
-    public void kill(Region[][] regions) {
-        for (Cell cell : snakeCells) {
-            cell.draw(regions, DEAD_SNAKE_CLASS_NAME);
-        }
-    }
-
-    public void removeTail(Region[][] regions) {
+    public void removeTail() {
         Cell tailCell = snakeCells.removeLast();
-        tailCell.erase(regions);
+        tailCell.erase(getRegions());
     }
 
     public Cell getNewHeadCell() {
@@ -75,9 +61,9 @@ public class Snake {
         }
     }
 
-    public void addHead(Region[][] regions, Cell cell) {
-        snakeCells.getFirst().draw(regions, SNAKE_CLASS_NAME);
-        cell.draw(regions, HEAD_CLASS_NAME);
+    public void addHead(Cell cell) {
+        snakeCells.getFirst().draw(getRegions(), SNAKE_CLASS_NAME);
+        cell.draw(getRegions(), HEAD_CLASS_NAME);
         snakeCells.addFirst(cell);
     }
 
@@ -106,19 +92,12 @@ public class Snake {
         }
     }
 
-    public void moveUp() {
-        directionQueue.add(Direction.UP);
+    public void addDirection(Direction direction) {
+        directionQueue.add(direction);
     }
 
-    public void moveDown() {
-        directionQueue.add(Direction.DOWN);
-    }
-
-    public void moveRight() {
-        directionQueue.add(Direction.RIGHT);
-    }
-
-    public void moveLeft() {
-        directionQueue.add(Direction.LEFT);
+    @Override
+    protected Collection<Cell> getGameObjectCells() {
+        return snakeCells;
     }
 }

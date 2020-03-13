@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import sample.SnakeGame;
 
-public class MenuController extends Controller {
+public class MenuController implements Controller {
 
     private static final String FXML_FILE_NAME = "menu.fxml";
 

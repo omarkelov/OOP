@@ -1,6 +1,8 @@
 package sample.java.controllers;
 
-public abstract class Controller {
-    public void runAfterSceneSet() {}
-    abstract public String getFXMLFileName();
+import javafx.scene.Scene;
+
+public interface Controller {
+    default void runAfterSceneSet(Scene scene) {}
+    String getFXMLFileName();
 }

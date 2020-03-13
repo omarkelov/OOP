@@ -1,6 +1,7 @@
-package sample.java.gameobjects;
+package sample.java.game.gameobjects.singlecelled;
 
 import javafx.scene.layout.Region;
+import sample.java.game.Cell;
 
 public class Food {
 

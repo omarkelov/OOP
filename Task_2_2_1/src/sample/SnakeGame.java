@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import sample.java.controllers.Controller;
 import sample.java.controllers.GameController;
+import sample.java.controllers.MenuController;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,7 +34,6 @@ public class SnakeGame extends Application {
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
-        executor = Executors.newSingleThreadScheduledExecutor();
 
 //        changeScene(new MenuController());
         changeScene(new GameController());
@@ -43,13 +43,23 @@ public class SnakeGame extends Application {
 
     @Override
     public void stop() {
-        executor.shutdown();
+        if (executor != null) {
+            executor.shutdown();
+        }
+    }
+
+    public void initExecutor() {
+        if (executor != null) {
+            executor.shutdownNow();
+        }
+
+        executor = Executors.newSingleThreadScheduledExecutor();
     }
 
     public void changeScene(Controller controller) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("fxml/" + controller.getFXMLFileName()));
+            fxmlLoader.setLocation(getClass().getResource("resources/fxml/" + controller.getFXMLFileName()));
             fxmlLoader.setController(controller);
             Parent root = fxmlLoader.load();
 
@@ -60,7 +70,7 @@ public class SnakeGame extends Application {
                 stage.getScene().setRoot(root);
             }
 
-            controller.runAfterSceneSet();
+            controller.runAfterSceneSet(stage.getScene());
         } catch (Exception e) {
             e.printStackTrace();
             /*Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -1,12 +1,17 @@
+BorderPane {
+    -fx-pref-width: 1080px;
+    -fx-pref-height: 720px;
+}
+
 GridPane {
     -fx-alignment: center;
 }
 
-.outer {
+.wrapper {
     -fx-background-color: #578a34;
 }
 
-.inner {
+.playing-field {
     -fx-background-color: #aad750;
 }
 
@@ -19,7 +24,7 @@ GridPane {
 }
 
 .dead-snake {
-    -fx-background-color: red;
+    -fx-background-color: yellow;
 }
 
 .head {
@@ -28,4 +33,8 @@ GridPane {
 
 .food {
     -fx-background-color: red;
+}
+
+.obstacle {
+    -fx-background-color: black;
 }
