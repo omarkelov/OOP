@@ -14,18 +14,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
-import sample.SnakeGame;
+import sample.java.SnakeGame;
 import sample.java.game.World;
 import sample.java.game.WorldProperties;
-import sample.java.observer.EventListener;
+import sample.java.util.observer.EventListener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static sample.java.observer.Events.APP_CLOSING;
-import static sample.java.observer.Events.FOOD_EATEN;
-import static sample.java.observer.Events.SNAKE_DEATH;
+import static sample.java.util.observer.Events.APP_CLOSING;
+import static sample.java.util.observer.Events.FOOD_EATEN;
+import static sample.java.util.observer.Events.SNAKE_DEATH;
 
 public class GameController implements Controller, EventListener {
 

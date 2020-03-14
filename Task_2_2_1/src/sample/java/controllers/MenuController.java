@@ -2,7 +2,7 @@ package sample.java.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import sample.SnakeGame;
+import sample.java.SnakeGame;
 
 public class MenuController implements Controller {
 

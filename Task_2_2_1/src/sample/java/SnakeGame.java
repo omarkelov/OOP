@@ -1,13 +1,14 @@
-package sample;
+package sample.java;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 import sample.java.controllers.GameController;
-import sample.java.observer.EventManager;
+import sample.java.util.SceneManager;
+import sample.java.util.observer.EventManager;
 
-import static sample.java.observer.Events.APP_CLOSING;
-import static sample.java.observer.Events.FOOD_EATEN;
-import static sample.java.observer.Events.SNAKE_DEATH;
+import static sample.java.util.observer.Events.APP_CLOSING;
+import static sample.java.util.observer.Events.FOOD_EATEN;
+import static sample.java.util.observer.Events.SNAKE_DEATH;
 
 public class SnakeGame extends Application {
 

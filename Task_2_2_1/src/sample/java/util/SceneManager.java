@@ -1,16 +1,20 @@
-package sample;
+package sample.java.util;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import sample.java.controllers.Controller;
 
 import java.io.IOException;
 
+import static sample.java.util.ErrorBuilder.buildErrorAlert;
+
 public class SceneManager {
 
-    private static final String FXML_DIRECTORY = "resources/fxml/";
+    private static final String GAME_TITLE = "Snaky";
+    private static final String FXML_DIRECTORY = "../../resources/fxml/";
 
     private Stage stage;
     private Controller controller;
@@ -32,7 +36,7 @@ public class SceneManager {
             this.controller = controller;
 
             if (stage.getScene() == null) {
-                stage.setTitle("Snake");
+                stage.setTitle(GAME_TITLE);
                 stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
             } else {
                 stage.getScene().setRoot(root);
@@ -41,10 +45,8 @@ public class SceneManager {
             controller.runAfterSceneSet(root);
         } catch (IOException e) {
             e.printStackTrace();
-            /*Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Some error");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();*/
+
+            buildErrorAlert("layout loading").showAndWait();
         }
     }
 }

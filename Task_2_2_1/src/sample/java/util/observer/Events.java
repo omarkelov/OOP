@@ -1,4 +1,4 @@
-package sample.java.observer;
+package sample.java.util.observer;
 
 public class Events {
     public static final String APP_CLOSING = "app_closing";
