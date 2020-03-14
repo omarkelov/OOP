@@ -9,12 +9,12 @@ import sample.java.game.gameobjects.singlecelled.Food;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static sample.SnakeGame.FOOD_EATEN;
-import static sample.SnakeGame.SNAKE_DEATH;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.DOWN;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.LEFT;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.RIGHT;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.UP;
+import static sample.java.observer.Events.FOOD_EATEN;
+import static sample.java.observer.Events.SNAKE_DEATH;
 
 public class World {
 

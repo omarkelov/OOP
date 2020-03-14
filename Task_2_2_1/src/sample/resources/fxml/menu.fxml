@@ -5,8 +5,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/10.0.2-internal"
       xmlns:fx="http://javafx.com/fxml/1"
-      stylesheets="@../css/menu.css"
-      spacing="${playButton.height / 4}">
+      stylesheets="@../css/menu.css">
 
    <Button fx:id="playButton" text="Play"/>
    <Button fx:id="helpButton" text="Help"/>

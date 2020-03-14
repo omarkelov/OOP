@@ -13,8 +13,10 @@ public class MenuController implements Controller {
 
     @FXML
     private void initialize() {
-        playButton.setOnAction(actionEvent -> SnakeGame.getInstance().changeScene(new GameController()));
-//        helpButton.setOnAction(actionEvent -> SnakeGame.getInstance().changeScene(new HelpController()));
+        playButton.setOnAction(actionEvent ->
+            SnakeGame.getInstance().getSceneManager().changeScene(new GameController()));
+//        helpButton.setOnAction(actionEvent
+//            -> SnakeGame.getInstance().getSceneManager().changeScene(new HelpController()));
     }
 
     @Override
