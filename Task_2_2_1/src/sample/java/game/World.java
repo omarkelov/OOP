@@ -6,11 +6,10 @@ import sample.java.game.gameobjects.multicelled.Obstacle;
 import sample.java.game.gameobjects.multicelled.Snake;
 import sample.java.game.gameobjects.singlecelled.Food;
 
-import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static sample.SnakeGame.FOOD_EATEN;
 import static sample.SnakeGame.SNAKE_DEATH;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.DOWN;
 import static sample.java.game.gameobjects.multicelled.Snake.Direction.LEFT;
@@ -34,28 +33,8 @@ public class World {
         width = worldProperties.getWidth();
         height = worldProperties.getHeight();
 
-        Deque<Cell> snakeCells = new LinkedList<>();
-        snakeCells.addFirst(new Cell(0, 0));
-        snakeCells.addFirst(new Cell(0, 1));
-        snakeCells.addFirst(new Cell(0, 2));
-
-        List<Cell> obstacleCells = new LinkedList<>();
-        obstacleCells.add(new Cell(7, 10));
-        obstacleCells.add(new Cell(7, 11));
-        obstacleCells.add(new Cell(7, 12));
-        obstacleCells.add(new Cell(8, 12));
-        obstacleCells.add(new Cell(9, 12));
-        obstacleCells.add(new Cell(7, 13));
-        obstacleCells.add(new Cell(7, 14));
-        obstacleCells.add(new Cell(4, 22));
-        obstacleCells.add(new Cell(5, 22));
-        obstacleCells.add(new Cell(6, 22));
-        obstacleCells.add(new Cell(7, 22));
-        obstacleCells.add(new Cell(8, 22));
-        obstacleCells.add(new Cell(9, 22));
-
-        snake = new Snake(regions, snakeCells);
-        obstacle = new Obstacle(regions, obstacleCells);
+        snake = new Snake(regions, new LinkedList<>(worldProperties.getSnakeCells()));
+        obstacle = new Obstacle(regions, new LinkedList<>(worldProperties.getObstacleCells()));
         food = generateFood();
     }
 
@@ -84,6 +63,7 @@ public class World {
 
         if (isFoodEaten) {
             food = generateFood();
+            SnakeGame.getInstance().getEventManager().notify(FOOD_EATEN);
         }
     }
 

@@ -15,12 +15,16 @@ public class EventManager {
         }
     }
 
-    public void subscribe(String eventType, EventListener listener) {
-        eventListeners.get(eventType).add(listener);
+    public void subscribe(EventListener listener, String... eventTypes) {
+        for (String eventType : eventTypes) {
+            eventListeners.get(eventType).add(listener);
+        }
     }
 
-    public void unsubscribe(String eventType, EventListener listener) {
-        eventListeners.get(eventType).remove(listener);
+    public void unsubscribe(EventListener listener, String... eventTypes) {
+        for (String eventType : eventTypes) {
+            eventListeners.get(eventType).remove(listener);
+        }
     }
 
     public void notify(String eventType) {

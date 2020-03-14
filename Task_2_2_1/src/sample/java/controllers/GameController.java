@@ -1,10 +1,14 @@
 package sample.java.controllers;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -20,32 +24,52 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static sample.SnakeGame.APP_CLOSING;
+import static sample.SnakeGame.FOOD_EATEN;
 import static sample.SnakeGame.SNAKE_DEATH;
 
 public class GameController implements Controller, EventListener {
 
     private static final String FXML_FILE_NAME = "game.fxml";
 
-    private ScheduledExecutorService executor;
+    @FXML private Button menuButton;
+    @FXML private Button restartButton;
+    @FXML private Button pauseButton;
+
+    @FXML private Label currentScoreLabel;
+    @FXML private Label goalScoreLabel;
 
     @FXML private GridPane wrapper;
     @FXML private GridPane playingField;
 
+    private ScheduledExecutorService worldUpdateExecutor;
+
     private WorldProperties worldProperties;
     private World world;
 
-    private boolean gameStarted; // change to states?
-    private boolean gamePaused; // change to states?
+    private BooleanBinding gameStartedBinding;
+
+    private boolean gameStarted;  // change to states?
+    private boolean gamePaused;   // change to states?
     private boolean gameFinished; // change to states?
 
+    private int currentScore;
+    private int goalScore;
+
     public GameController() {
-        SnakeGame.getInstance().getEventManager().subscribe(APP_CLOSING, this);
-        SnakeGame.getInstance().getEventManager().subscribe(SNAKE_DEATH, this);
+        SnakeGame.getInstance().getEventManager().subscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+
+        worldProperties = new WorldProperties();
     }
 
     @FXML
     private void initialize() {
-        worldProperties = new WorldProperties();
+        menuButton.setOnAction(actionEvent -> onMenuButtonClick());
+        restartButton.setOnAction(actionEvent -> onRestartButtonClick());
+        pauseButton.setOnAction(actionEvent -> onPauseButtonClick());
+
+        goalScore = worldProperties.getGoal();
+        goalScoreLabel.setText(goalScore + "");
+
         int w = worldProperties.getWidth();
         int h = worldProperties.getHeight();
 
@@ -72,6 +96,13 @@ public class GameController implements Controller, EventListener {
     private void initGame() {
         System.out.println("initGame");
 
+        restartButton.setDisable(true);
+        pauseButton.setDisable(true);
+        pauseButton.setText("⏸");
+
+        currentScore = worldProperties.getSnakeCells().size();
+        currentScoreLabel.setText(currentScore + "");
+
         int w = worldProperties.getWidth();
         int h = worldProperties.getHeight();
         Region[][] regions = new Region[h][w];
@@ -95,19 +126,18 @@ public class GameController implements Controller, EventListener {
         world = new World(regions, worldProperties);
     }
 
-    private class KeyPressedEventHandler implements EventHandler<KeyEvent> {
+    private class KeyReleasedEventHandler implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {
             switch (keyEvent.getCode()) {
+                case M:
+                    onMenuButtonClick();
+                    break;
                 case R:
-                    resetGame();
+                    onRestartButtonClick();
                     break;
                 case P:
-                    if (!gamePaused) {
-                        pauseGame();
-                    } else {
-                        unpauseGame();
-                    }
+                    onPauseButtonClick();
                     break;
             }
 
@@ -136,26 +166,62 @@ public class GameController implements Controller, EventListener {
         }
     }
 
+    private void onMenuButtonClick() {
+        System.out.println("onMenuButtonClick");
+
+        SnakeGame.getInstance().changeScene(new MenuController());
+    }
+
+    private void onRestartButtonClick() {
+        System.out.println("onRestartButtonClick");
+
+        if (!gameStarted) {
+            return;
+        }
+
+        System.out.println("restartGame");
+
+        playingField.getChildren().clear();
+        worldUpdateExecutor.shutdownNow();
+
+        initGame();
+    }
+
+    private void onPauseButtonClick() {
+        System.out.println("onPauseButtonClick");
+
+        if (!gamePaused) {
+            pauseGame();
+        } else {
+            unpauseGame();
+        }
+    }
+
     private void startGameIfNotStarted() {
         if (!gameStarted) {
             System.out.println("startGame");
+
+            restartButton.setDisable(false);
+            pauseButton.setDisable(false);
 
             activateGame();
             gameStarted = true;
         }
     }
 
-    private void resetGame() {
-        if (!gameStarted) {
-            return;
+    private void finishGame(boolean isWin) {
+        System.out.println("finishGame");
+
+        pauseButton.setDisable(true);
+
+        worldUpdateExecutor.shutdown();
+        gameFinished = true;
+
+        if (isWin) {
+            System.out.println("win");
+        } else {
+            System.out.println("loss");
         }
-
-        System.out.println("resetGame");
-
-        playingField.getChildren().clear();
-        executor.shutdownNow();
-
-        initGame();
     }
 
     private void pauseGame() {
@@ -165,7 +231,9 @@ public class GameController implements Controller, EventListener {
 
         System.out.println("pauseGame");
 
-        executor.shutdown();
+        pauseButton.setText("⏵");
+
+        worldUpdateExecutor.shutdown();
         gamePaused = true;
     }
 
@@ -176,6 +244,8 @@ public class GameController implements Controller, EventListener {
 
         System.out.println("unpauseGame");
 
+        pauseButton.setText("⏸");
+
         activateGame();
         gamePaused = false;
     }
@@ -183,15 +253,16 @@ public class GameController implements Controller, EventListener {
     private void activateGame() {
         System.out.println("activateGame");
 
-        executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
+        worldUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
+        worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void runAfterSceneSet(Scene scene) {
         System.out.println("runAfterSceneSet");
 
-        scene.setOnKeyPressed(new KeyPressedEventHandler());
+        scene.setOnKeyReleased(new KeyReleasedEventHandler());
+        playingField.requestFocus();
     }
 
     @Override
@@ -202,10 +273,9 @@ public class GameController implements Controller, EventListener {
     @Override
     public void dispose() {
         System.out.println("dispose");
-        SnakeGame.getInstance().getEventManager().unsubscribe(APP_CLOSING, this);
-        SnakeGame.getInstance().getEventManager().unsubscribe(SNAKE_DEATH, this);
-        if (executor != null) {
-            executor.shutdown();
+        SnakeGame.getInstance().getEventManager().unsubscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+        if (worldUpdateExecutor != null) {
+            worldUpdateExecutor.shutdown();
         }
     }
 
@@ -214,13 +284,19 @@ public class GameController implements Controller, EventListener {
         switch (eventType) {
             case SNAKE_DEATH:
                 System.out.println("event: SNAKE_DEATH");
-                executor.shutdown();
-                gameFinished = true;
+                finishGame(false);
+                break;
+            case FOOD_EATEN:
+                System.out.println("event: FOOD_EATEN");
+                if (++currentScore >= goalScore) {
+                    finishGame(true);
+                }
+                Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));
                 break;
             case APP_CLOSING:
                 System.out.println("event: APP_CLOSING");
-                if (executor != null) {
-                    executor.shutdown();
+                if (worldUpdateExecutor != null) {
+                    worldUpdateExecutor.shutdown();
                 }
                 break;
         }

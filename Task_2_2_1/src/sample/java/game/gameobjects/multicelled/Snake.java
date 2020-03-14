@@ -2,7 +2,6 @@ package sample.java.game.gameobjects.multicelled;
 
 import javafx.scene.layout.Region;
 import sample.java.game.Cell;
-import sample.java.observer.EventManager;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -16,8 +15,10 @@ public class Snake extends MultiCelledGameObject {
     private static final String DEAD_SNAKE_CLASS_NAME = "dead-snake";
 
     public enum Direction {
-        UP, RIGHT, DOWN, LEFT;
+        UNDEFINED, UP, RIGHT, DOWN, LEFT;
     }
+
+    private int size;
 
     private Direction direction;
     private final Queue<Direction> directionQueue;
@@ -28,7 +29,9 @@ public class Snake extends MultiCelledGameObject {
         super(regions);
         this.snakeCells = snakeCells;
 
-        direction = Direction.RIGHT;
+        size = snakeCells.size();
+
+        direction = size == 1 ? Direction.UNDEFINED : Direction.RIGHT;
         directionQueue = new LinkedList<>();
 
         drawObjectCells(SNAKE_CLASS_NAME);
@@ -63,7 +66,9 @@ public class Snake extends MultiCelledGameObject {
     }
 
     public void addHead(Cell cell) {
-        snakeCells.getFirst().draw(getRegions(), SNAKE_CLASS_NAME);
+        if (!snakeCells.isEmpty()) {
+            snakeCells.getFirst().draw(getRegions(), SNAKE_CLASS_NAME);
+        }
         cell.draw(getRegions(), HEAD_CLASS_NAME);
         snakeCells.addFirst(cell);
     }

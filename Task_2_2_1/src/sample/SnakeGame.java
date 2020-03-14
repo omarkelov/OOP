@@ -12,6 +12,7 @@ import sample.java.observer.EventManager;
 public class SnakeGame extends Application {
 
     public static final String APP_CLOSING = "app_closing";
+    public static final String FOOD_EATEN = "food_eaten";
     public static final String SNAKE_DEATH = "snake_death";
 
     private static SnakeGame instance;
@@ -19,11 +20,12 @@ public class SnakeGame extends Application {
     private EventManager eventManager;
 
     private Stage stage;
+    private Controller controller;
 
     public SnakeGame() {
         instance = this;
 
-        eventManager = new EventManager(APP_CLOSING, SNAKE_DEATH);
+        eventManager = new EventManager(APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
     }
 
     public static SnakeGame getInstance() {
@@ -56,12 +58,15 @@ public class SnakeGame extends Application {
             fxmlLoader.setController(controller);
             Parent root = fxmlLoader.load();
 
+            if (this.controller != null) {
+                this.controller.dispose();
+            }
+            this.controller = controller;
+
             if (stage.getScene() == null) {
                 stage.setTitle("Snake");
                 stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
             } else {
-                Controller oldController = ((FXMLLoader) stage.getScene().getUserData()).getController();
-                oldController.dispose();
                 stage.getScene().setRoot(root);
             }
 
