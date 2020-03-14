@@ -30,6 +30,8 @@ import static sample.SnakeGame.SNAKE_DEATH;
 public class GameController implements Controller, EventListener {
 
     private static final String FXML_FILE_NAME = "game.fxml";
+    private static final String PAUSE_TEXT = "⏸";
+    private static final String PLAY_TEXT = "⏵";
 
     @FXML private Button menuButton;
     @FXML private Button restartButton;
@@ -98,7 +100,7 @@ public class GameController implements Controller, EventListener {
 
         restartButton.setDisable(true);
         pauseButton.setDisable(true);
-        pauseButton.setText("⏸");
+        pauseButton.setText(PAUSE_TEXT);
 
         currentScore = worldProperties.getSnakeCells().size();
         currentScoreLabel.setText(currentScore + "");
@@ -126,7 +128,7 @@ public class GameController implements Controller, EventListener {
         world = new World(regions, worldProperties);
     }
 
-    private class KeyReleasedEventHandler implements EventHandler<KeyEvent> {
+    private class NavigationKeyEventHandler implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {
             switch (keyEvent.getCode()) {
@@ -140,28 +142,37 @@ public class GameController implements Controller, EventListener {
                     onPauseButtonClick();
                     break;
             }
+        }
+    }
 
+    private class GameplayKeyEventHandler implements EventHandler<KeyEvent> {
+        @Override
+        public void handle(KeyEvent keyEvent) {
             if (gamePaused) {
                 return;
             }
 
+            boolean expectedKey = true;
+
             switch (keyEvent.getCode()) {
                 case W: case UP:
                     world.moveSnakeUp();
-                    startGameIfNotStarted();
                     break;
                 case S: case DOWN:
                     world.moveSnakeDown();
-                    startGameIfNotStarted();
                     break;
                 case D: case RIGHT:
                     world.moveSnakeRight();
-                    startGameIfNotStarted();
                     break;
                 case A: case LEFT:
                     world.moveSnakeLeft();
-                    startGameIfNotStarted();
                     break;
+                default:
+                    expectedKey = false;
+            }
+
+            if (!gameStarted && expectedKey) {
+                startGame();
             }
         }
     }
@@ -197,16 +208,14 @@ public class GameController implements Controller, EventListener {
         }
     }
 
-    private void startGameIfNotStarted() {
-        if (!gameStarted) {
-            System.out.println("startGame");
+    private void startGame() {
+        System.out.println("startGame");
 
-            restartButton.setDisable(false);
-            pauseButton.setDisable(false);
+        restartButton.setDisable(false);
+        pauseButton.setDisable(false);
 
-            activateGame();
-            gameStarted = true;
-        }
+        activateGame();
+        gameStarted = true;
     }
 
     private void finishGame(boolean isWin) {
@@ -231,7 +240,7 @@ public class GameController implements Controller, EventListener {
 
         System.out.println("pauseGame");
 
-        pauseButton.setText("⏵");
+        pauseButton.setText(PLAY_TEXT);
 
         worldUpdateExecutor.shutdown();
         gamePaused = true;
@@ -244,7 +253,7 @@ public class GameController implements Controller, EventListener {
 
         System.out.println("unpauseGame");
 
-        pauseButton.setText("⏸");
+        pauseButton.setText(PAUSE_TEXT);
 
         activateGame();
         gamePaused = false;
@@ -261,7 +270,8 @@ public class GameController implements Controller, EventListener {
     public void runAfterSceneSet(Scene scene) {
         System.out.println("runAfterSceneSet");
 
-        scene.setOnKeyReleased(new KeyReleasedEventHandler());
+        scene.setOnKeyReleased(new NavigationKeyEventHandler());
+        scene.setOnKeyPressed(new GameplayKeyEventHandler());
         playingField.requestFocus();
     }
 
