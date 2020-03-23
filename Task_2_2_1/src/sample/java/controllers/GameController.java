@@ -65,9 +65,8 @@ public class GameController implements Controller, EventListener {
     private WorldProperties worldProperties;
     private World world;
 
-    private boolean gameStarted;  // change to states?
-    private boolean gamePaused;   // change to states?
-    private boolean gameFinished; // change to states?
+    private enum State { NOT_PLAYING, PLAYING, PAUSED, FINISHED }
+    private State state;
 
     private int currentScore;
     private int goalScore;
@@ -143,7 +142,7 @@ public class GameController implements Controller, EventListener {
             }
         }
 
-        gameStarted = gamePaused = gameFinished = false;
+        state = State.NOT_PLAYING;
 
         world = new World(regions, worldProperties);
     }
@@ -171,7 +170,7 @@ public class GameController implements Controller, EventListener {
     private class GameplayKeyEventHandler implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {
-            if (gamePaused) {
+            if (state == State.PAUSED) {
                 return;
             }
 
@@ -194,7 +193,7 @@ public class GameController implements Controller, EventListener {
                     expectedKey = false;
             }
 
-            if (!gameStarted && expectedKey) {
+            if (state == State.NOT_PLAYING && expectedKey) {
                 startGame();
             }
         }
@@ -203,7 +202,7 @@ public class GameController implements Controller, EventListener {
     private void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        if (getUserConfirmation()) {
+        if (getUserConfirmationIfNeeded()) {
             System.out.println("getUserConfirmation() == true");
 
             SnakeGame.getInstance().getSceneManager().changeScene(new MenuController());
@@ -213,20 +212,32 @@ public class GameController implements Controller, EventListener {
     private void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        if (getUserConfirmation()) {
+        if (getUserConfirmationIfNeeded()) {
             System.out.println("getUserConfirmation() == true");
 
             SnakeGame.getInstance().getSceneManager().changeScene(new HelpController());
         }
     }
 
-    private boolean getUserConfirmation() {
+    private boolean getUserConfirmationIfNeeded() {
+        if (state == State.NOT_PLAYING || state == State.FINISHED) {
+            return true;
+        }
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
         alert.setHeaderText(CONFIRMATION_HEADER);
 
-        onPauseButtonClick();
+        boolean switchState = state == State.PLAYING;
+
+        if (switchState) {
+            pauseGame();
+        }
+
         alert.showAndWait();
-        onPauseButtonClick();
+
+        if (switchState) {
+            unpauseGame();
+        }
 
         return alert.getResult() == ButtonType.YES;
     }
@@ -234,7 +245,7 @@ public class GameController implements Controller, EventListener {
     private void onRestartButtonClick() {
         System.out.println("onRestartButtonClick");
 
-        if (!gameStarted) {
+        if (state == State.NOT_PLAYING) {
             return;
         }
 
@@ -249,9 +260,9 @@ public class GameController implements Controller, EventListener {
     private void onPauseButtonClick() {
         System.out.println("onPauseButtonClick");
 
-        if (!gamePaused) {
+        if (state == State.PLAYING) {
             pauseGame();
-        } else {
+        } else if (state == State.PAUSED) {
             unpauseGame();
         }
     }
@@ -263,7 +274,7 @@ public class GameController implements Controller, EventListener {
         pauseButton.setDisable(false);
 
         activateGame();
-        gameStarted = true;
+        state = State.PLAYING;
     }
 
     private void finishGame(boolean isWin) {
@@ -272,7 +283,7 @@ public class GameController implements Controller, EventListener {
         pauseButton.setDisable(true);
 
         worldUpdateExecutor.shutdown();
-        gameFinished = true;
+        state = State.FINISHED;
 
         if (isWin) {
             System.out.println("Win");
@@ -285,29 +296,21 @@ public class GameController implements Controller, EventListener {
     }
 
     private void pauseGame() {
-        if (!gameStarted || gameFinished) {
-            return;
-        }
-
         System.out.println("pauseGame");
 
         pauseButton.setText(PLAY_TEXT);
 
         worldUpdateExecutor.shutdown();
-        gamePaused = true;
+        state = State.PAUSED;
     }
 
     private void unpauseGame() {
-        if (!gameStarted || gameFinished) {
-            return;
-        }
-
         System.out.println("unpauseGame");
 
         pauseButton.setText(PAUSE_TEXT);
 
         activateGame();
-        gamePaused = false;
+        state = State.PLAYING;
     }
 
     private void activateGame() {
