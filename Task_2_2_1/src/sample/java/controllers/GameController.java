@@ -3,7 +3,6 @@ package sample.java.controllers;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -17,6 +16,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
 import sample.java.SnakeGame;
+import sample.java.controllers.gamecontrollerstates.FinishedState;
+import sample.java.controllers.gamecontrollerstates.PausedState;
+import sample.java.controllers.gamecontrollerstates.PlayingState;
+import sample.java.controllers.gamecontrollerstates.ReadyState;
+import sample.java.controllers.gamecontrollerstates.State;
 import sample.java.game.World;
 import sample.java.game.WorldProperties;
 import sample.java.util.observer.EventListener;
@@ -46,6 +50,8 @@ public class GameController implements Controller, EventListener {
     private static final String CONFIRMATION_QUESTION =
         "Game progress will be lost. Are you sure you want to continue?";
 
+    private Parent root;
+
     @FXML private Button menuButton;
     @FXML private Button helpButton;
     @FXML private Button restartButton;
@@ -65,7 +71,6 @@ public class GameController implements Controller, EventListener {
     private WorldProperties worldProperties;
     private World world;
 
-    private enum State { NOT_PLAYING, PLAYING, PAUSED, FINISHED }
     private State state;
 
     private int currentScore;
@@ -79,10 +84,12 @@ public class GameController implements Controller, EventListener {
 
     @FXML
     private void initialize() {
-        menuButton.setOnAction(actionEvent -> onMenuButtonClick());
-        helpButton.setOnAction(actionEvent -> onHelpButtonClick());
-        restartButton.setOnAction(actionEvent -> onRestartButtonClick());
-        pauseButton.setOnAction(actionEvent -> onPauseButtonClick());
+        state = new ReadyState(this);
+
+        menuButton.setOnAction(actionEvent -> state.onMenuButtonClick());
+        helpButton.setOnAction(actionEvent -> state.onHelpButtonClick());
+        restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
+        pauseButton.setOnAction(actionEvent -> state.onPauseButtonClick());
 
         goalScore = worldProperties.getGoal();
         goalScoreLabel.setText(goalScore + "");
@@ -114,8 +121,12 @@ public class GameController implements Controller, EventListener {
         initGame();
     }
 
-    private void initGame() {
+    public void initGame() {
         System.out.println("initGame");
+
+        if (worldUpdateExecutor != null) {
+            worldUpdateExecutor.shutdownNow();
+        }
 
         popup.getStyleClass().add(INVISIBLE_CLASS_NAME);
 
@@ -126,6 +137,7 @@ public class GameController implements Controller, EventListener {
         currentScore = worldProperties.getSnakeCells().size();
         currentScoreLabel.setText(currentScore + "");
 
+        playingField.getChildren().clear();
         int w = worldProperties.getWidth();
         int h = worldProperties.getHeight();
         Region[][] regions = new Region[h][w];
@@ -142,136 +154,108 @@ public class GameController implements Controller, EventListener {
             }
         }
 
-        state = State.NOT_PLAYING;
+        if (root != null) {
+            changeState(new ReadyState(this));
+        }
 
         world = new World(regions, worldProperties);
     }
 
-    private class NavigationKeyEventHandler implements EventHandler<KeyEvent> {
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            switch (keyEvent.getCode()) {
-                case M: case ESCAPE:
-                    onMenuButtonClick();
-                    break;
-                case H:
-                    onHelpButtonClick();
-                    break;
-                case R:
-                    onRestartButtonClick();
-                    break;
-                case P:
-                    onPauseButtonClick();
-                    break;
-            }
+    private void handleNavigationInput(KeyEvent keyEvent) {
+        System.out.println("handleNavigationInput");
+
+        switch (keyEvent.getCode()) {
+            case M: case ESCAPE:
+                state.onMenuButtonClick();
+                break;
+            case H:
+                state.onHelpButtonClick();
+                break;
+            case R:
+                state.onRestartButtonClick();
+                break;
+            case P:
+                state.onPauseButtonClick();
+                break;
         }
     }
 
-    private class GameplayKeyEventHandler implements EventHandler<KeyEvent> {
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            if (state == State.PAUSED) {
-                return;
-            }
-
-            boolean expectedKey = true;
-
-            switch (keyEvent.getCode()) {
-                case W: case UP:
-                    world.moveSnakeUp();
-                    break;
-                case S: case DOWN:
-                    world.moveSnakeDown();
-                    break;
-                case D: case RIGHT:
-                    world.moveSnakeRight();
-                    break;
-                case A: case LEFT:
-                    world.moveSnakeLeft();
-                    break;
-                default:
-                    expectedKey = false;
-            }
-
-            if (state == State.NOT_PLAYING && expectedKey) {
-                startGame();
-            }
+    public boolean moveSnake(KeyEvent keyEvent) {
+        switch (keyEvent.getCode()) {
+            case W: case UP:
+                System.out.println("moveSnakeUp");
+                world.moveSnakeUp();
+                return true;
+            case S: case DOWN:
+                System.out.println("moveSnakeDown");
+                world.moveSnakeDown();
+                return true;
+            case D: case RIGHT:
+                System.out.println("moveSnakeRight");
+                world.moveSnakeRight();
+                return true;
+            case A: case LEFT:
+                System.out.println("moveSnakeLeft");
+                world.moveSnakeLeft();
+                return true;
+            default:
+                return false;
         }
     }
 
-    private void onMenuButtonClick() {
-        System.out.println("onMenuButtonClick");
-
-        if (getUserConfirmationIfNeeded()) {
-            System.out.println("getUserConfirmation() == true");
-
-            SnakeGame.getInstance().getSceneManager().changeScene(new MenuController());
-        }
-    }
-
-    private void onHelpButtonClick() {
-        System.out.println("onHelpButtonClick");
-
-        if (getUserConfirmationIfNeeded()) {
-            System.out.println("getUserConfirmation() == true");
-
-            SnakeGame.getInstance().getSceneManager().changeScene(new HelpController());
-        }
-    }
-
-    private void onRestartButtonClick() {
-        System.out.println("onRestartButtonClick");
-
-        if (state == State.NOT_PLAYING) {
-            return;
-        }
-
-        System.out.println("restartGame");
-
-        playingField.getChildren().clear();
-        worldUpdateExecutor.shutdownNow();
-
-        initGame();
-    }
-
-    private void onPauseButtonClick() {
-        System.out.println("onPauseButtonClick");
-
-        if (state == State.PLAYING) {
-            pauseGame();
-        } else if (state == State.PAUSED) {
-            unpauseGame();
-        }
-    }
-
-    private boolean getUserConfirmationIfNeeded() {
-        if (state == State.NOT_PLAYING || state == State.FINISHED) {
-            return true;
-        }
-
+    public boolean confirmLeaving() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
         alert.setHeaderText(CONFIRMATION_HEADER);
 
-        boolean isPlaying = state == State.PLAYING;
-
-        if (isPlaying) {
-            pauseGame();
-        }
-
         alert.showAndWait();
-
-        if (isPlaying) {
-            unpauseGame();
-        }
 
         return alert.getResult() == ButtonType.YES;
     }
 
-    private void startGame() {
+    public void switchToMenu() {
+        System.out.println("switchToMenu");
+
+        SnakeGame.getInstance().getSceneManager().changeScene(new MenuController());
+    }
+
+    public void switchToHelp() {
+        System.out.println("switchToHelp");
+
+        SnakeGame.getInstance().getSceneManager().changeScene(new HelpController());
+    }
+
+    public void startGame() {
         System.out.println("startGame");
 
         restartButton.setDisable(false);
         pauseButton.setDisable(false);
+
+        activateGame();
+    }
+
+    public void activateGame() {
+        System.out.println("activateGame");
+
+        worldUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
+        worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
+
+        changeState(new PlayingState(this));
+    }
+
+    public void pauseGame() {
+        System.out.println("pauseGame");
+
+        pauseButton.setText(PLAY_TEXT);
+
+        worldUpdateExecutor.shutdown();
+
+        changeState(new PausedState(this));
+    }
+
+    public void unpauseGame() {
+        System.out.println("unpauseGame");
+
+        pauseButton.setText(PAUSE_TEXT);
 
         activateGame();
     }
@@ -282,7 +266,6 @@ public class GameController implements Controller, EventListener {
         pauseButton.setDisable(true);
 
         worldUpdateExecutor.shutdown();
-        state = State.FINISHED;
 
         if (isWin) {
             System.out.println("Win");
@@ -292,40 +275,24 @@ public class GameController implements Controller, EventListener {
 
         Platform.runLater(() -> popupLabel.setText(isWin ? WIN_TEXT : LOSE_TEXT));
         popup.getStyleClass().remove(INVISIBLE_CLASS_NAME);
+
+        changeState(new FinishedState(this));
     }
 
-    private void pauseGame() {
-        System.out.println("pauseGame");
-
-        pauseButton.setText(PLAY_TEXT);
-
-        worldUpdateExecutor.shutdown();
-        state = State.PAUSED;
-    }
-
-    private void unpauseGame() {
-        System.out.println("unpauseGame");
-
-        pauseButton.setText(PAUSE_TEXT);
-
-        activateGame();
-    }
-
-    private void activateGame() {
-        System.out.println("activateGame");
-
-        worldUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
-        worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
-
-        state = State.PLAYING;
+    private void changeState(State state) {
+        root.setOnKeyPressed(state::handleGameplayInput);
+        this.state = state;
     }
 
     @Override
     public void runAfterSceneSet(Parent root) {
         System.out.println("runAfterSceneSet");
 
-        root.setOnKeyReleased(new NavigationKeyEventHandler());
-        root.setOnKeyPressed(new GameplayKeyEventHandler());
+        this.root = root;
+
+        root.setOnKeyReleased(this::handleNavigationInput);
+        root.setOnKeyPressed(state::handleGameplayInput);
+
         root.requestFocus();
     }
 
