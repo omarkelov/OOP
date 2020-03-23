@@ -17,19 +17,19 @@ public class PausedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        switchScene(MenuController.class);
+        switchScene(new MenuController());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        switchScene(HelpController.class);
+        switchScene(new HelpController());
     }
 
-    private void switchScene(Class<? extends Controller> controllerClass) {
+    private void switchScene(Controller controller) {
         if (gameController.confirmLeaving()) {
-            gameController.switchScene(controllerClass);
+            gameController.switchScene(controller);
         }
     }
 

@@ -30,7 +30,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static sample.java.game.Cell.DARK_BACKGROUND_CLASS_NAME;
-import static sample.java.util.ErrorBuilder.buildErrorAlert;
 import static sample.java.util.observer.Events.APP_CLOSING;
 import static sample.java.util.observer.Events.FOOD_EATEN;
 import static sample.java.util.observer.Events.SNAKE_DEATH;
@@ -77,20 +76,17 @@ public class GameController implements Controller, EventListener {
     private int currentScore;
     private int goalScore;
 
-    public GameController() {
-        SnakeGame.getInstance().getEventManager().subscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
-
-        worldProperties = new WorldProperties();
-    }
-
     @FXML
     private void initialize() {
         state = new ReadyState(this);
+        SnakeGame.getInstance().getEventManager().subscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
 
         menuButton.setOnAction(actionEvent -> state.onMenuButtonClick());
         helpButton.setOnAction(actionEvent -> state.onHelpButtonClick());
         restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
         pauseButton.setOnAction(actionEvent -> state.onPauseButtonClick());
+
+        worldProperties = new WorldProperties();
 
         goalScore = worldProperties.getGoal();
         goalScoreLabel.setText(goalScore + "");
@@ -213,16 +209,10 @@ public class GameController implements Controller, EventListener {
         return alert.getResult() == ButtonType.YES;
     }
 
-    public void switchScene(Class<? extends Controller> controllerClass) {
+    public void switchScene(Controller controller) {
         System.out.println("switchToMenu");
 
-        try {
-            SnakeGame.getInstance().getSceneManager().changeScene(controllerClass.newInstance());
-        } catch (InstantiationException|IllegalAccessException e) {
-            e.printStackTrace();
-
-            buildErrorAlert("class loading").showAndWait();
-        }
+        SnakeGame.getInstance().getSceneManager().changeScene(controller);
     }
 
     public void startGame() {

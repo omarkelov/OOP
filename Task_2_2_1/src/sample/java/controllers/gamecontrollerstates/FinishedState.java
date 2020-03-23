@@ -16,14 +16,14 @@ public class FinishedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        gameController.switchScene(MenuController.class);
+        gameController.switchScene(new MenuController());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        gameController.switchScene(HelpController.class);
+        gameController.switchScene(new HelpController());
     }
 
     @Override
