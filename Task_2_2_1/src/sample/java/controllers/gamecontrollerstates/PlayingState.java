@@ -1,10 +1,7 @@
 package sample.java.controllers.gamecontrollerstates;
 
 import javafx.scene.input.KeyEvent;
-import sample.java.controllers.Controller;
 import sample.java.controllers.GameController;
-import sample.java.controllers.HelpController;
-import sample.java.controllers.MenuController;
 
 public class PlayingState implements State {
 
@@ -25,21 +22,23 @@ public class PlayingState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        switchScene(MenuController.class);
+        gameController.pauseGame();
+
+        if (gameController.confirmLeaving()) {
+            gameController.switchToMenu();
+        } else {
+            gameController.unpauseGame();
+        }
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        switchScene(HelpController.class);
-    }
-
-    private void switchScene(Class<? extends Controller> controllerClass) {
         gameController.pauseGame();
 
         if (gameController.confirmLeaving()) {
-            gameController.switchScene(controllerClass);
+            gameController.switchToHelp();
         } else {
             gameController.unpauseGame();
         }

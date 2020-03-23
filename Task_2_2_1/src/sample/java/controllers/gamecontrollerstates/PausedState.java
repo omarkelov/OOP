@@ -1,9 +1,6 @@
 package sample.java.controllers.gamecontrollerstates;
 
-import sample.java.controllers.Controller;
 import sample.java.controllers.GameController;
-import sample.java.controllers.HelpController;
-import sample.java.controllers.MenuController;
 
 public class PausedState implements State {
 
@@ -17,19 +14,17 @@ public class PausedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        switchScene(MenuController.class);
+        if (gameController.confirmLeaving()) {
+            gameController.switchToMenu();
+        }
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        switchScene(HelpController.class);
-    }
-
-    private void switchScene(Class<? extends Controller> controllerClass) {
         if (gameController.confirmLeaving()) {
-            gameController.switchScene(controllerClass);
+            gameController.switchToHelp();
         }
     }
 

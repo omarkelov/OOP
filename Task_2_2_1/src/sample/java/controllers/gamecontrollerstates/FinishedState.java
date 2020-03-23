@@ -1,8 +1,6 @@
 package sample.java.controllers.gamecontrollerstates;
 
 import sample.java.controllers.GameController;
-import sample.java.controllers.HelpController;
-import sample.java.controllers.MenuController;
 
 public class FinishedState implements State {
 
@@ -16,14 +14,14 @@ public class FinishedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        gameController.switchScene(MenuController.class);
+        gameController.switchToMenu();
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        gameController.switchScene(HelpController.class);
+        gameController.switchToHelp();
     }
 
     @Override
