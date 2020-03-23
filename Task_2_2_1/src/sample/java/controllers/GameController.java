@@ -219,29 +219,6 @@ public class GameController implements Controller, EventListener {
         }
     }
 
-    private boolean getUserConfirmationIfNeeded() {
-        if (state == State.NOT_PLAYING || state == State.FINISHED) {
-            return true;
-        }
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
-        alert.setHeaderText(CONFIRMATION_HEADER);
-
-        boolean switchState = state == State.PLAYING;
-
-        if (switchState) {
-            pauseGame();
-        }
-
-        alert.showAndWait();
-
-        if (switchState) {
-            unpauseGame();
-        }
-
-        return alert.getResult() == ButtonType.YES;
-    }
-
     private void onRestartButtonClick() {
         System.out.println("onRestartButtonClick");
 
@@ -267,6 +244,29 @@ public class GameController implements Controller, EventListener {
         }
     }
 
+    private boolean getUserConfirmationIfNeeded() {
+        if (state == State.NOT_PLAYING || state == State.FINISHED) {
+            return true;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
+        alert.setHeaderText(CONFIRMATION_HEADER);
+
+        boolean isPlaying = state == State.PLAYING;
+
+        if (isPlaying) {
+            pauseGame();
+        }
+
+        alert.showAndWait();
+
+        if (isPlaying) {
+            unpauseGame();
+        }
+
+        return alert.getResult() == ButtonType.YES;
+    }
+
     private void startGame() {
         System.out.println("startGame");
 
@@ -274,7 +274,6 @@ public class GameController implements Controller, EventListener {
         pauseButton.setDisable(false);
 
         activateGame();
-        state = State.PLAYING;
     }
 
     private void finishGame(boolean isWin) {
@@ -310,7 +309,6 @@ public class GameController implements Controller, EventListener {
         pauseButton.setText(PAUSE_TEXT);
 
         activateGame();
-        state = State.PLAYING;
     }
 
     private void activateGame() {
@@ -318,6 +316,8 @@ public class GameController implements Controller, EventListener {
 
         worldUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
         worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
+
+        state = State.PLAYING;
     }
 
     @Override
