@@ -38,7 +38,7 @@ public class Snake extends MultiCelledGameObject {
         snakeCells.getFirst().draw(getRegions(), HEAD_CLASS_NAME);
     }
 
-    public void kill() {
+    public void die() {
         for (Cell cell : snakeCells) {
             cell.draw(getRegions(), DEAD_SNAKE_CLASS_NAME);
         }

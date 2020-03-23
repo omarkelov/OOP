@@ -34,7 +34,7 @@ public class SnakeGame extends Application {
 
 //        sceneManager.changeScene(new MenuController());
 //        sceneManager.changeScene(new HelpController());
-        sceneManager.changeScene(new GameController());
+        sceneManager.changeScene(new GameController(1));
 
         primaryStage.show();
     }

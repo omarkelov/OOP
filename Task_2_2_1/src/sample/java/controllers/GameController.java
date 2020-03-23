@@ -50,8 +50,6 @@ public class GameController implements Controller, EventListener {
     private static final String CONFIRMATION_QUESTION =
         "Game progress will be lost. Are you sure you want to continue?";
 
-    private Parent root;
-
     @FXML private Button menuButton;
     @FXML private Button helpButton;
     @FXML private Button restartButton;
@@ -66,6 +64,10 @@ public class GameController implements Controller, EventListener {
     @FXML private GridPane popup;
     @FXML private Label popupLabel;
 
+    private int level;
+
+    private Parent root;
+
     private ScheduledExecutorService worldUpdateExecutor;
 
     private WorldProperties worldProperties;
@@ -75,6 +77,10 @@ public class GameController implements Controller, EventListener {
 
     private int currentScore;
     private int goalScore;
+
+    public GameController(int level) {
+        this.level = level;
+    }
 
     @FXML
     private void initialize() {
@@ -86,7 +92,7 @@ public class GameController implements Controller, EventListener {
         restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
         pauseButton.setOnAction(actionEvent -> state.onPauseButtonClick());
 
-        worldProperties = new WorldProperties();
+        worldProperties = new WorldProperties(level);
 
         goalScore = worldProperties.getGoal();
         goalScoreLabel.setText(goalScore + "");
@@ -279,12 +285,11 @@ public class GameController implements Controller, EventListener {
     public void runAfterSceneSet(Parent root) {
         System.out.println("runAfterSceneSet");
 
-        this.root = root;
-
         root.setOnKeyReleased(this::handleNavigationInput);
         root.setOnKeyPressed(state::handleGameplayInput);
 
         root.requestFocus();
+        this.root = root;
     }
 
     @Override

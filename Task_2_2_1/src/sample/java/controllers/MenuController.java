@@ -14,7 +14,7 @@ public class MenuController implements Controller {
     @FXML
     private void initialize() {
         playButton.setOnAction(actionEvent ->
-            SnakeGame.getInstance().getSceneManager().changeScene(new GameController()));
+            SnakeGame.getInstance().getSceneManager().changeScene(new GameController(1)));
         helpButton.setOnAction(actionEvent
             -> SnakeGame.getInstance().getSceneManager().changeScene(new HelpController()));
     }

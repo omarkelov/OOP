@@ -48,7 +48,7 @@ public class World {
             snake.isColliding(newHeadCell) ||
             obstacle.isColliding(newHeadCell)
         ) {
-            snake.kill();
+            snake.die();
             SnakeGame.getInstance().getEventManager().notify(SNAKE_DEATH);
 
             return;
