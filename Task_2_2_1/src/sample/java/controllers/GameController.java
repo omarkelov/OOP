@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static sample.java.game.Cell.DARK_BACKGROUND_CLASS_NAME;
+import static sample.java.util.ErrorBuilder.buildErrorAlert;
 import static sample.java.util.observer.Events.APP_CLOSING;
 import static sample.java.util.observer.Events.FOOD_EATEN;
 import static sample.java.util.observer.Events.SNAKE_DEATH;
@@ -212,16 +213,16 @@ public class GameController implements Controller, EventListener {
         return alert.getResult() == ButtonType.YES;
     }
 
-    public void switchToMenu() {
+    public void switchScene(Class<? extends Controller> controllerClass) {
         System.out.println("switchToMenu");
 
-        SnakeGame.getInstance().getSceneManager().changeScene(new MenuController());
-    }
+        try {
+            SnakeGame.getInstance().getSceneManager().changeScene(controllerClass.newInstance());
+        } catch (InstantiationException|IllegalAccessException e) {
+            e.printStackTrace();
 
-    public void switchToHelp() {
-        System.out.println("switchToHelp");
-
-        SnakeGame.getInstance().getSceneManager().changeScene(new HelpController());
+            buildErrorAlert("class loading").showAndWait();
+        }
     }
 
     public void startGame() {
