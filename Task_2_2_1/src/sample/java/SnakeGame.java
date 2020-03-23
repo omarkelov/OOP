@@ -3,6 +3,8 @@ package sample.java;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import sample.java.controllers.GameController;
+import sample.java.controllers.HelpController;
+import sample.java.controllers.MenuController;
 import sample.java.util.SceneManager;
 import sample.java.util.observer.EventManager;
 
@@ -31,6 +33,7 @@ public class SnakeGame extends Application {
         sceneManager = new SceneManager(primaryStage);
 
 //        sceneManager.changeScene(new MenuController());
+//        sceneManager.changeScene(new HelpController());
         sceneManager.changeScene(new GameController());
 
         primaryStage.show();

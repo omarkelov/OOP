@@ -6,26 +6,31 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-
-<BorderPane stylesheets="@../css/game.css"
-            xmlns="http://javafx.com/javafx/100.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1">
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx/100.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            styleClass="root">
+   <stylesheets>
+      <URL value="@../css/main.css"/>
+      <URL value="@../css/game.css"/>
+   </stylesheets>
    <top>
-      <HBox styleClass="top-bar">
+      <HBox styleClass="nav-bar">
          <Button fx:id="menuButton" text="Menu"/>
-         <Button fx:id="restartButton" text="Restart Game"/>
+         <Button fx:id="helpButton" text="Help"/>
          <Region HBox.hgrow="ALWAYS"/>
          <Label styleClass="score">Score:</Label>
          <Label styleClass="score" fx:id="currentScoreLabel">1</Label>
          <Label styleClass="score">/</Label>
          <Label styleClass="score" fx:id="goalScoreLabel">?</Label>
          <Region HBox.hgrow="ALWAYS"/>
+         <Button fx:id="restartButton" text="Restart Game"/>
          <Button fx:id="pauseButton"/>
       </HBox>
    </top>
    <center>
-      <GridPane fx:id="wrapper" styleClass="wrapper">
-         <GridPane fx:id="playingField" styleClass="playing-field"><!--Regions--></GridPane>
+      <GridPane fx:id="wrapper" styleClass="playing-field-wrapper">
+         <GridPane fx:id="playingField" styleClass="playing-field"></GridPane>
          <GridPane fx:id="popup">
             <Label fx:id="popupLabel" styleClass="popup-label">You win!</Label>
          </GridPane>

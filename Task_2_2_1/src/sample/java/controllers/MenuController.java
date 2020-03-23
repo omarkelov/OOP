@@ -15,8 +15,8 @@ public class MenuController implements Controller {
     private void initialize() {
         playButton.setOnAction(actionEvent ->
             SnakeGame.getInstance().getSceneManager().changeScene(new GameController()));
-//        helpButton.setOnAction(actionEvent
-//            -> SnakeGame.getInstance().getSceneManager().changeScene(new HelpController()));
+        helpButton.setOnAction(actionEvent
+            -> SnakeGame.getInstance().getSceneManager().changeScene(new HelpController()));
     }
 
     @Override

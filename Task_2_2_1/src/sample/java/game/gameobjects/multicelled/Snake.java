@@ -11,8 +11,8 @@ import java.util.Queue;
 public class Snake extends MultiCelledGameObject {
 
     private static final String SNAKE_CLASS_NAME = "snake";
-    private static final String HEAD_CLASS_NAME = "head";
-    private static final String DEAD_SNAKE_CLASS_NAME = "dead-snake";
+    private static final String HEAD_CLASS_NAME = "snake-head";
+    private static final String DEAD_SNAKE_CLASS_NAME = "snake-dead";
 
     public enum Direction {
         UNDEFINED, UP, RIGHT, DOWN, LEFT;

@@ -2,22 +2,6 @@ Button {
     -fx-focus-traversable: false;
 }
 
-.invisible {
-    visibility: hidden;
-}
-
-BorderPane {
-    -fx-pref-width: 1080px;
-    -fx-pref-height: 720px;
-    -fx-font-size: 20px;
-}
-
-.top-bar {
-    -fx-padding: 10px 30px;
-    -fx-spacing: 10px;
-    -fx-background-color: rgba(0, 0, 0, 0.1);
-}
-
 .score {
     -fx-font-size: 30px;
 }
@@ -26,7 +10,7 @@ GridPane {
     -fx-alignment: center;
 }
 
-.wrapper {
+.playing-field-wrapper {
     -fx-background-color: #578a34;
 }
 
@@ -40,7 +24,7 @@ GridPane {
     -fx-text-fill: white;
 }
 
-.dark {
+.dark-background {
     -fx-background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -48,11 +32,11 @@ GridPane {
     -fx-background-color: #4774ea;
 }
 
-.dead-snake {
+.snake-dead {
     -fx-background-color: yellow;
 }
 
-.head {
+.snake-head {
     -fx-background-color: #302cd2;
 }
 

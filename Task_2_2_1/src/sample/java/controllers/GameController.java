@@ -6,7 +6,9 @@ import javafx.beans.binding.NumberBinding;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
@@ -23,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static sample.java.game.Cell.DARK_BACKGROUND_CLASS_NAME;
 import static sample.java.util.observer.Events.APP_CLOSING;
 import static sample.java.util.observer.Events.FOOD_EATEN;
 import static sample.java.util.observer.Events.SNAKE_DEATH;
@@ -39,7 +42,12 @@ public class GameController implements Controller, EventListener {
     private static final String WIN_TEXT = "You win!";
     private static final String LOSE_TEXT = "You lose!";
 
+    private static final String CONFIRMATION_HEADER = "Leave the game?";
+    private static final String CONFIRMATION_QUESTION =
+        "Game progress will be lost. Are you sure you want to continue?";
+
     @FXML private Button menuButton;
+    @FXML private Button helpButton;
     @FXML private Button restartButton;
     @FXML private Button pauseButton;
 
@@ -73,6 +81,7 @@ public class GameController implements Controller, EventListener {
     @FXML
     private void initialize() {
         menuButton.setOnAction(actionEvent -> onMenuButtonClick());
+        helpButton.setOnAction(actionEvent -> onHelpButtonClick());
         restartButton.setOnAction(actionEvent -> onRestartButtonClick());
         pauseButton.setOnAction(actionEvent -> onPauseButtonClick());
 
@@ -126,7 +135,7 @@ public class GameController implements Controller, EventListener {
                 Region region = new Region();
 
                 if (i % 2 == j % 2) {
-                    region.getStyleClass().add("dark");
+                    region.getStyleClass().add(DARK_BACKGROUND_CLASS_NAME);
                 }
 
                 playingField.add(region, j, i);
@@ -143,8 +152,11 @@ public class GameController implements Controller, EventListener {
         @Override
         public void handle(KeyEvent keyEvent) {
             switch (keyEvent.getCode()) {
-                case ESCAPE:
+                case M: case ESCAPE:
                     onMenuButtonClick();
+                    break;
+                case H:
+                    onHelpButtonClick();
                     break;
                 case R:
                     onRestartButtonClick();
@@ -191,7 +203,32 @@ public class GameController implements Controller, EventListener {
     private void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        SnakeGame.getInstance().getSceneManager().changeScene(new MenuController());
+        if (getUserConfirmation()) {
+            System.out.println("getUserConfirmation() == true");
+
+            SnakeGame.getInstance().getSceneManager().changeScene(new MenuController());
+        }
+    }
+
+    private void onHelpButtonClick() {
+        System.out.println("onHelpButtonClick");
+
+        if (getUserConfirmation()) {
+            System.out.println("getUserConfirmation() == true");
+
+            SnakeGame.getInstance().getSceneManager().changeScene(new HelpController());
+        }
+    }
+
+    private boolean getUserConfirmation() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
+        alert.setHeaderText(CONFIRMATION_HEADER);
+
+        onPauseButtonClick();
+        alert.showAndWait();
+        onPauseButtonClick();
+
+        return alert.getResult() == ButtonType.YES;
     }
 
     private void onRestartButtonClick() {
