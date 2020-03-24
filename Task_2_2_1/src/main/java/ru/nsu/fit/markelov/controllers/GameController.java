@@ -38,10 +38,10 @@ public class GameController implements Controller, EventListener {
 
     private static final String FXML_FILE_NAME = "game.fxml";
 
+    private static final String INVISIBLE_CLASS_NAME = "invisible";
+
     private static final String PAUSE_TEXT = "\u23F8"; // ⏸
     private static final String PLAY_TEXT = "\u23F5"; // ⏵
-
-    private static final String INVISIBLE_CLASS_NAME = "invisible";
 
     private static final String WIN_TEXT = "You win!";
     private static final String LOSE_TEXT = "You lose!";
@@ -66,8 +66,6 @@ public class GameController implements Controller, EventListener {
 
     private int level;
 
-    private Parent root;
-
     private ScheduledExecutorService worldUpdateExecutor;
 
     private WorldProperties worldProperties;
@@ -84,7 +82,6 @@ public class GameController implements Controller, EventListener {
 
     @FXML
     private void initialize() {
-        state = new ReadyState(this);
         SnakeGame.getInstance().getEventManager().subscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
 
         menuButton.setOnAction(actionEvent -> state.onMenuButtonClick());
@@ -157,9 +154,7 @@ public class GameController implements Controller, EventListener {
             }
         }
 
-        if (root != null) {
-            changeState(new ReadyState(this));
-        }
+        changeState(new ReadyState(this));
 
         world = new World(regions, worldProperties);
     }
@@ -277,7 +272,6 @@ public class GameController implements Controller, EventListener {
     }
 
     private void changeState(State state) {
-        root.setOnKeyPressed(state::handleGameplayInput);
         this.state = state;
     }
 
@@ -286,10 +280,9 @@ public class GameController implements Controller, EventListener {
         System.out.println("runAfterSceneSet");
 
         root.setOnKeyReleased(this::handleNavigationInput);
-        root.setOnKeyPressed(state::handleGameplayInput);
+        root.setOnKeyPressed(keyEvent -> state.handleGameplayInput(keyEvent));
 
         root.requestFocus();
-        this.root = root;
     }
 
     @Override
