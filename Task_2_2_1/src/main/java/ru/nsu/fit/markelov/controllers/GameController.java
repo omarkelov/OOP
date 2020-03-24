@@ -38,8 +38,8 @@ public class GameController implements Controller, EventListener {
 
     private static final String FXML_FILE_NAME = "game.fxml";
 
-    private static final String PAUSE_TEXT = "⏸";
-    private static final String PLAY_TEXT = "⏵";
+    private static final String PAUSE_TEXT = "\u23F8"; // ⏸
+    private static final String PLAY_TEXT = "\u23F5"; // ⏵
 
     private static final String INVISIBLE_CLASS_NAME = "invisible";
 
