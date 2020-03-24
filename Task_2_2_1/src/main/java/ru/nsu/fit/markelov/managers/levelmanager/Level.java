@@ -5,19 +5,18 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
 import ru.nsu.fit.markelov.game.Cell;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+import ru.nsu.fit.markelov.util.validation.Validatable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
-import static ru.nsu.fit.markelov.util.ErrorBuilder.buildErrorAlert;
-
-public class Level {
+public class Level implements Validatable<Level> {
 
     private enum CellType {
 
@@ -47,13 +46,14 @@ public class Level {
     Deque<Cell> snakeCells;
     List<Cell> obstacleCells;
 
-    public Level(String imageFileName, String jsonFileName) {
+    public Level(String imageFileName, String jsonFileName) throws IOException {
         emptyCellsCount = 0;
         snakeCells = new LinkedList<>();
         obstacleCells = new LinkedList<>();
 
         try (FileInputStream iStream = new FileInputStream(imageFileName)) {
-            JSONObject levelJSONObject = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFileName))));
+            JSONObject levelJSONObject =
+                new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFileName))));
 
             goalScore = levelJSONObject.getInt("goalScore");
             delayBetweenMoves = levelJSONObject.getInt("delayBetweenMoves");
@@ -79,11 +79,23 @@ public class Level {
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            buildErrorAlert("level loading").showAndWait();
         }
+    }
+
+    @Override
+    public Level validate() throws IllegalInputException {
+        if (width < 2 ||
+            height < 2 ||
+            goalScore < 2 ||
+            emptyCellsCount < 3 ||
+            emptyCellsCount < goalScore ||
+            delayBetweenMoves < 20 ||
+            snakeCells.size() != 1
+        ) {
+            throw new IllegalInputException();
+        }
+
+        return this;
     }
 
     public int getWidth() {

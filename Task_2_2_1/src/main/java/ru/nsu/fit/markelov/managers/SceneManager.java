@@ -25,7 +25,8 @@ public class SceneManager {
     public void changeScene(Controller controller) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource(FXML_DIRECTORY + controller.getFXMLFileName()));
+            fxmlLoader.setLocation(getClass().getResource(
+                FXML_DIRECTORY + controller.getFXMLFileName()));
             fxmlLoader.setController(controller);
             Parent root = fxmlLoader.load();
 

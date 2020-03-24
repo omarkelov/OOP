@@ -3,9 +3,9 @@ package ru.nsu.fit.markelov;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import ru.nsu.fit.markelov.controllers.MenuController;
-import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.eventmanager.EventManager;
+import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
 import static ru.nsu.fit.markelov.managers.eventmanager.Events.APP_CLOSING;
 import static ru.nsu.fit.markelov.managers.eventmanager.Events.FOOD_EATEN;
@@ -35,8 +35,6 @@ public class SnakeGame extends Application {
         sceneManager = new SceneManager(primaryStage);
 
         sceneManager.changeScene(new MenuController());
-//        sceneManager.changeScene(new HelpController());
-//        sceneManager.changeScene(new GameController(3));
 
         primaryStage.show();
     }

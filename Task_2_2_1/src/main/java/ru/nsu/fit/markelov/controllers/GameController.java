@@ -100,7 +100,8 @@ public class GameController implements Controller, EventListener {
         int h = level.getHeight();
 
         final NumberBinding cellSize = Bindings
-            .when(Bindings.greaterThan(wrapper.widthProperty().divide(wrapper.heightProperty()), (double) w / h))
+            .when(Bindings.greaterThan(
+                wrapper.widthProperty().divide(wrapper.heightProperty()), (double) w / h))
             .then(wrapper.heightProperty().divide(h))
             .otherwise(wrapper.widthProperty().divide(w));
 

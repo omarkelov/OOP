@@ -1,13 +1,13 @@
 package ru.nsu.fit.markelov.managers.levelmanager;
 
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static ru.nsu.fit.markelov.util.ErrorBuilder.buildErrorAlert;
 
 public class LevelManager {
 
@@ -27,15 +27,18 @@ public class LevelManager {
                 .forEach(imagePath -> {
                     String levelName = getFileBaseName(imagePath.getFileName());
 
-                    levels.put(levelName, new Level(
-                        DIRECTORY + levelName + IMAGE_EXTENSION,
-                        DIRECTORY + levelName + DESCRIPTION_EXTENSION
-                    ));
+                    try {
+                        levels.put(levelName, new Level(DIRECTORY + levelName + IMAGE_EXTENSION,
+                            DIRECTORY + levelName + DESCRIPTION_EXTENSION).validate());
+                    } catch (IOException|IllegalInputException e) {
+                        e.printStackTrace();
+                        // just skipping this level
+                        // Alert will be shown in MenuController in case no levels are loaded
+                    }
                 });
         } catch (IOException e) {
             e.printStackTrace();
-
-            buildErrorAlert("levels loading").showAndWait();
+            // Alert will be shown in MenuController
         }
     }
 

@@ -23,7 +23,7 @@
    <center>
       <VBox styleClass="content">
          <Label fx:id="levelsLabel" styleClass="header">Levels</Label>
-         <ScrollPane styleClass="buttons-scroll-pane">
+         <ScrollPane fx:id="buttonsScrollPane" styleClass="buttons-scroll-pane">
             <content>
                <VBox fx:id="buttonsVBox" styleClass="content, buttons-box"/>
             </content>

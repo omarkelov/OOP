@@ -3,11 +3,14 @@ package ru.nsu.fit.markelov.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import ru.nsu.fit.markelov.SnakeGame;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
 import java.util.Map;
+
+import static ru.nsu.fit.markelov.util.ErrorBuilder.buildErrorAlert;
 
 public class MenuController implements Controller {
 
@@ -15,6 +18,7 @@ public class MenuController implements Controller {
 
     @FXML private Button helpButton;
     @FXML private Label levelsLabel;
+    @FXML private ScrollPane buttonsScrollPane;
     @FXML private VBox buttonsVBox;
 
     @FXML
@@ -26,6 +30,9 @@ public class MenuController implements Controller {
 
         if (levels.isEmpty()) {
             levelsLabel.setText("No levels");
+            ((VBox) buttonsScrollPane.getParent()).getChildren().remove(buttonsScrollPane);
+
+            buildErrorAlert("levels loading").showAndWait();
         }
 
         for (Map.Entry<String, Level> levelEntry : levels.entrySet()) {
@@ -33,8 +40,8 @@ public class MenuController implements Controller {
 
             Button button = new Button(levelName);
 
-            button.setOnAction(actionEvent ->
-                SnakeGame.getInstance().getSceneManager().changeScene(new GameController(levelName)));
+            button.setOnAction(actionEvent -> SnakeGame.getInstance()
+                .getSceneManager().changeScene(new GameController(levelName)));
 
             buttonsVBox.getChildren().add(button);
         }

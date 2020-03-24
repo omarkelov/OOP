@@ -20,7 +20,8 @@ public class Cell {
     }
 
     public void erase(Region[][] regions) {
-        regions[row][column].getStyleClass().removeIf(className -> !className.equals(DARK_BACKGROUND_CLASS_NAME));
+        regions[row][column].getStyleClass().removeIf(className ->
+            !className.equals(DARK_BACKGROUND_CLASS_NAME));
     }
 
     public boolean hasSamePosition(Cell cell) {
