@@ -17,6 +17,11 @@
     -fx-spacing: 20px;
 }
 
+.header {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
 .invisible {
     visibility: hidden;
 }

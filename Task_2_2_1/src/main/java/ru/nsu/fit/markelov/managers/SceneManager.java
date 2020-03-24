@@ -1,4 +1,4 @@
-package ru.nsu.fit.markelov.util;
+package ru.nsu.fit.markelov.managers;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +12,7 @@ import static ru.nsu.fit.markelov.util.ErrorBuilder.buildErrorAlert;
 
 public class SceneManager {
 
-    private static final String GAME_TITLE = "Snaky";
+    private static final String GAME_TITLE = "Blue Snake";
     private static final String FXML_DIRECTORY = "/ru/nsu/fit/markelov/fxml/";
 
     private Stage stage;

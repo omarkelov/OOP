@@ -1,4 +1,4 @@
-package ru.nsu.fit.markelov.util.observer;
+package ru.nsu.fit.markelov.managers.eventmanager;
 
 import java.util.ArrayList;
 import java.util.HashMap;

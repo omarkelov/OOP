@@ -22,17 +22,17 @@ import ru.nsu.fit.markelov.controllers.gamecontrollerstates.PlayingState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.ReadyState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.State;
 import ru.nsu.fit.markelov.game.World;
-import ru.nsu.fit.markelov.game.WorldProperties;
-import ru.nsu.fit.markelov.util.observer.EventListener;
+import ru.nsu.fit.markelov.managers.eventmanager.EventListener;
+import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static ru.nsu.fit.markelov.game.Cell.DARK_BACKGROUND_CLASS_NAME;
-import static ru.nsu.fit.markelov.util.observer.Events.APP_CLOSING;
-import static ru.nsu.fit.markelov.util.observer.Events.FOOD_EATEN;
-import static ru.nsu.fit.markelov.util.observer.Events.SNAKE_DEATH;
+import static ru.nsu.fit.markelov.managers.eventmanager.Events.APP_CLOSING;
+import static ru.nsu.fit.markelov.managers.eventmanager.Events.FOOD_EATEN;
+import static ru.nsu.fit.markelov.managers.eventmanager.Events.SNAKE_DEATH;
 
 public class GameController implements Controller, EventListener {
 
@@ -64,38 +64,40 @@ public class GameController implements Controller, EventListener {
     @FXML private GridPane popup;
     @FXML private Label popupLabel;
 
-    private int level;
+    private String levelName;
 
     private ScheduledExecutorService worldUpdateExecutor;
 
-    private WorldProperties worldProperties;
+    private Level level;
     private World world;
 
     private State state;
 
+    private int delayBetweenMoves;
+
     private int currentScore;
     private int goalScore;
 
-    public GameController(int level) {
-        this.level = level;
+    public GameController(String levelName) {
+        this.levelName = levelName;
     }
 
     @FXML
     private void initialize() {
-        SnakeGame.getInstance().getEventManager().subscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+        SnakeGame.getInstance().getEventManager().subscribe(this,
+            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
 
         menuButton.setOnAction(actionEvent -> state.onMenuButtonClick());
         helpButton.setOnAction(actionEvent -> state.onHelpButtonClick());
         restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
         pauseButton.setOnAction(actionEvent -> state.onPauseButtonClick());
 
-        worldProperties = new WorldProperties(level);
+        level = SnakeGame.getInstance().getLevelManager().getLevel(levelName);
 
-        goalScore = worldProperties.getGoal();
-        goalScoreLabel.setText(goalScore + "");
+        goalScoreLabel.setText(level.getGoalScore() + "");
 
-        int w = worldProperties.getWidth();
-        int h = worldProperties.getHeight();
+        int w = level.getWidth();
+        int h = level.getHeight();
 
         final NumberBinding cellSize = Bindings
             .when(Bindings.greaterThan(wrapper.widthProperty().divide(wrapper.heightProperty()), (double) w / h))
@@ -134,12 +136,14 @@ public class GameController implements Controller, EventListener {
         pauseButton.setDisable(true);
         pauseButton.setText(PAUSE_TEXT);
 
-        currentScore = worldProperties.getSnakeCells().size();
+        currentScore = level.getSnakeCells().size();
         currentScoreLabel.setText(currentScore + "");
 
         playingField.getChildren().clear();
-        int w = worldProperties.getWidth();
-        int h = worldProperties.getHeight();
+
+        int w = level.getWidth();
+        int h = level.getHeight();
+
         Region[][] regions = new Region[h][w];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
@@ -156,7 +160,7 @@ public class GameController implements Controller, EventListener {
 
         changeState(new ReadyState(this));
 
-        world = new World(regions, worldProperties);
+        world = new World(regions, level);
     }
 
     private void handleNavigationInput(KeyEvent keyEvent) {
@@ -202,9 +206,10 @@ public class GameController implements Controller, EventListener {
     }
 
     public boolean confirmLeaving() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
-        alert.setHeaderText(CONFIRMATION_HEADER);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+            CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
 
+        alert.setHeaderText(CONFIRMATION_HEADER);
         alert.showAndWait();
 
         return alert.getResult() == ButtonType.YES;
@@ -229,7 +234,8 @@ public class GameController implements Controller, EventListener {
         System.out.println("activateGame");
 
         worldUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
-        worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(), 0, 150, TimeUnit.MILLISECONDS);
+        worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(),
+            0, level.getDelayBetweenMoves(), TimeUnit.MILLISECONDS);
 
         changeState(new PlayingState(this));
     }
@@ -294,7 +300,9 @@ public class GameController implements Controller, EventListener {
     public void dispose() {
         System.out.println("dispose");
 
-        SnakeGame.getInstance().getEventManager().unsubscribe(this, APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+        SnakeGame.getInstance().getEventManager().unsubscribe(this,
+            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+
         if (worldUpdateExecutor != null) {
             worldUpdateExecutor.shutdownNow();
         }
@@ -311,7 +319,7 @@ public class GameController implements Controller, EventListener {
             case FOOD_EATEN:
                 System.out.println("event: FOOD_EATEN");
 
-                if (++currentScore >= goalScore) {
+                if (++currentScore >= level.getGoalScore()) {
                     finishGame(true);
                 }
                 Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));

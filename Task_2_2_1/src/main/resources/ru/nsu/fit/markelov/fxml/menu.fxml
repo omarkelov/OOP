@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane xmlns="http://javafx.com/javafx/100.2-internal"
             xmlns:fx="http://javafx.com/fxml/1"
             styleClass="root">
@@ -20,7 +22,12 @@
    </top>
    <center>
       <VBox styleClass="content">
-         <Button fx:id="playButton" text="Play"/>
+         <Label fx:id="levelsLabel" styleClass="header">Levels</Label>
+         <ScrollPane styleClass="buttons-scroll-pane">
+            <content>
+               <VBox fx:id="buttonsVBox" styleClass="content, buttons-box"/>
+            </content>
+         </ScrollPane>
       </VBox>
    </center>
 </BorderPane>

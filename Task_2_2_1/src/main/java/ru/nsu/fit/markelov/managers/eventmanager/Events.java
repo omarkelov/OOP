@@ -1,4 +1,4 @@
-package ru.nsu.fit.markelov.util.observer;
+package ru.nsu.fit.markelov.managers.eventmanager;
 
 public class Events {
     public static final String APP_CLOSING = "app_closing";

@@ -5,6 +5,7 @@ import ru.nsu.fit.markelov.SnakeGame;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Obstacle;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake;
 import ru.nsu.fit.markelov.game.gameobjects.singlecelled.Food;
+import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -13,8 +14,8 @@ import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.D
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.LEFT;
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.RIGHT;
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.UP;
-import static ru.nsu.fit.markelov.util.observer.Events.FOOD_EATEN;
-import static ru.nsu.fit.markelov.util.observer.Events.SNAKE_DEATH;
+import static ru.nsu.fit.markelov.managers.eventmanager.Events.FOOD_EATEN;
+import static ru.nsu.fit.markelov.managers.eventmanager.Events.SNAKE_DEATH;
 
 public class World {
 
@@ -27,14 +28,14 @@ public class World {
     Obstacle obstacle;
     Food food;
 
-    public World(Region[][] regions, WorldProperties worldProperties) {
+    public World(Region[][] regions, Level level) {
         this.regions = regions;
 
-        width = worldProperties.getWidth();
-        height = worldProperties.getHeight();
+        width = level.getWidth();
+        height = level.getHeight();
 
-        snake = new Snake(regions, new LinkedList<>(worldProperties.getSnakeCells()));
-        obstacle = new Obstacle(regions, new LinkedList<>(worldProperties.getObstacleCells()));
+        snake = new Snake(regions, new LinkedList<>(level.getSnakeCells()));
+        obstacle = new Obstacle(regions, new LinkedList<>(level.getObstacleCells()));
         food = generateFood();
     }
 

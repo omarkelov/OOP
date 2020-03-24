@@ -2,11 +2,6 @@
     -fx-pref-height: 500px;
 }
 
-.header {
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
 .center {
     -fx-alignment: top-center;
 }
