@@ -38,17 +38,6 @@ public class Snake extends MultiCelledGameObject {
         snakeCells.getFirst().draw(getRegions(), HEAD_CLASS_NAME);
     }
 
-    public void die() {
-        for (Cell cell : snakeCells) {
-            cell.draw(getRegions(), DEAD_SNAKE_CLASS_NAME);
-        }
-    }
-
-    public void removeTail() {
-        Cell tailCell = snakeCells.removeLast();
-        tailCell.erase(getRegions());
-    }
-
     public Cell getNewHeadCell() {
         Cell headCell = snakeCells.getFirst();
         switch (direction) {
@@ -63,6 +52,17 @@ public class Snake extends MultiCelledGameObject {
             default:
                 return null;
         }
+    }
+
+    public void die() {
+        for (Cell cell : snakeCells) {
+            cell.draw(getRegions(), DEAD_SNAKE_CLASS_NAME);
+        }
+    }
+
+    public void removeTail() {
+        Cell tailCell = snakeCells.removeLast();
+        tailCell.erase(getRegions());
     }
 
     public void addHead(Cell cell) {

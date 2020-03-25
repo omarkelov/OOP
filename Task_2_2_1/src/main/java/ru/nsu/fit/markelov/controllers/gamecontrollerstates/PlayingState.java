@@ -25,20 +25,20 @@ public class PlayingState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        switchScene(new MenuController());
+        askConfirmAndSwitchScene(new MenuController());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        switchScene(new HelpController());
+        askConfirmAndSwitchScene(new HelpController());
     }
 
-    private void switchScene(Controller controller) {
+    private void askConfirmAndSwitchScene(Controller controller) {
         gameController.pauseGame();
 
-        if (gameController.confirmLeaving()) {
+        if (gameController.confirmGameLeaving()) {
             gameController.switchScene(controller);
         } else {
             gameController.unpauseGame();

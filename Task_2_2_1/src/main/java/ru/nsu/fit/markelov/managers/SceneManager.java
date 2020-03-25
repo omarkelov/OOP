@@ -8,7 +8,7 @@ import ru.nsu.fit.markelov.controllers.Controller;
 
 import java.io.IOException;
 
-import static ru.nsu.fit.markelov.util.ErrorBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
 
 public class SceneManager {
 

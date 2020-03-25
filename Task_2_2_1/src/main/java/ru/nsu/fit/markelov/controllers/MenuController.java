@@ -10,7 +10,7 @@ import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
 import java.util.Map;
 
-import static ru.nsu.fit.markelov.util.ErrorBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
 
 public class MenuController implements Controller {
 

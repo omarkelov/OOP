@@ -28,7 +28,7 @@ public class PausedState implements State {
     }
 
     private void switchScene(Controller controller) {
-        if (gameController.confirmLeaving()) {
+        if (gameController.confirmGameLeaving()) {
             gameController.switchScene(controller);
         }
     }

@@ -33,6 +33,7 @@ import static ru.nsu.fit.markelov.game.Cell.DARK_BACKGROUND_CLASS_NAME;
 import static ru.nsu.fit.markelov.managers.eventmanager.Events.APP_CLOSING;
 import static ru.nsu.fit.markelov.managers.eventmanager.Events.FOOD_EATEN;
 import static ru.nsu.fit.markelov.managers.eventmanager.Events.SNAKE_DEATH;
+import static ru.nsu.fit.markelov.util.AlertBuilder.buildConfirmationAlert;
 
 public class GameController implements Controller, EventListener {
 
@@ -73,10 +74,7 @@ public class GameController implements Controller, EventListener {
 
     private State state;
 
-    private int delayBetweenMoves;
-
     private int currentScore;
-    private int goalScore;
 
     public GameController(String levelName) {
         this.levelName = levelName;
@@ -84,9 +82,6 @@ public class GameController implements Controller, EventListener {
 
     @FXML
     private void initialize() {
-        SnakeGame.getInstance().getEventManager().subscribe(this,
-            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
-
         menuButton.setOnAction(actionEvent -> state.onMenuButtonClick());
         helpButton.setOnAction(actionEvent -> state.onHelpButtonClick());
         restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
@@ -121,7 +116,63 @@ public class GameController implements Controller, EventListener {
             () -> Font.font((w > h ? playingField.getHeight() : playingField.getWidth()) / 6),
             w > h ? playingField.heightProperty() : playingField.widthProperty()));
 
+        SnakeGame.getInstance().getEventManager().subscribe(this,
+            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+
         initGame();
+    }
+
+    @Override
+    public String getFXMLFileName() {
+        return FXML_FILE_NAME;
+    }
+
+    @Override
+    public void runAfterSceneSet(Parent root) {
+        System.out.println("runAfterSceneSet");
+
+        root.setOnKeyReleased(this::handleNavigationInput);
+        root.setOnKeyPressed(keyEvent -> state.handleGameplayInput(keyEvent));
+
+        root.requestFocus();
+    }
+
+    @Override
+    public void dispose() {
+        System.out.println("dispose");
+
+        SnakeGame.getInstance().getEventManager().unsubscribe(this,
+            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
+
+        if (worldUpdateExecutor != null) {
+            worldUpdateExecutor.shutdownNow();
+        }
+    }
+
+    @Override
+    public void onEvent(String eventType) {
+        switch (eventType) {
+            case SNAKE_DEATH:
+                System.out.println("event: SNAKE_DEATH");
+
+                finishGame(false);
+                break;
+            case FOOD_EATEN:
+                System.out.println("event: FOOD_EATEN");
+
+                if (++currentScore >= level.getGoalScore()) {
+                    finishGame(true);
+                }
+                Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));
+                break;
+            case APP_CLOSING:
+                System.out.println("event: APP_CLOSING");
+
+                if (worldUpdateExecutor != null) {
+                    worldUpdateExecutor.shutdownNow();
+                }
+                break;
+        }
     }
 
     public void initGame() {
@@ -159,7 +210,7 @@ public class GameController implements Controller, EventListener {
             }
         }
 
-        changeState(new ReadyState(this));
+        state = new ReadyState(this);
 
         world = new World(regions, level);
     }
@@ -206,11 +257,8 @@ public class GameController implements Controller, EventListener {
         }
     }
 
-    public boolean confirmLeaving() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-            CONFIRMATION_QUESTION, ButtonType.YES, ButtonType.NO);
-
-        alert.setHeaderText(CONFIRMATION_HEADER);
+    public boolean confirmGameLeaving() {
+        Alert alert = buildConfirmationAlert(CONFIRMATION_HEADER, CONFIRMATION_QUESTION);
         alert.showAndWait();
 
         return alert.getResult() == ButtonType.YES;
@@ -238,7 +286,7 @@ public class GameController implements Controller, EventListener {
         worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(),
             0, level.getDelayBetweenMoves(), TimeUnit.MILLISECONDS);
 
-        changeState(new PlayingState(this));
+        state = new PlayingState(this);
     }
 
     public void pauseGame() {
@@ -248,7 +296,7 @@ public class GameController implements Controller, EventListener {
 
         worldUpdateExecutor.shutdown();
 
-        changeState(new PausedState(this));
+        state = new PausedState(this);
     }
 
     public void unpauseGame() {
@@ -260,78 +308,15 @@ public class GameController implements Controller, EventListener {
     }
 
     private void finishGame(boolean isWin) {
-        System.out.println("finishGame");
+        System.out.println("finishGame: " + (isWin ? "Win" : "Lose"));
 
         pauseButton.setDisable(true);
 
         worldUpdateExecutor.shutdown();
 
-        if (isWin) {
-            System.out.println("Win");
-        } else {
-            System.out.println("Lose");
-        }
-
         Platform.runLater(() -> popupLabel.setText(isWin ? WIN_TEXT : LOSE_TEXT));
         popup.getStyleClass().remove(INVISIBLE_CLASS_NAME);
 
-        changeState(new FinishedState(this));
-    }
-
-    private void changeState(State state) {
-        this.state = state;
-    }
-
-    @Override
-    public void runAfterSceneSet(Parent root) {
-        System.out.println("runAfterSceneSet");
-
-        root.setOnKeyReleased(this::handleNavigationInput);
-        root.setOnKeyPressed(keyEvent -> state.handleGameplayInput(keyEvent));
-
-        root.requestFocus();
-    }
-
-    @Override
-    public String getFXMLFileName() {
-        return FXML_FILE_NAME;
-    }
-
-    @Override
-    public void dispose() {
-        System.out.println("dispose");
-
-        SnakeGame.getInstance().getEventManager().unsubscribe(this,
-            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
-
-        if (worldUpdateExecutor != null) {
-            worldUpdateExecutor.shutdownNow();
-        }
-    }
-
-    @Override
-    public void onEvent(String eventType) {
-        switch (eventType) {
-            case SNAKE_DEATH:
-                System.out.println("event: SNAKE_DEATH");
-
-                finishGame(false);
-                break;
-            case FOOD_EATEN:
-                System.out.println("event: FOOD_EATEN");
-
-                if (++currentScore >= level.getGoalScore()) {
-                    finishGame(true);
-                }
-                Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));
-                break;
-            case APP_CLOSING:
-                System.out.println("event: APP_CLOSING");
-
-                if (worldUpdateExecutor != null) {
-                    worldUpdateExecutor.shutdownNow();
-                }
-                break;
-        }
+        state = new FinishedState(this);
     }
 }
