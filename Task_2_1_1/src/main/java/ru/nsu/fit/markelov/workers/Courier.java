@@ -38,17 +38,19 @@ public class Courier extends Worker {
     private int bagCapacity;
 
     private final BlockingQueue<Order> storedOrders;
+    private final Object courierLock;
 
     /**
-     *
+     * Constructs a new <code>Courier</code> object with specified properties.
      *
      * @param courierProperties courier properties.
+     * @param courierLock       an object to synchronize on during taking the orders.
      * @param storedOrders      a synchronized queue for taking baked orders from it.
      * @param log               log for sending messages about the current status of an order.
      * @throws IllegalInputException if any validating parameter is null or illegal.
      * @see Validatable
      */
-    public Courier(CourierProperties courierProperties,
+    public Courier(CourierProperties courierProperties, Object courierLock,
                    BlockingQueue<Order> storedOrders, Log log) throws IllegalInputException {
         // super(courierProperties.getName(), log);
         super(
@@ -58,6 +60,9 @@ public class Courier extends Worker {
             requireNonNull(log,
                 buildMessage(Courier.class, "log", NOT_NULL))
         );
+
+        this.courierLock = requireNonNull(courierLock,
+            buildMessage(Courier.class, "courierLock", NOT_NULL));
 
         this.storedOrders = requireNonNull(storedOrders,
             buildMessage(Operator.class, "storedOrders", NOT_NULL));
@@ -81,7 +86,7 @@ public class Courier extends Worker {
         int bagSize = 0;
 
         // taking the order(s)
-        synchronized (storedOrders) {
+        synchronized (courierLock) {
             while (bagSize < bagCapacity && !storedOrders.isEmpty()) {
                 Order order = storedOrders.take();
                 orderNames.add(order.getName());

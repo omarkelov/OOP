@@ -49,6 +49,7 @@ public class Pizzeria {
 
     private BlockingQueue<Order> newOrders;
     private BlockingQueue<Order> storedOrders;
+    private Object courierLock;
 
     private ArrayList<Worker> workers;
 
@@ -82,6 +83,7 @@ public class Pizzeria {
     private void init() throws IllegalInputException {
         newOrders = new LinkedBlockingQueue<>(pizzeriaProperties.getNewOrdersCapacity());
         storedOrders = new LinkedBlockingQueue<>(pizzeriaProperties.getStorageCapacity());
+        courierLock = new Object();
 
         workers = new ArrayList<>();
 
@@ -94,7 +96,7 @@ public class Pizzeria {
         }
 
         for (CourierProperties courierProperties : pizzeriaProperties.getCouriersProperties()) {
-            workers.add(new Courier(courierProperties, storedOrders, log));
+            workers.add(new Courier(courierProperties, courierLock, storedOrders, log));
         }
     }
 
