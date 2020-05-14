@@ -1,9 +1,7 @@
 package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
 
-import ru.nsu.fit.markelov.controllers.Controller;
 import ru.nsu.fit.markelov.controllers.GameController;
-import ru.nsu.fit.markelov.controllers.HelpController;
-import ru.nsu.fit.markelov.controllers.MenuController;
+import ru.nsu.fit.markelov.util.Closure;
 
 public class PausedState implements State {
 
@@ -17,19 +15,19 @@ public class PausedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        switchScene(new MenuController());
+        switchScene(() -> gameController.switchToMenu());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        switchScene(new HelpController());
+        switchScene(() -> gameController.switchToHelp());
     }
 
-    private void switchScene(Controller controller) {
+    private void switchScene(Closure switchSceneClosure) {
         if (gameController.confirmGameLeaving()) {
-            gameController.switchScene(controller);
+            switchSceneClosure.call();
         }
     }
 

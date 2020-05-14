@@ -1,10 +1,8 @@
 package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
 
 import javafx.scene.input.KeyEvent;
-import ru.nsu.fit.markelov.controllers.Controller;
 import ru.nsu.fit.markelov.controllers.GameController;
-import ru.nsu.fit.markelov.controllers.HelpController;
-import ru.nsu.fit.markelov.controllers.MenuController;
+import ru.nsu.fit.markelov.util.Closure;
 
 public class PlayingState implements State {
 
@@ -25,21 +23,21 @@ public class PlayingState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        askConfirmAndSwitchScene(new MenuController());
+        askConfirmAndSwitchScene(() -> gameController.switchToMenu());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        askConfirmAndSwitchScene(new HelpController());
+        askConfirmAndSwitchScene(() -> gameController.switchToHelp());
     }
 
-    private void askConfirmAndSwitchScene(Controller controller) {
+    private void askConfirmAndSwitchScene(Closure switchSceneClosure) {
         gameController.pauseGame();
 
         if (gameController.confirmGameLeaving()) {
-            gameController.switchScene(controller);
+            switchSceneClosure.call();
         } else {
             gameController.unpauseGame();
         }

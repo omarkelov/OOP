@@ -5,8 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import ru.nsu.fit.markelov.SnakeGame;
+import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
+import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
 import java.util.Map;
 
@@ -21,12 +22,20 @@ public class MenuController implements Controller {
     @FXML private ScrollPane buttonsScrollPane;
     @FXML private VBox buttonsVBox;
 
+    private LevelManager levelManager;
+    private SceneManager sceneManager;
+
+    public MenuController(LevelManager levelManager, SceneManager sceneManager) {
+        this.levelManager = levelManager;
+        this.sceneManager = sceneManager;
+    }
+
     @FXML
     private void initialize() {
-        helpButton.setOnAction(actionEvent
-            -> SnakeGame.getInstance().getSceneManager().changeScene(new HelpController()));
+        helpButton.setOnAction(actionEvent ->
+            sceneManager.changeScene(new HelpController(levelManager, sceneManager)));
 
-        Map<String, Level> levels = SnakeGame.getInstance().getLevelManager().getLevels();
+        Map<String, Level> levels = levelManager.getLevels();
 
         if (levels.isEmpty()) {
             levelsLabel.setText("No levels");
@@ -40,8 +49,8 @@ public class MenuController implements Controller {
 
             Button button = new Button(levelName);
 
-            button.setOnAction(actionEvent -> SnakeGame.getInstance()
-                .getSceneManager().changeScene(new GameController(levelName)));
+            button.setOnAction(actionEvent ->
+                sceneManager.changeScene(new GameController(levelName, levelManager, sceneManager)));
 
             buttonsVBox.getChildren().add(button);
         }

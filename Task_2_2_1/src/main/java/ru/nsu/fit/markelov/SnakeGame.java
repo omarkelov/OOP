@@ -8,14 +8,10 @@ import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
 public class SnakeGame extends Application {
 
-    private static SnakeGame instance;
-
     private LevelManager levelManager;
     private SceneManager sceneManager;
 
     public SnakeGame() {
-        instance = this;
-
         levelManager = new LevelManager();
     }
 
@@ -27,7 +23,7 @@ public class SnakeGame extends Application {
     public void start(Stage primaryStage) {
         sceneManager = new SceneManager(primaryStage);
 
-        sceneManager.changeScene(new MenuController());
+        sceneManager.changeScene(new MenuController(levelManager, sceneManager));
 
         primaryStage.show();
     }
@@ -35,17 +31,5 @@ public class SnakeGame extends Application {
     @Override
     public void stop() {
         sceneManager.dispose();
-    }
-
-    public static SnakeGame getInstance() {
-        return instance;
-    }
-
-    public LevelManager getLevelManager() {
-        return levelManager;
-    }
-
-    public SceneManager getSceneManager() {
-        return sceneManager;
     }
 }

@@ -1,8 +1,6 @@
 package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
 
 import ru.nsu.fit.markelov.controllers.GameController;
-import ru.nsu.fit.markelov.controllers.HelpController;
-import ru.nsu.fit.markelov.controllers.MenuController;
 
 public class FinishedState implements State {
 
@@ -16,14 +14,14 @@ public class FinishedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        gameController.switchScene(new MenuController());
+        gameController.switchToMenu();
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        gameController.switchScene(new HelpController());
+        gameController.switchToHelp();
     }
 
     @Override

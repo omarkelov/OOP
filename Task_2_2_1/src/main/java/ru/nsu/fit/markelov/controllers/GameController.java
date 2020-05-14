@@ -15,7 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
-import ru.nsu.fit.markelov.SnakeGame;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.FinishedState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.PausedState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.PlayingState;
@@ -23,7 +22,9 @@ import ru.nsu.fit.markelov.controllers.gamecontrollerstates.ReadyState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.State;
 import ru.nsu.fit.markelov.game.World;
 import ru.nsu.fit.markelov.game.WorldObserver;
+import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
+import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -62,7 +63,8 @@ public class GameController implements Controller, WorldObserver {
     @FXML private GridPane popup;
     @FXML private Label popupLabel;
 
-    private String levelName;
+    private LevelManager levelManager;
+    private SceneManager sceneManager;
 
     private ScheduledExecutorService worldUpdateExecutor;
 
@@ -73,8 +75,10 @@ public class GameController implements Controller, WorldObserver {
 
     private int currentScore;
 
-    public GameController(String levelName) {
-        this.levelName = levelName;
+    public GameController(String levelName, LevelManager levelManager, SceneManager sceneManager) {
+        this.levelManager = levelManager;
+        this.sceneManager = sceneManager;
+        level = levelManager.getLevel(levelName);
     }
 
     @FXML
@@ -83,8 +87,6 @@ public class GameController implements Controller, WorldObserver {
         helpButton.setOnAction(actionEvent -> state.onHelpButtonClick());
         restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
         pauseButton.setOnAction(actionEvent -> state.onPauseButtonClick());
-
-        level = SnakeGame.getInstance().getLevelManager().getLevel(levelName);
 
         goalScoreLabel.setText(level.getGoalScore() + "");
 
@@ -246,10 +248,16 @@ public class GameController implements Controller, WorldObserver {
         return alert.getResult() == ButtonType.YES;
     }
 
-    public void switchScene(Controller controller) {
+    public void switchToMenu() {
         System.out.println("switchToMenu");
 
-        SnakeGame.getInstance().getSceneManager().changeScene(controller);
+        sceneManager.changeScene(new MenuController(levelManager, sceneManager));
+    }
+
+    public void switchToHelp() {
+        System.out.println("switchToHelp");
+
+        sceneManager.changeScene(new HelpController(levelManager, sceneManager));
     }
 
     public void startGame() {
