@@ -1,8 +1,8 @@
-package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
+package ru.nsu.fit.markelov.controllers;
 
 import javafx.scene.input.KeyEvent;
 
-public interface State {
+public interface GameControllerDelegate {
     default void handleGameplayInput(KeyEvent keyEvent) {}
     default void onMenuButtonClick() {}
     default void onHelpButtonClick() {}

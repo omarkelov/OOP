@@ -1,13 +1,12 @@
-package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
+package ru.nsu.fit.markelov.controllers;
 
 import javafx.scene.input.KeyEvent;
-import ru.nsu.fit.markelov.controllers.GameController;
 
-public class ReadyState implements State {
+public class GameControllerDelegateReady implements GameControllerDelegate {
 
     private GameController gameController;
 
-    public ReadyState(GameController gameController) {
+    public GameControllerDelegateReady(GameController gameController) {
         this.gameController = gameController;
     }
 

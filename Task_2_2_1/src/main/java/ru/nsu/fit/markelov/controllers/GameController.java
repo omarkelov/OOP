@@ -15,11 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
-import ru.nsu.fit.markelov.controllers.gamecontrollerstates.FinishedState;
-import ru.nsu.fit.markelov.controllers.gamecontrollerstates.PausedState;
-import ru.nsu.fit.markelov.controllers.gamecontrollerstates.PlayingState;
-import ru.nsu.fit.markelov.controllers.gamecontrollerstates.ReadyState;
-import ru.nsu.fit.markelov.controllers.gamecontrollerstates.State;
 import ru.nsu.fit.markelov.game.World;
 import ru.nsu.fit.markelov.game.WorldObserver;
 import ru.nsu.fit.markelov.managers.SceneManager;
@@ -69,7 +64,7 @@ public class GameController implements Controller, WorldObserver {
     private Level level;
     private World world;
 
-    private State state;
+    private GameControllerDelegate gameControllerDelegate;
 
     private int currentScore;
 
@@ -80,10 +75,10 @@ public class GameController implements Controller, WorldObserver {
 
     @FXML
     private void initialize() {
-        menuButton.setOnAction(actionEvent -> state.onMenuButtonClick());
-        helpButton.setOnAction(actionEvent -> state.onHelpButtonClick());
-        restartButton.setOnAction(actionEvent -> state.onRestartButtonClick());
-        pauseButton.setOnAction(actionEvent -> state.onPauseButtonClick());
+        menuButton.setOnAction(actionEvent -> gameControllerDelegate.onMenuButtonClick());
+        helpButton.setOnAction(actionEvent -> gameControllerDelegate.onHelpButtonClick());
+        restartButton.setOnAction(actionEvent -> gameControllerDelegate.onRestartButtonClick());
+        pauseButton.setOnAction(actionEvent -> gameControllerDelegate.onPauseButtonClick());
 
         goalScoreLabel.setText(level.getGoalScore() + "");
 
@@ -125,7 +120,7 @@ public class GameController implements Controller, WorldObserver {
         System.out.println("runAfterSceneSet");
 
         root.setOnKeyReleased(this::handleNavigationInput);
-        root.setOnKeyPressed(keyEvent -> state.handleGameplayInput(keyEvent));
+        root.setOnKeyPressed(keyEvent -> gameControllerDelegate.handleGameplayInput(keyEvent));
 
         root.requestFocus();
     }
@@ -195,7 +190,7 @@ public class GameController implements Controller, WorldObserver {
             }
         }
 
-        state = new ReadyState(this);
+        gameControllerDelegate = new GameControllerDelegateReady(this);
 
         world = new World(regions, level, this);
     }
@@ -205,16 +200,16 @@ public class GameController implements Controller, WorldObserver {
 
         switch (keyEvent.getCode()) {
             case M: case ESCAPE:
-                state.onMenuButtonClick();
+                gameControllerDelegate.onMenuButtonClick();
                 break;
             case H:
-                state.onHelpButtonClick();
+                gameControllerDelegate.onHelpButtonClick();
                 break;
             case R:
-                state.onRestartButtonClick();
+                gameControllerDelegate.onRestartButtonClick();
                 break;
             case P:
-                state.onPauseButtonClick();
+                gameControllerDelegate.onPauseButtonClick();
                 break;
         }
     }
@@ -265,7 +260,7 @@ public class GameController implements Controller, WorldObserver {
         worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(),
             0, level.getDelayBetweenMoves(), TimeUnit.MILLISECONDS);
 
-        state = new PlayingState(this);
+        gameControllerDelegate = new GameControllerDelegatePlaying(this);
     }
 
     public void pauseGame() {
@@ -275,7 +270,7 @@ public class GameController implements Controller, WorldObserver {
 
         worldUpdateExecutor.shutdown();
 
-        state = new PausedState(this);
+        gameControllerDelegate = new GameControllerDelegatePaused(this);
     }
 
     public void unpauseGame() {
@@ -296,6 +291,6 @@ public class GameController implements Controller, WorldObserver {
         Platform.runLater(() -> popupLabel.setText(isWin ? WIN_TEXT : LOSE_TEXT));
         popup.getStyleClass().remove(INVISIBLE_CLASS_NAME);
 
-        state = new FinishedState(this);
+        gameControllerDelegate = new GameControllerDelegateFinished(this);
     }
 }

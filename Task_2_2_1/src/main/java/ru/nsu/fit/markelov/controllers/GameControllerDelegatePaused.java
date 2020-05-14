@@ -1,13 +1,12 @@
-package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
+package ru.nsu.fit.markelov.controllers;
 
-import ru.nsu.fit.markelov.controllers.GameController;
 import ru.nsu.fit.markelov.util.Closure;
 
-public class PausedState implements State {
+public class GameControllerDelegatePaused implements GameControllerDelegate {
 
     private GameController gameController;
 
-    public PausedState(GameController gameController) {
+    public GameControllerDelegatePaused(GameController gameController) {
         this.gameController = gameController;
     }
 

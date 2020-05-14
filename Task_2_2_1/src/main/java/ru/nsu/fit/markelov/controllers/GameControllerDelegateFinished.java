@@ -1,12 +1,10 @@
-package ru.nsu.fit.markelov.controllers.gamecontrollerstates;
+package ru.nsu.fit.markelov.controllers;
 
-import ru.nsu.fit.markelov.controllers.GameController;
-
-public class FinishedState implements State {
+public class GameControllerDelegateFinished implements GameControllerDelegate {
 
     private GameController gameController;
 
-    public FinishedState(GameController gameController) {
+    public GameControllerDelegateFinished(GameController gameController) {
         this.gameController = gameController;
     }
 
