@@ -11,8 +11,6 @@ import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
 import java.util.Map;
 
-import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
-
 public class MenuController implements Controller {
 
     private static final String FXML_FILE_NAME = "menu.fxml";
@@ -39,8 +37,6 @@ public class MenuController implements Controller {
         if (levels.isEmpty()) {
             levelsLabel.setText("No levels");
             ((VBox) buttonsScrollPane.getParent()).getChildren().remove(buttonsScrollPane);
-
-            buildErrorAlert("levels loading").showAndWait();
         }
 
         for (Map.Entry<String, Level> levelEntry : levels.entrySet()) {
