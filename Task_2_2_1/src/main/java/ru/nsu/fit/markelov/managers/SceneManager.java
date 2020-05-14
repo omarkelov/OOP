@@ -49,4 +49,8 @@ public class SceneManager {
             buildErrorAlert("layout loading").showAndWait();
         }
     }
+
+    public void dispose() {
+        controller.dispose();
+    }
 }

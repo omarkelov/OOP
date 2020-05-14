@@ -22,7 +22,7 @@ import ru.nsu.fit.markelov.controllers.gamecontrollerstates.PlayingState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.ReadyState;
 import ru.nsu.fit.markelov.controllers.gamecontrollerstates.State;
 import ru.nsu.fit.markelov.game.World;
-import ru.nsu.fit.markelov.managers.eventmanager.EventListener;
+import ru.nsu.fit.markelov.game.WorldObserver;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
 import java.util.concurrent.Executors;
@@ -30,12 +30,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static ru.nsu.fit.markelov.game.Cell.DARK_BACKGROUND_CLASS_NAME;
-import static ru.nsu.fit.markelov.managers.eventmanager.Events.APP_CLOSING;
-import static ru.nsu.fit.markelov.managers.eventmanager.Events.FOOD_EATEN;
-import static ru.nsu.fit.markelov.managers.eventmanager.Events.SNAKE_DEATH;
 import static ru.nsu.fit.markelov.util.AlertBuilder.buildConfirmationAlert;
 
-public class GameController implements Controller, EventListener {
+public class GameController implements Controller, WorldObserver {
 
     private static final String FXML_FILE_NAME = "game.fxml";
 
@@ -116,9 +113,6 @@ public class GameController implements Controller, EventListener {
             () -> Font.font((w > h ? playingField.getHeight() : playingField.getWidth()) / 6),
             w > h ? playingField.heightProperty() : playingField.widthProperty()));
 
-        SnakeGame.getInstance().getEventManager().subscribe(this,
-            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
-
         initGame();
     }
 
@@ -141,38 +135,26 @@ public class GameController implements Controller, EventListener {
     public void dispose() {
         System.out.println("dispose");
 
-        SnakeGame.getInstance().getEventManager().unsubscribe(this,
-            APP_CLOSING, FOOD_EATEN, SNAKE_DEATH);
-
         if (worldUpdateExecutor != null) {
             worldUpdateExecutor.shutdownNow();
         }
     }
 
     @Override
-    public void onEvent(String eventType) {
-        switch (eventType) {
-            case SNAKE_DEATH:
-                System.out.println("event: SNAKE_DEATH");
+    public void onFoodEaten() {
+        System.out.println("onFoodEaten");
 
-                finishGame(false);
-                break;
-            case FOOD_EATEN:
-                System.out.println("event: FOOD_EATEN");
-
-                if (++currentScore >= level.getGoalScore()) {
-                    finishGame(true);
-                }
-                Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));
-                break;
-            case APP_CLOSING:
-                System.out.println("event: APP_CLOSING");
-
-                if (worldUpdateExecutor != null) {
-                    worldUpdateExecutor.shutdownNow();
-                }
-                break;
+        if (++currentScore >= level.getGoalScore()) {
+            finishGame(true);
         }
+        Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));
+    }
+
+    @Override
+    public void onSnakeDeath() {
+        System.out.println("onSnakeDeath");
+
+        finishGame(false);
     }
 
     public void initGame() {
@@ -212,7 +194,7 @@ public class GameController implements Controller, EventListener {
 
         state = new ReadyState(this);
 
-        world = new World(regions, level);
+        world = new World(regions, level, this);
     }
 
     private void handleNavigationInput(KeyEvent keyEvent) {

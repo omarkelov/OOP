@@ -1,7 +1,6 @@
 package ru.nsu.fit.markelov.game;
 
 import javafx.scene.layout.Region;
-import ru.nsu.fit.markelov.SnakeGame;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Obstacle;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake;
 import ru.nsu.fit.markelov.game.gameobjects.singlecelled.Food;
@@ -14,12 +13,11 @@ import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.D
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.LEFT;
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.RIGHT;
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.UP;
-import static ru.nsu.fit.markelov.managers.eventmanager.Events.FOOD_EATEN;
-import static ru.nsu.fit.markelov.managers.eventmanager.Events.SNAKE_DEATH;
 
 public class World {
 
     private Region[][] regions;
+    private WorldObserver worldObserver;
 
     private int width;
     private int height;
@@ -28,8 +26,9 @@ public class World {
     Obstacle obstacle;
     Food food;
 
-    public World(Region[][] regions, Level level) {
+    public World(Region[][] regions, Level level, WorldObserver worldObserver) {
         this.regions = regions;
+        this.worldObserver = worldObserver;
 
         width = level.getWidth();
         height = level.getHeight();
@@ -50,7 +49,7 @@ public class World {
             obstacle.isColliding(newHeadCell)
         ) {
             snake.die();
-            SnakeGame.getInstance().getEventManager().notify(SNAKE_DEATH);
+            worldObserver.onSnakeDeath();
 
             return;
         }
@@ -64,7 +63,7 @@ public class World {
 
         if (isFoodEaten) {
             food = generateFood();
-            SnakeGame.getInstance().getEventManager().notify(FOOD_EATEN);
+            worldObserver.onFoodEaten();
         }
     }
 
