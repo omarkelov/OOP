@@ -24,7 +24,6 @@ import ru.nsu.fit.markelov.game.World;
 import ru.nsu.fit.markelov.game.WorldObserver;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
-import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,7 +62,6 @@ public class GameController implements Controller, WorldObserver {
     @FXML private GridPane popup;
     @FXML private Label popupLabel;
 
-    private LevelManager levelManager;
     private SceneManager sceneManager;
 
     private ScheduledExecutorService worldUpdateExecutor;
@@ -75,10 +73,9 @@ public class GameController implements Controller, WorldObserver {
 
     private int currentScore;
 
-    public GameController(String levelName, LevelManager levelManager, SceneManager sceneManager) {
-        this.levelManager = levelManager;
+    public GameController(SceneManager sceneManager, Level level) {
         this.sceneManager = sceneManager;
-        level = levelManager.getLevel(levelName);
+        this.level = level;
     }
 
     @FXML
@@ -140,6 +137,10 @@ public class GameController implements Controller, WorldObserver {
         if (worldUpdateExecutor != null) {
             worldUpdateExecutor.shutdownNow();
         }
+    }
+
+    public SceneManager getSceneManager() {
+        return sceneManager;
     }
 
     @Override
@@ -246,18 +247,6 @@ public class GameController implements Controller, WorldObserver {
         alert.showAndWait();
 
         return alert.getResult() == ButtonType.YES;
-    }
-
-    public void switchToMenu() {
-        System.out.println("switchToMenu");
-
-        sceneManager.changeScene(new MenuController(levelManager, sceneManager));
-    }
-
-    public void switchToHelp() {
-        System.out.println("switchToHelp");
-
-        sceneManager.changeScene(new HelpController(levelManager, sceneManager));
     }
 
     public void startGame() {

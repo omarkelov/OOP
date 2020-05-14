@@ -23,14 +23,14 @@ public class PlayingState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        askConfirmAndSwitchScene(() -> gameController.switchToMenu());
+        askConfirmAndSwitchScene(() -> gameController.getSceneManager().switchToMenu());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        askConfirmAndSwitchScene(() -> gameController.switchToHelp());
+        askConfirmAndSwitchScene(() -> gameController.getSceneManager().switchToHelp());
     }
 
     private void askConfirmAndSwitchScene(Closure switchSceneClosure) {

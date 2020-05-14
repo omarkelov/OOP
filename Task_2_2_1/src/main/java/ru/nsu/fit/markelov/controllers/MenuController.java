@@ -22,18 +22,17 @@ public class MenuController implements Controller {
     @FXML private ScrollPane buttonsScrollPane;
     @FXML private VBox buttonsVBox;
 
-    private LevelManager levelManager;
     private SceneManager sceneManager;
+    private LevelManager levelManager;
 
-    public MenuController(LevelManager levelManager, SceneManager sceneManager) {
-        this.levelManager = levelManager;
+    public MenuController(SceneManager sceneManager, LevelManager levelManager) {
         this.sceneManager = sceneManager;
+        this.levelManager = levelManager;
     }
 
     @FXML
     private void initialize() {
-        helpButton.setOnAction(actionEvent ->
-            sceneManager.changeScene(new HelpController(levelManager, sceneManager)));
+        helpButton.setOnAction(actionEvent -> sceneManager.switchToHelp());
 
         Map<String, Level> levels = levelManager.getLevels();
 
@@ -49,8 +48,7 @@ public class MenuController implements Controller {
 
             Button button = new Button(levelName);
 
-            button.setOnAction(actionEvent ->
-                sceneManager.changeScene(new GameController(levelName, levelManager, sceneManager)));
+            button.setOnAction(actionEvent -> sceneManager.switchToGame(levelName));
 
             buttonsVBox.getChildren().add(button);
         }

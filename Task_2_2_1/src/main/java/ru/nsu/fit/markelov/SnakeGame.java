@@ -2,7 +2,6 @@ package ru.nsu.fit.markelov;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import ru.nsu.fit.markelov.controllers.MenuController;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
 
@@ -21,9 +20,9 @@ public class SnakeGame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        sceneManager = new SceneManager(primaryStage);
+        sceneManager = new SceneManager(primaryStage, levelManager);
 
-        sceneManager.changeScene(new MenuController(levelManager, sceneManager));
+        sceneManager.switchToMenu();
 
         primaryStage.show();
     }

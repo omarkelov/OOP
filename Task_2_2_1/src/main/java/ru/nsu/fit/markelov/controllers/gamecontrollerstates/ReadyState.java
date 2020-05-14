@@ -26,13 +26,13 @@ public class ReadyState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        gameController.switchToMenu();
+        gameController.getSceneManager().switchToMenu();
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        gameController.switchToHelp();
+        gameController.getSceneManager().switchToHelp();
     }
 }

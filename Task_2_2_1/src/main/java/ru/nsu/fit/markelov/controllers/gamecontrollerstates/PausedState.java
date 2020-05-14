@@ -15,14 +15,14 @@ public class PausedState implements State {
     public void onMenuButtonClick() {
         System.out.println("onMenuButtonClick");
 
-        switchScene(() -> gameController.switchToMenu());
+        switchScene(() -> gameController.getSceneManager().switchToMenu());
     }
 
     @Override
     public void onHelpButtonClick() {
         System.out.println("onHelpButtonClick");
 
-        switchScene(() -> gameController.switchToHelp());
+        switchScene(() -> gameController.getSceneManager().switchToHelp());
     }
 
     private void switchScene(Closure switchSceneClosure) {
