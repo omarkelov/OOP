@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
 import ru.nsu.fit.markelov.game.Cell;
@@ -21,18 +20,11 @@ import ru.nsu.fit.markelov.game.WorldObserver;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static ru.nsu.fit.markelov.game.Cell.Type.DEAD_SNAKE;
 import static ru.nsu.fit.markelov.game.Cell.Type.EMPTY;
-import static ru.nsu.fit.markelov.game.Cell.Type.FOOD;
-import static ru.nsu.fit.markelov.game.Cell.Type.OBSTACLE;
-import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE;
-import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE_HEAD;
 import static ru.nsu.fit.markelov.util.AlertBuilder.buildConfirmationAlert;
 
 public class GameController implements Controller, WorldObserver {
@@ -40,12 +32,6 @@ public class GameController implements Controller, WorldObserver {
     private static final String FXML_FILE_NAME = "game.fxml";
 
     private static final String INVISIBLE_CLASS_NAME = "invisible";
-    private static final String SNAKE_CLASS_NAME = "snake";
-    private static final String SNAKE_HEAD_CLASS_NAME = "snake-head";
-    private static final String DEAD_SNAKE_CLASS_NAME = "snake-dead";
-    private static final String OBSTACLE_CLASS_NAME = "obstacle";
-    private static final String FOOD_CLASS_NAME = "food";
-    private static final String DARK_BACKGROUND_CLASS_NAME = "dark-background";
 
     private static final String PAUSE_TEXT = "\u23F8"; // ⏸
     private static final String PLAY_TEXT = "\u23F5"; // ⏵
@@ -65,22 +51,19 @@ public class GameController implements Controller, WorldObserver {
     @FXML private Label currentScoreLabel;
     @FXML private Label goalScoreLabel;
 
-    @FXML private GridPane wrapper;
-    @FXML private GridPane playingField;
+    @FXML private GridPane wrapperGrid;
+    @FXML private GridPane fieldGrid;
 
-    @FXML private GridPane popup;
+    @FXML private GridPane popupGrid;
     @FXML private Label popupLabel;
 
     private SceneManager sceneManager;
 
     private ScheduledExecutorService worldUpdateExecutor;
 
-    private Region[][] regions;
-
     private Level level;
     private World world;
-
-    private Map<Cell.Type, String> cellTypeToCssClassMap;
+    private GameField gameField;
 
     private GameControllerDelegate gameControllerDelegate;
 
@@ -89,13 +72,7 @@ public class GameController implements Controller, WorldObserver {
     public GameController(SceneManager sceneManager, Level level) {
         this.sceneManager = sceneManager;
         this.level = level;
-
-        cellTypeToCssClassMap = new TreeMap<>();
-        cellTypeToCssClassMap.put(SNAKE, SNAKE_CLASS_NAME);
-        cellTypeToCssClassMap.put(SNAKE_HEAD, SNAKE_HEAD_CLASS_NAME);
-        cellTypeToCssClassMap.put(DEAD_SNAKE, DEAD_SNAKE_CLASS_NAME);
-        cellTypeToCssClassMap.put(OBSTACLE, OBSTACLE_CLASS_NAME);
-        cellTypeToCssClassMap.put(FOOD, FOOD_CLASS_NAME);
+        gameField = new GameField();
     }
 
     @FXML
@@ -112,25 +89,25 @@ public class GameController implements Controller, WorldObserver {
 
         final NumberBinding cellSize = Bindings
             .when(Bindings.greaterThan(
-                wrapper.widthProperty().divide(wrapper.heightProperty()), (double) w / h))
-            .then(wrapper.heightProperty().divide(h))
-            .otherwise(wrapper.widthProperty().divide(w));
+                wrapperGrid.widthProperty().divide(wrapperGrid.heightProperty()), (double) w / h))
+            .then(wrapperGrid.heightProperty().divide(h))
+            .otherwise(wrapperGrid.widthProperty().divide(w));
 
         for (int i = 0; i < w; i++) {
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.prefWidthProperty().bind(cellSize);
-            playingField.getColumnConstraints().add(columnConstraints);
+            fieldGrid.getColumnConstraints().add(columnConstraints);
         }
 
         for (int j = 0; j < h; j++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.prefHeightProperty().bind(cellSize);
-            playingField.getRowConstraints().add(rowConstraints);
+            fieldGrid.getRowConstraints().add(rowConstraints);
         }
 
         popupLabel.fontProperty().bind(Bindings.createObjectBinding(
-            () -> Font.font((w > h ? playingField.getHeight() : playingField.getWidth()) / 6),
-            w > h ? playingField.heightProperty() : playingField.widthProperty()));
+            () -> Font.font((w > h ? fieldGrid.getHeight() : fieldGrid.getWidth()) / 6),
+            w > h ? fieldGrid.heightProperty() : fieldGrid.widthProperty()));
 
         initGame();
     }
@@ -186,22 +163,10 @@ public class GameController implements Controller, WorldObserver {
 
         System.out.println(cell.getType());
         if (cell.getType() != EMPTY) {
-            draw(cell);
+            gameField.draw(cell);
         } else {
-            erase(cell);
+            gameField.erase(cell);
         }
-    }
-
-    private void draw(Cell cell) {
-        erase(cell);
-        System.out.println(cellTypeToCssClassMap.get(cell.getType()));
-        regions[cell.getPosition().getY()][cell.getPosition().getX()]
-            .getStyleClass().add(cellTypeToCssClassMap.get(cell.getType()));
-    }
-
-    private void erase(Cell cell) {
-        regions[cell.getPosition().getY()][cell.getPosition().getX()]
-            .getStyleClass().removeIf(className -> !className.equals(DARK_BACKGROUND_CLASS_NAME));
     }
 
     public void initGame() {
@@ -211,7 +176,7 @@ public class GameController implements Controller, WorldObserver {
             worldUpdateExecutor.shutdownNow();
         }
 
-        popup.getStyleClass().add(INVISIBLE_CLASS_NAME);
+        popupGrid.getStyleClass().add(INVISIBLE_CLASS_NAME);
 
         restartButton.setDisable(true);
         pauseButton.setDisable(true);
@@ -220,24 +185,7 @@ public class GameController implements Controller, WorldObserver {
         currentScore = level.getSnakeCellPositions().size();
         currentScoreLabel.setText(currentScore + "");
 
-        playingField.getChildren().clear();
-
-        int w = level.getWidth();
-        int h = level.getHeight();
-
-        regions = new Region[h][w];
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                Region region = new Region();
-
-                if (i % 2 == j % 2) {
-                    region.getStyleClass().add(DARK_BACKGROUND_CLASS_NAME);
-                }
-
-                playingField.add(region, j, i);
-                regions[i][j] = region;
-            }
-        }
+        gameField.init(level.getWidth(), level.getHeight(), fieldGrid);
 
         gameControllerDelegate = new GameControllerDelegateReady(this);
 
@@ -338,7 +286,7 @@ public class GameController implements Controller, WorldObserver {
         worldUpdateExecutor.shutdown();
 
         Platform.runLater(() -> popupLabel.setText(isWin ? WIN_TEXT : LOSE_TEXT));
-        popup.getStyleClass().remove(INVISIBLE_CLASS_NAME);
+        popupGrid.getStyleClass().remove(INVISIBLE_CLASS_NAME);
 
         gameControllerDelegate = new GameControllerDelegateFinished(this);
     }
