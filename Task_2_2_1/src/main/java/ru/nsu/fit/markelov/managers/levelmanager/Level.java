@@ -5,6 +5,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
 import ru.nsu.fit.markelov.game.Cell;
+import ru.nsu.fit.markelov.util.Vector2;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 import ru.nsu.fit.markelov.util.validation.Validatable;
 
@@ -19,7 +20,6 @@ import java.util.List;
 public class Level implements Validatable<Level> {
 
     private enum CellType {
-
         EMPTY(Color.WHITE),
         SNAKE(Color.BLUE),
         OBSTACLE(Color.BLACK);
@@ -43,13 +43,13 @@ public class Level implements Validatable<Level> {
 
     private int emptyCellsCount;
 
-    Deque<Cell> snakeCells;
-    List<Cell> obstacleCells;
+    Deque<Vector2> snakeCellPositions;
+    List<Vector2> obstacleCellPositions;
 
     public Level(String imageFileName, String jsonFileName) throws IOException {
         emptyCellsCount = 0;
-        snakeCells = new LinkedList<>();
-        obstacleCells = new LinkedList<>();
+        snakeCellPositions = new LinkedList<>();
+        obstacleCellPositions = new LinkedList<>();
 
         try (FileInputStream iStream = new FileInputStream(imageFileName)) {
             JSONObject levelJSONObject =
@@ -69,9 +69,9 @@ public class Level implements Validatable<Level> {
                     Color currentPixel = pixelReader.getColor(x, y);
 
                     if (CellType.SNAKE.isSameColor(currentPixel)) {
-                        snakeCells.addFirst(new Cell(y, x));
+                        snakeCellPositions.addFirst(new Vector2(x, y));
                     } else if (CellType.OBSTACLE.isSameColor(currentPixel)) {
-                        obstacleCells.add(new Cell(y, x));
+                        obstacleCellPositions.add(new Vector2(x, y));
                     } else if (CellType.EMPTY.isSameColor(currentPixel)) {
                         emptyCellsCount++;
                     } else {
@@ -90,7 +90,7 @@ public class Level implements Validatable<Level> {
             emptyCellsCount < 3 ||
             emptyCellsCount < goalScore ||
             delayBetweenMoves < 20 ||
-            snakeCells.size() != 1
+            snakeCellPositions.size() != 1
         ) {
             throw new IllegalInputException();
         }
@@ -114,11 +114,11 @@ public class Level implements Validatable<Level> {
         return delayBetweenMoves;
     }
 
-    public Deque<Cell> getSnakeCells() {
-        return snakeCells;
+    public Deque<Vector2> getSnakeCellPositions() {
+        return snakeCellPositions;
     }
 
-    public List<Cell> getObstacleCells() {
-        return obstacleCells;
+    public List<Vector2> getObstacleCellPositions() {
+        return obstacleCellPositions;
     }
 }

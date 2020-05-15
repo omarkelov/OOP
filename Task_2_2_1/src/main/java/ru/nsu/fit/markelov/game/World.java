@@ -4,6 +4,7 @@ import ru.nsu.fit.markelov.game.gameobjects.multicelled.Obstacle;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake;
 import ru.nsu.fit.markelov.game.gameobjects.singlecelled.Food;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
+import ru.nsu.fit.markelov.util.Vector2;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -32,14 +33,14 @@ public class World {
         width = level.getWidth();
         height = level.getHeight();
 
-        Deque<Cell> snakeCells = new LinkedList<>(level.getSnakeCells());
-        for (Cell cell : snakeCells) {
-            cell.setWorldObserver(worldObserver);
+        Deque<Cell> snakeCells = new LinkedList<>();
+        for (Vector2 position : level.getSnakeCellPositions()) {
+            snakeCells.add(new Cell(position, worldObserver));
         }
 
-        List<Cell> obstacleCells = new LinkedList<>(level.getObstacleCells());
-        for (Cell cell : obstacleCells) {
-            cell.setWorldObserver(worldObserver);
+        List<Cell> obstacleCells = new LinkedList<>();
+        for (Vector2 position : level.getObstacleCellPositions()) {
+            obstacleCells.add(new Cell(position, worldObserver));
         }
 
         snake = new Snake(snakeCells);
@@ -49,12 +50,11 @@ public class World {
 
     public void update() {
         snake.updateDirection();
-        Cell newHeadCell = snake.getNewHeadCell();
-        newHeadCell.setWorldObserver(worldObserver);
-        if (newHeadCell.getColumn() < 0 ||
-            newHeadCell.getColumn() >= width ||
-            newHeadCell.getRow() < 0 ||
-            newHeadCell.getRow() >= height ||
+        Cell newHeadCell = new Cell(snake.getNewHeadPosition(), worldObserver);
+        int x = newHeadCell.getPosition().getX();
+        int y = newHeadCell.getPosition().getY();
+        if (x < 0 || x >= width ||
+            y < 0 || y >= height ||
             snake.isColliding(newHeadCell) ||
             obstacle.isColliding(newHeadCell)
         ) {
@@ -78,11 +78,10 @@ public class World {
     }
 
     private Food generateFood() {
-        Cell cell = new Cell(-1, -1);
-        cell.setWorldObserver(worldObserver);
+        Cell cell = new Cell(new Vector2(-1, -1), worldObserver);
         do {
-            cell.setRow(ThreadLocalRandom.current().nextInt(height));
-            cell.setColumn(ThreadLocalRandom.current().nextInt(width));
+            cell.getPosition().setX(ThreadLocalRandom.current().nextInt(width));
+            cell.getPosition().setY(ThreadLocalRandom.current().nextInt(height));
         } while (snake.isColliding(cell) || obstacle.isColliding(cell));
 
         return new Food(cell);

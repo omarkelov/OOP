@@ -195,13 +195,13 @@ public class GameController implements Controller, WorldObserver {
     private void draw(Cell cell) {
         erase(cell);
         System.out.println(cellTypeToCssClassMap.get(cell.getType()));
-        regions[cell.getRow()][cell.getColumn()]
+        regions[cell.getPosition().getY()][cell.getPosition().getX()]
             .getStyleClass().add(cellTypeToCssClassMap.get(cell.getType()));
     }
 
     private void erase(Cell cell) {
-        regions[cell.getRow()][cell.getColumn()].getStyleClass().removeIf(className ->
-            !className.equals(DARK_BACKGROUND_CLASS_NAME));
+        regions[cell.getPosition().getY()][cell.getPosition().getX()]
+            .getStyleClass().removeIf(className -> !className.equals(DARK_BACKGROUND_CLASS_NAME));
     }
 
     public void initGame() {
@@ -217,7 +217,7 @@ public class GameController implements Controller, WorldObserver {
         pauseButton.setDisable(true);
         pauseButton.setText(PAUSE_TEXT);
 
-        currentScore = level.getSnakeCells().size();
+        currentScore = level.getSnakeCellPositions().size();
         currentScoreLabel.setText(currentScore + "");
 
         playingField.getChildren().clear();

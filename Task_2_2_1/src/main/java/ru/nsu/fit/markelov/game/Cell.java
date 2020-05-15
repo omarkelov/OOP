@@ -1,18 +1,19 @@
 package ru.nsu.fit.markelov.game;
 
+import ru.nsu.fit.markelov.util.Vector2;
+
 public class Cell {
 
     public enum Type { EMPTY, SNAKE, SNAKE_HEAD, DEAD_SNAKE, OBSTACLE, FOOD }
 
+    private Vector2 position;
     private Type type;
-    private int row;
-    private int column;
 
     private WorldObserver worldObserver;
 
-    public Cell(int row, int column) {
-        this.row = row;
-        this.column = column;
+    public Cell(Vector2 position, WorldObserver worldObserver) {
+        this.position = position;
+        this.worldObserver = worldObserver;
     }
 
     public void changeType(Type type) {
@@ -21,30 +22,14 @@ public class Cell {
     }
 
     public boolean hasSamePosition(Cell cell) {
-        return row == cell.row && column == cell.column;
+        return position.equals(cell.getPosition());
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 
     public Type getType() {
         return type;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    public void setWorldObserver(WorldObserver worldObserver) {
-        this.worldObserver = worldObserver;
     }
 }

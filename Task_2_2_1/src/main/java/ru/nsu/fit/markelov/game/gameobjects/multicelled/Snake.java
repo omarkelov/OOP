@@ -1,6 +1,7 @@
 package ru.nsu.fit.markelov.game.gameobjects.multicelled;
 
 import ru.nsu.fit.markelov.game.Cell;
+import ru.nsu.fit.markelov.util.Vector2;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -37,17 +38,17 @@ public class Snake extends MultiCelledGameObject {
         snakeCells.getFirst().changeType(SNAKE_HEAD);
     }
 
-    public Cell getNewHeadCell() {
+    public Vector2 getNewHeadPosition() {
         Cell headCell = snakeCells.getFirst();
         switch (direction) {
             case UP:
-                return new Cell(headCell.getRow() - 1, headCell.getColumn());
+                return new Vector2(headCell.getPosition().getX(), headCell.getPosition().getY() - 1);
             case DOWN:
-                return new Cell(headCell.getRow() + 1, headCell.getColumn());
+                return new Vector2(headCell.getPosition().getX(), headCell.getPosition().getY() + 1);
             case RIGHT:
-                return new Cell(headCell.getRow(), headCell.getColumn() + 1);
+                return new Vector2(headCell.getPosition().getX() + 1, headCell.getPosition().getY());
             case LEFT:
-                return new Cell(headCell.getRow(), headCell.getColumn() - 1);
+                return new Vector2(headCell.getPosition().getX() - 1, headCell.getPosition().getY());
             default:
                 return null;
         }
