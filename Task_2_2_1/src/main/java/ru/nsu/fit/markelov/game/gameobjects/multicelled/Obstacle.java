@@ -1,22 +1,20 @@
 package ru.nsu.fit.markelov.game.gameobjects.multicelled;
 
-import javafx.scene.layout.Region;
 import ru.nsu.fit.markelov.game.Cell;
 
 import java.util.Collection;
 import java.util.List;
 
-public class Obstacle extends MultiCelledGameObject {
+import static ru.nsu.fit.markelov.game.Cell.Type.OBSTACLE;
 
-    private static final String OBSTACLE_CLASS_NAME = "obstacle";
+public class Obstacle extends MultiCelledGameObject {
 
     List<Cell> obstacleCells;
 
-    public Obstacle(Region[][] regions, List<Cell> obstacleCells) {
-        super(regions);
+    public Obstacle(List<Cell> obstacleCells) {
         this.obstacleCells = obstacleCells;
 
-        drawObjectCells(OBSTACLE_CLASS_NAME);
+        changeObjectCellsType(OBSTACLE);
     }
 
     @Override

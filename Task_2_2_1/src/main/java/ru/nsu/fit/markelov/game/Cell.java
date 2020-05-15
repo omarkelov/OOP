@@ -1,31 +1,31 @@
 package ru.nsu.fit.markelov.game;
 
-import javafx.scene.layout.Region;
-
 public class Cell {
 
-    public static final String DARK_BACKGROUND_CLASS_NAME = "dark-background";
+    public enum Type { EMPTY, SNAKE, SNAKE_HEAD, DEAD_SNAKE, OBSTACLE, FOOD }
 
+    private Type type;
     private int row;
     private int column;
+
+    private WorldObserver worldObserver;
 
     public Cell(int row, int column) {
         this.row = row;
         this.column = column;
     }
 
-    public void draw(Region[][] regions, String className) {
-        erase(regions);
-        regions[row][column].getStyleClass().add(className);
-    }
-
-    public void erase(Region[][] regions) {
-        regions[row][column].getStyleClass().removeIf(className ->
-            !className.equals(DARK_BACKGROUND_CLASS_NAME));
+    public void changeType(Type type) {
+        this.type = type;
+        worldObserver.onCellChanged(this);
     }
 
     public boolean hasSamePosition(Cell cell) {
         return row == cell.row && column == cell.column;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public int getRow() {
@@ -42,5 +42,9 @@ public class Cell {
 
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    public void setWorldObserver(WorldObserver worldObserver) {
+        this.worldObserver = worldObserver;
     }
 }

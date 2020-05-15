@@ -15,16 +15,24 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
+import ru.nsu.fit.markelov.game.Cell;
 import ru.nsu.fit.markelov.game.World;
 import ru.nsu.fit.markelov.game.WorldObserver;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static ru.nsu.fit.markelov.game.Cell.DARK_BACKGROUND_CLASS_NAME;
+import static ru.nsu.fit.markelov.game.Cell.Type.DEAD_SNAKE;
+import static ru.nsu.fit.markelov.game.Cell.Type.EMPTY;
+import static ru.nsu.fit.markelov.game.Cell.Type.FOOD;
+import static ru.nsu.fit.markelov.game.Cell.Type.OBSTACLE;
+import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE;
+import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE_HEAD;
 import static ru.nsu.fit.markelov.util.AlertBuilder.buildConfirmationAlert;
 
 public class GameController implements Controller, WorldObserver {
@@ -32,6 +40,12 @@ public class GameController implements Controller, WorldObserver {
     private static final String FXML_FILE_NAME = "game.fxml";
 
     private static final String INVISIBLE_CLASS_NAME = "invisible";
+    private static final String SNAKE_CLASS_NAME = "snake";
+    private static final String SNAKE_HEAD_CLASS_NAME = "snake-head";
+    private static final String DEAD_SNAKE_CLASS_NAME = "snake-dead";
+    private static final String OBSTACLE_CLASS_NAME = "obstacle";
+    private static final String FOOD_CLASS_NAME = "food";
+    private static final String DARK_BACKGROUND_CLASS_NAME = "dark-background";
 
     private static final String PAUSE_TEXT = "\u23F8"; // ⏸
     private static final String PLAY_TEXT = "\u23F5"; // ⏵
@@ -61,8 +75,12 @@ public class GameController implements Controller, WorldObserver {
 
     private ScheduledExecutorService worldUpdateExecutor;
 
+    private Region[][] regions;
+
     private Level level;
     private World world;
+
+    private Map<Cell.Type, String> cellTypeToCssClassMap;
 
     private GameControllerDelegate gameControllerDelegate;
 
@@ -71,6 +89,13 @@ public class GameController implements Controller, WorldObserver {
     public GameController(SceneManager sceneManager, Level level) {
         this.sceneManager = sceneManager;
         this.level = level;
+
+        cellTypeToCssClassMap = new TreeMap<>();
+        cellTypeToCssClassMap.put(SNAKE, SNAKE_CLASS_NAME);
+        cellTypeToCssClassMap.put(SNAKE_HEAD, SNAKE_HEAD_CLASS_NAME);
+        cellTypeToCssClassMap.put(DEAD_SNAKE, DEAD_SNAKE_CLASS_NAME);
+        cellTypeToCssClassMap.put(OBSTACLE, OBSTACLE_CLASS_NAME);
+        cellTypeToCssClassMap.put(FOOD, FOOD_CLASS_NAME);
     }
 
     @FXML
@@ -155,6 +180,30 @@ public class GameController implements Controller, WorldObserver {
         finishGame(false);
     }
 
+    @Override
+    public void onCellChanged(Cell cell) {
+        System.out.println("onCellChanged");
+
+        System.out.println(cell.getType());
+        if (cell.getType() != EMPTY) {
+            draw(cell);
+        } else {
+            erase(cell);
+        }
+    }
+
+    private void draw(Cell cell) {
+        erase(cell);
+        System.out.println(cellTypeToCssClassMap.get(cell.getType()));
+        regions[cell.getRow()][cell.getColumn()]
+            .getStyleClass().add(cellTypeToCssClassMap.get(cell.getType()));
+    }
+
+    private void erase(Cell cell) {
+        regions[cell.getRow()][cell.getColumn()].getStyleClass().removeIf(className ->
+            !className.equals(DARK_BACKGROUND_CLASS_NAME));
+    }
+
     public void initGame() {
         System.out.println("initGame");
 
@@ -176,7 +225,7 @@ public class GameController implements Controller, WorldObserver {
         int w = level.getWidth();
         int h = level.getHeight();
 
-        Region[][] regions = new Region[h][w];
+        regions = new Region[h][w];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 Region region = new Region();
@@ -192,7 +241,7 @@ public class GameController implements Controller, WorldObserver {
 
         gameControllerDelegate = new GameControllerDelegateReady(this);
 
-        world = new World(regions, level, this);
+        world = new World(level, this);
     }
 
     private void handleNavigationInput(KeyEvent keyEvent) {

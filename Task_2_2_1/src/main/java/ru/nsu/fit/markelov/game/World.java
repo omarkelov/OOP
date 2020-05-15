@@ -1,12 +1,13 @@
 package ru.nsu.fit.markelov.game;
 
-import javafx.scene.layout.Region;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Obstacle;
 import ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake;
 import ru.nsu.fit.markelov.game.gameobjects.singlecelled.Food;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 
+import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.DOWN;
@@ -16,7 +17,6 @@ import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.U
 
 public class World {
 
-    private Region[][] regions;
     private WorldObserver worldObserver;
 
     private int width;
@@ -26,21 +26,31 @@ public class World {
     Obstacle obstacle;
     Food food;
 
-    public World(Region[][] regions, Level level, WorldObserver worldObserver) {
-        this.regions = regions;
+    public World(Level level, WorldObserver worldObserver) {
         this.worldObserver = worldObserver;
 
         width = level.getWidth();
         height = level.getHeight();
 
-        snake = new Snake(regions, new LinkedList<>(level.getSnakeCells()));
-        obstacle = new Obstacle(regions, new LinkedList<>(level.getObstacleCells()));
+        Deque<Cell> snakeCells = new LinkedList<>(level.getSnakeCells());
+        for (Cell cell : snakeCells) {
+            cell.setWorldObserver(worldObserver);
+        }
+
+        List<Cell> obstacleCells = new LinkedList<>(level.getObstacleCells());
+        for (Cell cell : obstacleCells) {
+            cell.setWorldObserver(worldObserver);
+        }
+
+        snake = new Snake(snakeCells);
+        obstacle = new Obstacle(obstacleCells);
         food = generateFood();
     }
 
     public void update() {
         snake.updateDirection();
         Cell newHeadCell = snake.getNewHeadCell();
+        newHeadCell.setWorldObserver(worldObserver);
         if (newHeadCell.getColumn() < 0 ||
             newHeadCell.getColumn() >= width ||
             newHeadCell.getRow() < 0 ||
@@ -69,12 +79,13 @@ public class World {
 
     private Food generateFood() {
         Cell cell = new Cell(-1, -1);
+        cell.setWorldObserver(worldObserver);
         do {
             cell.setRow(ThreadLocalRandom.current().nextInt(height));
             cell.setColumn(ThreadLocalRandom.current().nextInt(width));
         } while (snake.isColliding(cell) || obstacle.isColliding(cell));
 
-        return new Food(regions, cell);
+        return new Food(cell);
     }
 
     public void moveSnakeUp() {

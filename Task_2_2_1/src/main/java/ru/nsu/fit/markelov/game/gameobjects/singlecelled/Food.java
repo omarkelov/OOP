@@ -1,18 +1,17 @@
 package ru.nsu.fit.markelov.game.gameobjects.singlecelled;
 
-import javafx.scene.layout.Region;
 import ru.nsu.fit.markelov.game.Cell;
+
+import static ru.nsu.fit.markelov.game.Cell.Type.FOOD;
 
 public class Food {
 
-    private static final String FOOD_CLASS_NAME = "food";
-
     private Cell cell;
 
-    public Food(Region[][] regions, Cell cell) {
+    public Food(Cell cell) {
         this.cell = cell;
 
-        cell.draw(regions, FOOD_CLASS_NAME);
+        cell.changeType(FOOD);
     }
 
     public boolean isColliding(Cell cell) {

@@ -1,6 +1,5 @@
 package ru.nsu.fit.markelov.game.gameobjects.multicelled;
 
-import javafx.scene.layout.Region;
 import ru.nsu.fit.markelov.game.Cell;
 
 import java.util.Collection;
@@ -8,11 +7,12 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Snake extends MultiCelledGameObject {
+import static ru.nsu.fit.markelov.game.Cell.Type.DEAD_SNAKE;
+import static ru.nsu.fit.markelov.game.Cell.Type.EMPTY;
+import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE;
+import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE_HEAD;
 
-    private static final String SNAKE_CLASS_NAME = "snake";
-    private static final String HEAD_CLASS_NAME = "snake-head";
-    private static final String DEAD_SNAKE_CLASS_NAME = "snake-dead";
+public class Snake extends MultiCelledGameObject {
 
     public enum Direction {
         UNDEFINED, UP, RIGHT, DOWN, LEFT;
@@ -25,8 +25,7 @@ public class Snake extends MultiCelledGameObject {
 
     private Deque<Cell> snakeCells;
 
-    public Snake(Region[][] regions, Deque<Cell> snakeCells) {
-        super(regions);
+    public Snake(Deque<Cell> snakeCells) {
         this.snakeCells = snakeCells;
 
         size = snakeCells.size();
@@ -34,8 +33,8 @@ public class Snake extends MultiCelledGameObject {
         direction = size == 1 ? Direction.UNDEFINED : Direction.RIGHT;
         directionQueue = new LinkedList<>();
 
-        drawObjectCells(SNAKE_CLASS_NAME);
-        snakeCells.getFirst().draw(getRegions(), HEAD_CLASS_NAME);
+        changeObjectCellsType(SNAKE);
+        snakeCells.getFirst().changeType(SNAKE_HEAD);
     }
 
     public Cell getNewHeadCell() {
@@ -56,20 +55,20 @@ public class Snake extends MultiCelledGameObject {
 
     public void die() {
         for (Cell cell : snakeCells) {
-            cell.draw(getRegions(), DEAD_SNAKE_CLASS_NAME);
+            cell.changeType(DEAD_SNAKE);
         }
     }
 
     public void removeTail() {
         Cell tailCell = snakeCells.removeLast();
-        tailCell.erase(getRegions());
+        tailCell.changeType(EMPTY);
     }
 
     public void addHead(Cell cell) {
         if (!snakeCells.isEmpty()) {
-            snakeCells.getFirst().draw(getRegions(), SNAKE_CLASS_NAME);
+            snakeCells.getFirst().changeType(SNAKE);
         }
-        cell.draw(getRegions(), HEAD_CLASS_NAME);
+        cell.changeType(SNAKE_HEAD);
         snakeCells.addFirst(cell);
     }
 
