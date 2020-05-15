@@ -29,9 +29,9 @@
       </HBox>
    </top>
    <center>
-      <GridPane fx:id="wrapper" styleClass="playing-field-wrapper">
-         <GridPane fx:id="playingField" styleClass="playing-field"></GridPane>
-         <GridPane fx:id="popup">
+      <GridPane fx:id="wrapperGrid" styleClass="playing-field-wrapper">
+         <GridPane fx:id="fieldGrid" styleClass="playing-field"></GridPane>
+         <GridPane fx:id="popupGrid">
             <Label fx:id="popupLabel" styleClass="popup-label">You win!</Label>
          </GridPane>
       </GridPane>
