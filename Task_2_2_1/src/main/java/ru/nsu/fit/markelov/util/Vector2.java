@@ -1,5 +1,9 @@
 package ru.nsu.fit.markelov.util;
 
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
 public class Vector2 {
 
     private int x;
@@ -10,7 +14,8 @@ public class Vector2 {
         this.y = y;
     }
 
-    public boolean equals(Vector2 vector2) {
+    public boolean equals(Vector2 vector2) throws IllegalInputException {
+        requireNonNull(vector2);
         return x == vector2.x && y == vector2.y;
     }
 

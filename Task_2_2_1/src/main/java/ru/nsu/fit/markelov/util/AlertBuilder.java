@@ -6,7 +6,15 @@ import javafx.scene.layout.Region;
 
 public class AlertBuilder {
 
+    public static Alert buildErrorAlert() {
+        return buildErrorAlert(null);
+    }
+
     public static Alert buildErrorAlert(String task) {
+        if (task == null || task.isEmpty()) {
+            task = "game";
+        }
+
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
         alert.setHeaderText(capitalize(task) + " error");

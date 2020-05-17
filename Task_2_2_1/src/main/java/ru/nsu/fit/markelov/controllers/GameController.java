@@ -19,6 +19,7 @@ import ru.nsu.fit.markelov.game.World;
 import ru.nsu.fit.markelov.game.WorldObserver;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 import static ru.nsu.fit.markelov.game.Cell.Type.EMPTY;
 import static ru.nsu.fit.markelov.util.AlertBuilder.buildConfirmationAlert;
+import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class GameController implements Controller, WorldObserver {
 
@@ -57,21 +60,21 @@ public class GameController implements Controller, WorldObserver {
     @FXML private GridPane popupGrid;
     @FXML private Label popupLabel;
 
-    private SceneManager sceneManager;
+    private final SceneManager sceneManager;
 
     private ScheduledExecutorService worldUpdateExecutor;
 
-    private Level level;
+    private final Level level;
     private World world;
-    private GameField gameField;
+    private final GameField gameField;
 
     private GameControllerDelegate gameControllerDelegate;
 
     private int currentScore;
 
-    public GameController(SceneManager sceneManager, Level level) {
-        this.sceneManager = sceneManager;
-        this.level = level;
+    public GameController(SceneManager sceneManager, Level level) throws IllegalInputException {
+        this.sceneManager = requireNonNull(sceneManager);
+        this.level = requireNonNull(level);
         gameField = new GameField();
     }
 
@@ -118,8 +121,10 @@ public class GameController implements Controller, WorldObserver {
     }
 
     @Override
-    public void runAfterSceneSet(Parent root) {
+    public void runAfterSceneSet(Parent root) throws IllegalInputException {
         System.out.println("runAfterSceneSet");
+
+        requireNonNull(root);
 
         root.setOnKeyReleased(this::handleNavigationInput);
         root.setOnKeyPressed(keyEvent -> gameControllerDelegate.handleGameplayInput(keyEvent));
@@ -158,10 +163,11 @@ public class GameController implements Controller, WorldObserver {
     }
 
     @Override
-    public void onCellChanged(Cell cell) {
+    public void onCellChanged(Cell cell) throws IllegalInputException {
         System.out.println("onCellChanged");
 
-        System.out.println(cell.getType());
+        requireNonNull(cell);
+
         if (cell.getType() != EMPTY) {
             gameField.draw(cell);
         } else {
@@ -176,6 +182,8 @@ public class GameController implements Controller, WorldObserver {
             worldUpdateExecutor.shutdownNow();
         }
 
+        gameControllerDelegate = new GameControllerDelegateReady(this);
+
         popupGrid.getStyleClass().add(INVISIBLE_CLASS_NAME);
 
         restartButton.setDisable(true);
@@ -185,11 +193,15 @@ public class GameController implements Controller, WorldObserver {
         currentScore = level.getSnakeCellPositions().size();
         currentScoreLabel.setText(currentScore + "");
 
-        gameField.init(level.getWidth(), level.getHeight(), fieldGrid);
-
-        gameControllerDelegate = new GameControllerDelegateReady(this);
-
-        world = new World(level, this);
+        try {
+            gameField.init(level.getWidth(), level.getHeight(), fieldGrid);
+            world = new World(level, this);
+        } catch (IllegalInputException e) {
+            Platform.runLater(() -> {
+                buildErrorAlert().showAndWait();
+                sceneManager.switchToMenu();
+            });
+        }
     }
 
     private void handleNavigationInput(KeyEvent keyEvent) {
@@ -254,8 +266,14 @@ public class GameController implements Controller, WorldObserver {
         System.out.println("activateGame");
 
         worldUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
-        worldUpdateExecutor.scheduleWithFixedDelay(() -> world.update(),
-            0, level.getDelayBetweenMoves(), TimeUnit.MILLISECONDS);
+        worldUpdateExecutor.scheduleWithFixedDelay(() -> {
+                try {
+                    world.update();
+                } catch (IllegalInputException e) {
+                    sceneManager.switchToMenu();
+                    Platform.runLater(() -> buildErrorAlert().showAndWait());
+                }
+            }, 0, level.getDelayBetweenMoves(), TimeUnit.MILLISECONDS);
 
         gameControllerDelegate = new GameControllerDelegatePlaying(this);
     }

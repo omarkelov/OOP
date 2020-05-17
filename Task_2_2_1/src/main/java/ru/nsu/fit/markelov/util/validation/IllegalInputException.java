@@ -39,9 +39,25 @@ public class IllegalInputException extends Exception {
      * Checks that the specified object reference is not null. This method is designed primarily for
      * doing parameter validation in methods and constructors.
      *
+     * @param object the object reference to check for nullity.
+     * @param <T>    the type of the reference.
+     * @return       object itself if not null.
+     * @throws IllegalInputException if object is null.
+     */
+    public static <T> T requireNonNull(T object) throws IllegalInputException {
+        if (object == null) {
+            throw new IllegalInputException();
+        }
+
+        return object;
+    }
+
+    /**
+     * Checks that the specified object reference is not null. This method is designed primarily for
+     * doing parameter validation in methods and constructors.
+     *
      * @param object  the object reference to check for nullity.
-     * @param message detail message to be used in the event that a
-     *                <code>IllegalInputException</code> is thrown.
+     * @param message detail message to be used in <code>IllegalInputException</code>.
      * @param <T>     the type of the reference.
      * @return        object itself if not null.
      * @throws IllegalInputException if object is null.

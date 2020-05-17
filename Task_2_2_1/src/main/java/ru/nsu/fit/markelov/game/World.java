@@ -5,6 +5,7 @@ import ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake;
 import ru.nsu.fit.markelov.game.gameobjects.singlecelled.Food;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 import ru.nsu.fit.markelov.util.Vector2;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -15,20 +16,21 @@ import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.D
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.LEFT;
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.RIGHT;
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.UP;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class World {
 
-    private WorldObserver worldObserver;
+    private final WorldObserver worldObserver;
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
     Snake snake;
     Obstacle obstacle;
     Food food;
 
-    public World(Level level, WorldObserver worldObserver) {
-        this.worldObserver = worldObserver;
+    public World(Level level, WorldObserver worldObserver) throws IllegalInputException {
+        this.worldObserver = requireNonNull(worldObserver);
 
         width = level.getWidth();
         height = level.getHeight();
@@ -48,7 +50,7 @@ public class World {
         food = generateFood();
     }
 
-    public void update() {
+    public void update() throws IllegalInputException {
         snake.updateDirection();
         Cell newHeadCell = new Cell(snake.getNewHeadPosition(), worldObserver);
         int x = newHeadCell.getPosition().getX();
@@ -77,7 +79,7 @@ public class World {
         }
     }
 
-    private Food generateFood() {
+    private Food generateFood() throws IllegalInputException {
         Cell cell = new Cell(new Vector2(-1, -1), worldObserver);
         do {
             cell.getPosition().setX(ThreadLocalRandom.current().nextInt(width));

@@ -9,35 +9,49 @@ import ru.nsu.fit.markelov.controllers.GameController;
 import ru.nsu.fit.markelov.controllers.HelpController;
 import ru.nsu.fit.markelov.controllers.MenuController;
 import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.io.IOException;
 
 import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class SceneManager {
 
     private static final String GAME_TITLE = "Blue Snake";
     private static final String FXML_DIRECTORY = "/ru/nsu/fit/markelov/fxml/";
 
-    private Stage stage;
-    private LevelManager levelManager;
+    private final Stage stage;
+    private final LevelManager levelManager;
     private Controller controller;
 
-    public SceneManager(Stage stage, LevelManager levelManager) {
-        this.stage = stage;
-        this.levelManager = levelManager;
+    public SceneManager(Stage stage, LevelManager levelManager) throws IllegalInputException {
+        this.stage = requireNonNull(stage);
+        this.levelManager = requireNonNull(levelManager);
     }
 
     public void switchToGame(String levelName) {
-        switchScene(new GameController(this, levelManager.getLevel(levelName)));
+        try {
+            switchScene(new GameController(this, levelManager.getLevel(levelName)));
+        } catch (IllegalInputException e) {
+            buildErrorAlert("scene switching").showAndWait();
+        }
     }
 
     public void switchToMenu() {
-        switchScene(new MenuController(this, levelManager));
+        try {
+            switchScene(new MenuController(this, levelManager));
+        } catch (IllegalInputException e) {
+            buildErrorAlert("scene switching").showAndWait();
+        }
     }
 
     public void switchToHelp() {
-        switchScene(new HelpController(this));
+        try {
+            switchScene(new HelpController(this));
+        } catch (IllegalInputException e) {
+            buildErrorAlert("scene switching").showAndWait();
+        }
     }
 
     public void dispose() {
@@ -67,8 +81,10 @@ public class SceneManager {
             controller.runAfterSceneSet(root);
         } catch (IOException e) {
             e.printStackTrace();
-
             buildErrorAlert("layout loading").showAndWait();
+        } catch (IllegalInputException e) {
+            e.printStackTrace();
+            buildErrorAlert().showAndWait();
         }
     }
 }

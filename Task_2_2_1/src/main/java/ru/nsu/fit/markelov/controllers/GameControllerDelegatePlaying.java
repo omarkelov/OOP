@@ -2,10 +2,11 @@ package ru.nsu.fit.markelov.controllers;
 
 import javafx.scene.input.KeyEvent;
 import ru.nsu.fit.markelov.util.Closure;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 public class GameControllerDelegatePlaying implements GameControllerDelegate {
 
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameControllerDelegatePlaying(GameController gameController) {
         this.gameController = gameController;

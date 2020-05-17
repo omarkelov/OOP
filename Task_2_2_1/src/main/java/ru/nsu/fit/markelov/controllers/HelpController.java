@@ -5,6 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import ru.nsu.fit.markelov.managers.SceneManager;
 import ru.nsu.fit.markelov.models.Control;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class HelpController implements Controller {
 
@@ -15,10 +18,10 @@ public class HelpController implements Controller {
 
     @FXML private TableView<Control> controlsTableView;
 
-    private SceneManager sceneManager;
+    private final SceneManager sceneManager;
 
-    public HelpController(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
+    public HelpController(SceneManager sceneManager) throws IllegalInputException {
+        this.sceneManager = requireNonNull(sceneManager);
     }
 
     @FXML

@@ -2,6 +2,7 @@ package ru.nsu.fit.markelov.game.gameobjects.multicelled;
 
 import ru.nsu.fit.markelov.game.Cell;
 import ru.nsu.fit.markelov.util.Vector2;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -12,26 +13,23 @@ import static ru.nsu.fit.markelov.game.Cell.Type.DEAD_SNAKE;
 import static ru.nsu.fit.markelov.game.Cell.Type.EMPTY;
 import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE;
 import static ru.nsu.fit.markelov.game.Cell.Type.SNAKE_HEAD;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class Snake extends MultiCelledGameObject {
 
     public enum Direction {
-        UNDEFINED, UP, RIGHT, DOWN, LEFT;
+        UNDEFINED, UP, RIGHT, DOWN, LEFT
     }
-
-    private int size;
 
     private Direction direction;
     private final Queue<Direction> directionQueue;
 
-    private Deque<Cell> snakeCells;
+    private final Deque<Cell> snakeCells;
 
-    public Snake(Deque<Cell> snakeCells) {
-        this.snakeCells = snakeCells;
+    public Snake(Deque<Cell> snakeCells) throws IllegalInputException {
+        this.snakeCells = requireNonNull(snakeCells);
 
-        size = snakeCells.size();
-
-        direction = size == 1 ? Direction.UNDEFINED : Direction.RIGHT;
+        direction = snakeCells.size() == 1 ? Direction.UNDEFINED : Direction.RIGHT;
         directionQueue = new LinkedList<>();
 
         changeObjectCellsType(SNAKE);
@@ -54,18 +52,18 @@ public class Snake extends MultiCelledGameObject {
         }
     }
 
-    public void die() {
+    public void die() throws IllegalInputException {
         for (Cell cell : snakeCells) {
             cell.changeType(DEAD_SNAKE);
         }
     }
 
-    public void removeTail() {
+    public void removeTail() throws IllegalInputException {
         Cell tailCell = snakeCells.removeLast();
         tailCell.changeType(EMPTY);
     }
 
-    public void addHead(Cell cell) {
+    public void addHead(Cell cell) throws IllegalInputException {
         if (!snakeCells.isEmpty()) {
             snakeCells.getFirst().changeType(SNAKE);
         }

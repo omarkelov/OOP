@@ -2,7 +2,7 @@ package ru.nsu.fit.markelov.controllers;
 
 public class GameControllerDelegateFinished implements GameControllerDelegate {
 
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameControllerDelegateFinished(GameController gameController) {
         this.gameController = gameController;

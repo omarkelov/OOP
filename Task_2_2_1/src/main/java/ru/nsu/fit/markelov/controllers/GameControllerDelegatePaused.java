@@ -4,7 +4,7 @@ import ru.nsu.fit.markelov.util.Closure;
 
 public class GameControllerDelegatePaused implements GameControllerDelegate {
 
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameControllerDelegatePaused(GameController gameController) {
         this.gameController = gameController;

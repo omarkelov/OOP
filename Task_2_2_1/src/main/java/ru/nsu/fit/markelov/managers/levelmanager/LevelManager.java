@@ -17,7 +17,7 @@ public class LevelManager {
     public static final String IMAGE_EXTENSION = ".png";
     public static final String DESCRIPTION_EXTENSION = ".json";
 
-    private Map<String, Level> levels;
+    private final Map<String, Level> levels;
 
     public LevelManager() {
         levels = new TreeMap<>();

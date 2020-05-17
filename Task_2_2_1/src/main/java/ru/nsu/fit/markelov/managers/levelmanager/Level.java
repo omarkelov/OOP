@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
-import ru.nsu.fit.markelov.game.Cell;
 import ru.nsu.fit.markelov.util.Vector2;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 import ru.nsu.fit.markelov.util.validation.Validatable;
@@ -17,6 +16,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
 public class Level implements Validatable<Level> {
 
     private enum CellType {
@@ -24,7 +25,7 @@ public class Level implements Validatable<Level> {
         SNAKE(Color.BLUE),
         OBSTACLE(Color.BLACK);
 
-        private Color color;
+        private final Color color;
 
         CellType(Color color) {
             this.color = color;
@@ -35,18 +36,21 @@ public class Level implements Validatable<Level> {
         }
     }
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
-    private int goalScore;
-    private int delayBetweenMoves;
+    private final int goalScore;
+    private final int delayBetweenMoves;
 
     private int emptyCellsCount;
 
     Deque<Vector2> snakeCellPositions;
     List<Vector2> obstacleCellPositions;
 
-    public Level(String imageFileName, String jsonFileName) throws IOException {
+    public Level(String imageFileName, String jsonFileName) throws IOException, IllegalInputException {
+        requireNonNull(imageFileName);
+        requireNonNull(jsonFileName);
+
         emptyCellsCount = 0;
         snakeCellPositions = new LinkedList<>();
         obstacleCellPositions = new LinkedList<>();

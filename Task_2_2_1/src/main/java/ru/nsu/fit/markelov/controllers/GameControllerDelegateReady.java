@@ -4,7 +4,7 @@ import javafx.scene.input.KeyEvent;
 
 public class GameControllerDelegateReady implements GameControllerDelegate {
 
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameControllerDelegateReady(GameController gameController) {
         this.gameController = gameController;
