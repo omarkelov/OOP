@@ -30,6 +30,7 @@ public class World {
     Food food;
 
     public World(Level level, WorldObserver worldObserver) throws IllegalInputException {
+        requireNonNull(level);
         this.worldObserver = requireNonNull(worldObserver);
 
         width = level.getWidth();

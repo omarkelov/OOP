@@ -13,9 +13,9 @@ import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
 
 public class LevelManager {
 
-    public static final String DIRECTORY = "src/main/resources/ru/nsu/fit/markelov/levels/";
-    public static final String IMAGE_EXTENSION = ".png";
-    public static final String DESCRIPTION_EXTENSION = ".json";
+    private static final String DIRECTORY = "src/main/resources/ru/nsu/fit/markelov/levels/";
+    private static final String IMAGE_EXTENSION = ".png";
+    private static final String DESCRIPTION_EXTENSION = ".json";
 
     private final Map<String, Level> levels;
 
