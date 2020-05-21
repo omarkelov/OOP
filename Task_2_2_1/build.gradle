@@ -17,7 +17,19 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-group 'OOP'
-version '1.0'
+jar {
+    archivesBaseName = 'SnakeGame'
 
-mainClassName = 'ru.nsu.fit.markelov.SnakeGame'
+    manifest {
+        attributes 'Main-Class': 'ru.nsu.fit.markelov.Main'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+group 'OOP'
+//version '1.0'
+
+mainClassName = 'ru.nsu.fit.markelov.Main'

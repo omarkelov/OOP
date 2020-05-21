@@ -8,10 +8,6 @@ import ru.nsu.fit.markelov.util.Vector2;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 import ru.nsu.fit.markelov.util.validation.Validatable;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,15 +43,38 @@ public class Level implements Validatable<Level> {
     Deque<Vector2> snakeCellPositions;
     List<Vector2> obstacleCellPositions;
 
-    public Level(String imageFileName, String jsonFileName) throws IOException, IllegalInputException {
-        requireNonNull(imageFileName);
-        requireNonNull(jsonFileName);
+    public Level(Image levelImage, JSONObject levelJSONObject) throws IllegalInputException {
+        requireNonNull(levelImage);
+        requireNonNull(levelJSONObject);
 
         emptyCellsCount = 0;
         snakeCellPositions = new LinkedList<>();
         obstacleCellPositions = new LinkedList<>();
 
-        try (FileInputStream iStream = new FileInputStream(imageFileName)) {
+        goalScore = levelJSONObject.getInt("goalScore");
+        delayBetweenMoves = levelJSONObject.getInt("delayBetweenMoves");
+
+        width = (int) levelImage.getWidth();
+        height = (int) levelImage.getHeight();
+
+        PixelReader pixelReader = levelImage.getPixelReader();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color currentPixel = pixelReader.getColor(x, y);
+
+                if (CellType.SNAKE.isSameColor(currentPixel)) {
+                    snakeCellPositions.addFirst(new Vector2(x, y));
+                } else if (CellType.OBSTACLE.isSameColor(currentPixel)) {
+                    obstacleCellPositions.add(new Vector2(x, y));
+                } else if (CellType.EMPTY.isSameColor(currentPixel)) {
+                    emptyCellsCount++;
+                } else {
+                    System.out.println("Unknown object at (" + x + "; " + y + ").");
+                }
+            }
+        }
+
+        /*try (FileInputStream iStream = new FileInputStream(imageFileName)) {
             JSONObject levelJSONObject =
                 new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFileName))));
 
@@ -83,7 +102,7 @@ public class Level implements Validatable<Level> {
                     }
                 }
             }
-        }
+        }*/
     }
 
     @Override
