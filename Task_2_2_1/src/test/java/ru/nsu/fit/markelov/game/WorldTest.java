@@ -1,11 +1,17 @@
 package ru.nsu.fit.markelov.game;
 
+import javafx.scene.image.Image;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class WorldTest {
 
@@ -24,11 +30,15 @@ public class WorldTest {
 
     @Test
     public void testWorld() {
-        try {
-            String levelName = "Level 1";
-            String imageFileName = DIRECTORY + levelName + IMAGE_EXTENSION;
-            String jsonFileName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
-            new World(new Level(imageFileName, jsonFileName), worldObserver);
+        String levelName = "Level 1";
+        String imagePathName = DIRECTORY + levelName + IMAGE_EXTENSION;
+        String jsonPathName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
+
+        try (InputStream imageStream = new FileInputStream(imagePathName)) {
+            Image image = new Image(imageStream);
+            JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
+
+            new World(new Level(image, jsonLevel), worldObserver);
         } catch (IOException|IllegalInputException e) {
             Assert.fail();
         }
@@ -49,13 +59,17 @@ public class WorldTest {
 
     @Test
     public void testNullWorldObserver() {
+        String levelName = "Level 1";
+        String imagePathName = DIRECTORY + levelName + IMAGE_EXTENSION;
+        String jsonPathName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
+
         boolean exceptionCaught = false;
 
-        try {
-            String levelName = "Level 1";
-            String imageFileName = DIRECTORY + levelName + IMAGE_EXTENSION;
-            String jsonFileName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
-            new World(new Level(imageFileName, jsonFileName), null);
+        try (InputStream imageStream = new FileInputStream(imagePathName)) {
+            Image image = new Image(imageStream);
+            JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
+
+            new World(new Level(image, jsonLevel), null);
         } catch (IllegalInputException e) {
             exceptionCaught = true;
         } catch (IOException e) {

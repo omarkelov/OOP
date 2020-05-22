@@ -1,10 +1,16 @@
 package ru.nsu.fit.markelov.managers.levelmanager;
 
+import javafx.scene.image.Image;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class LevelTest {
 
@@ -14,11 +20,15 @@ public class LevelTest {
 
     @Test
     public void testCorrectLevel() {
-        try {
-            String levelName = "Level 1";
-            String imageFileName = DIRECTORY + levelName + IMAGE_EXTENSION;
-            String jsonFileName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
-            new Level(imageFileName, jsonFileName);
+        String levelName = "Level 1";
+        String imagePathName = DIRECTORY + levelName + IMAGE_EXTENSION;
+        String jsonPathName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
+
+        try (InputStream imageStream = new FileInputStream(imagePathName)) {
+            Image image = new Image(imageStream);
+            JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
+
+            new Level(image, jsonLevel);
         } catch (IOException|IllegalInputException e) {
             Assert.fail();
         }
@@ -26,13 +36,17 @@ public class LevelTest {
 
     @Test
     public void testCorruptedLevel() {
+        String levelName = "Corrupted";
+        String imagePathName = DIRECTORY + levelName + IMAGE_EXTENSION;
+        String jsonPathName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
+
         boolean exceptionCaught = false;
 
-        try {
-            String levelName = "Corrupted";
-            String imageFileName = DIRECTORY + levelName + IMAGE_EXTENSION;
-            String jsonFileName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
-            new Level(imageFileName, jsonFileName);
+        try (InputStream imageStream = new FileInputStream(imagePathName)) {
+            Image image = new Image(imageStream);
+            JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
+
+            new Level(image, jsonLevel);
         } catch (IOException e) {
             exceptionCaught = true;
         } catch (IllegalInputException e) {
@@ -44,13 +58,17 @@ public class LevelTest {
 
     @Test
     public void testIllegalLevel() {
+        String levelName = "Illegal";
+        String imagePathName = DIRECTORY + levelName + IMAGE_EXTENSION;
+        String jsonPathName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
+
         boolean exceptionCaught = false;
 
-        try {
-            String levelName = "Illegal";
-            String imageFileName = DIRECTORY + levelName + IMAGE_EXTENSION;
-            String jsonFileName = DIRECTORY + levelName + DESCRIPTION_EXTENSION;
-            new Level(imageFileName, jsonFileName).validate();
+        try (InputStream imageStream = new FileInputStream(imagePathName)) {
+            Image image = new Image(imageStream);
+            JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
+
+            new Level(image, jsonLevel).validate();
         } catch (IOException e) {
             Assert.fail();
         } catch (IllegalInputException e) {
@@ -65,9 +83,7 @@ public class LevelTest {
         boolean exceptionCaught = false;
 
         try {
-            new Level(null, "").validate();
-        } catch (IOException e) {
-            Assert.fail();
+            new Level(null, new JSONObject()).validate();
         } catch (IllegalInputException e) {
             exceptionCaught = true;
         }
@@ -80,9 +96,12 @@ public class LevelTest {
         boolean exceptionCaught = false;
 
         try {
-            new Level("", null).validate();
-        } catch (IOException e) {
-            Assert.fail();
+            new Level(new Image(new InputStream() {
+                @Override
+                public int read() throws IOException {
+                    return 0;
+                }
+            }), null).validate();
         } catch (IllegalInputException e) {
             exceptionCaught = true;
         }
