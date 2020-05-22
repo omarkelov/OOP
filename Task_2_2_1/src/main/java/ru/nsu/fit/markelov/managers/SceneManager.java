@@ -13,9 +13,14 @@ import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.io.IOException;
 
-import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildErrorAlert;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * SceneManager class is used for switching the scenes of JavaFX stage.
+ *
+ * @author Oleg Markelov
+ */
 public class SceneManager {
 
     private static final String GAME_TITLE = "Blue Snake";
@@ -25,11 +30,23 @@ public class SceneManager {
     private final LevelManager levelManager;
     private Controller controller;
 
+    /**
+     * Creates new SceneManager with specified JavaFX stage and level manager.
+     *
+     * @param stage        JavaFX stage.
+     * @param levelManager level manager.
+     * @throws IllegalInputException if one of the input parameters is null.
+     */
     public SceneManager(Stage stage, LevelManager levelManager) throws IllegalInputException {
         this.stage = requireNonNull(stage);
         this.levelManager = requireNonNull(levelManager);
     }
 
+    /**
+     * Creates new GameController and switches the scene to a specified level of a game.
+     *
+     * @param levelName level name.
+     */
     public void switchToGame(String levelName) {
         try {
             switchScene(new GameController(this, levelManager.getLevel(levelName)));
@@ -38,14 +55,20 @@ public class SceneManager {
         }
     }
 
+    /**
+     * Creates new MenuController and switches the scene to a menu.
+     */
     public void switchToMenu() {
         try {
-            switchScene(new MenuController(this, levelManager));
+            switchScene(new MenuController(this, levelManager.getLevels()));
         } catch (IllegalInputException e) {
             buildErrorAlert("scene switching").showAndWait();
         }
     }
 
+    /**
+     * Creates new HelpController and switches the scene to a help one.
+     */
     public void switchToHelp() {
         try {
             switchScene(new HelpController(this));
@@ -54,6 +77,9 @@ public class SceneManager {
         }
     }
 
+    /**
+     * Disposes all the controller resources.
+     */
     public void dispose() {
         controller.dispose();
     }

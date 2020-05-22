@@ -26,10 +26,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static ru.nsu.fit.markelov.game.Cell.Type.EMPTY;
-import static ru.nsu.fit.markelov.util.AlertBuilder.buildConfirmationAlert;
-import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildConfirmationAlert;
+import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildErrorAlert;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * GameController interface is used by JavaFX in javafx.fxml.FXMLLoader for showing a game scene.
+ *
+ * @author Oleg Markelov
+ */
 public class GameController implements Controller, WorldObserver {
 
     private static final String FXML_FILE_NAME = "game.fxml";
@@ -72,6 +77,13 @@ public class GameController implements Controller, WorldObserver {
 
     private int currentScore;
 
+    /**
+     * Creates new GameController with specified SceneManager and a level.
+     *
+     * @param sceneManager scene manager.
+     * @param level        level.
+     * @throws IllegalInputException if one of the input parameters is null.
+     */
     public GameController(SceneManager sceneManager, Level level) throws IllegalInputException {
         this.sceneManager = requireNonNull(sceneManager);
         this.level = requireNonNull(level);
@@ -115,11 +127,17 @@ public class GameController implements Controller, WorldObserver {
         initGame();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFXMLFileName() {
         return FXML_FILE_NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void runAfterSceneSet(Parent root) throws IllegalInputException {
         System.out.println("runAfterSceneSet");
@@ -132,6 +150,9 @@ public class GameController implements Controller, WorldObserver {
         root.requestFocus();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void dispose() {
         System.out.println("dispose");
@@ -141,10 +162,18 @@ public class GameController implements Controller, WorldObserver {
         }
     }
 
+    /**
+     * Returns scene manager.
+     *
+     * @return scene manager.
+     */
     public SceneManager getSceneManager() {
         return sceneManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onFoodEaten() {
         System.out.println("onFoodEaten");
@@ -155,6 +184,9 @@ public class GameController implements Controller, WorldObserver {
         Platform.runLater(() -> currentScoreLabel.setText(currentScore + ""));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onSnakeDeath() {
         System.out.println("onSnakeDeath");
@@ -162,6 +194,9 @@ public class GameController implements Controller, WorldObserver {
         finishGame(false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCellChanged(Cell cell) throws IllegalInputException {
         System.out.println("onCellChanged");

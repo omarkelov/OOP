@@ -18,6 +18,13 @@ import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.R
 import static ru.nsu.fit.markelov.game.gameobjects.multicelled.Snake.Direction.UP;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * World class is used for representing the plain world, which has limited bounds. It also contains
+ * Snake, Obstacle and Food game objects, that can interact with each other inside the 'update()'
+ * method.
+ *
+ * @author Oleg Markelov
+ */
 public class World {
 
     private final WorldObserver worldObserver;
@@ -25,10 +32,20 @@ public class World {
     private final int width;
     private final int height;
 
-    Snake snake;
-    Obstacle obstacle;
-    Food food;
+    private final Snake snake;
+    private final Obstacle obstacle;
+    private Food food;
 
+    /**
+     * Creates new World from specified game level.
+     *
+     * WorldObserver is used for firing 'onSnakeDeath()' and 'onFoodEaten()' events.
+     *
+     * @param level         game level.
+     * @param worldObserver world observer.
+     * @throws IllegalInputException if one of the input parameters is null. It can also be rethrown
+     *                               from Cell or any game object class.
+     */
     public World(Level level, WorldObserver worldObserver) throws IllegalInputException {
         requireNonNull(level);
         this.worldObserver = requireNonNull(worldObserver);
@@ -51,6 +68,12 @@ public class World {
         food = generateFood();
     }
 
+    /**
+     * Updates the world: the snake moves one cell ahead in its direction. The snake dies if it
+     * collides with an obstacle. The snake grows up by one cell if it collides with a food.
+     *
+     * @throws IllegalInputException from Cell or any game object class.
+     */
     public void update() throws IllegalInputException {
         snake.updateDirection();
         Cell newHeadCell = new Cell(snake.getNewHeadPosition(), worldObserver);
@@ -90,18 +113,30 @@ public class World {
         return new Food(cell);
     }
 
+    /**
+     * Adds 'UP' direction for a snake.
+     */
     public void moveSnakeUp() {
         snake.addDirection(UP);
     }
 
+    /**
+     * Adds 'DOWN' direction for a snake.
+     */
     public void moveSnakeDown() {
         snake.addDirection(DOWN);
     }
 
+    /**
+     * Adds 'RIGHT' direction for a snake.
+     */
     public void moveSnakeRight() {
         snake.addDirection(RIGHT);
     }
 
+    /**
+     * Adds 'LEFT' direction for a snake.
+     */
     public void moveSnakeLeft() {
         snake.addDirection(LEFT);
     }

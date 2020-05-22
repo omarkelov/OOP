@@ -1,6 +1,7 @@
 package ru.nsu.fit.markelov.managers.levelmanager;
 
 import javafx.scene.image.Image;
+import org.json.JSONException;
 import org.json.JSONObject;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
@@ -18,8 +19,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import static ru.nsu.fit.markelov.util.AlertBuilder.buildErrorAlert;
+import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildErrorAlert;
 
+/**
+ * LevelManager class is used for loading and holding all the available levels.
+ *
+ * @author Oleg Markelov
+ */
 public class LevelManager {
 
     private static final String DIRECTORY = "/ru/nsu/fit/markelov/levels/";
@@ -28,6 +34,9 @@ public class LevelManager {
 
     private final Map<String, Level> levels;
 
+    /**
+     * Creates new LevelManager loading all the available levels.
+     */
     public LevelManager() {
         levels = new TreeMap<>();
 
@@ -75,10 +84,28 @@ public class LevelManager {
         return s.hasNext() ? s.next() : "";
     }
 
-    public Level getLevel(String levelName) {
-        return levels.get(levelName);
+    /**
+     * Returns level gotten by specified name.
+     *
+     * @param levelName level name.
+     * @return level gotten by specified name.
+     * @throws IllegalInputException if there is no level with specified name.
+     */
+    public Level getLevel(String levelName) throws IllegalInputException {
+        Level level = levels.get(levelName);
+
+        if (level == null) {
+            throw new IllegalInputException();
+        }
+
+        return level;
     }
 
+    /**
+     * Returns map of name into level.
+     *
+     * @return map of name into level.
+     */
     public Map<String, Level> getLevels() {
         return levels;
     }
