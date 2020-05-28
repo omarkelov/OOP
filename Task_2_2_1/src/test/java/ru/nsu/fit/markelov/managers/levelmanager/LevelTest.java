@@ -28,7 +28,7 @@ public class LevelTest {
             Image image = new Image(imageStream);
             JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
 
-            new Level(image, jsonLevel);
+            LevelImageParser.createLevelFromImage(image, jsonLevel);
         } catch (IOException|IllegalInputException e) {
             Assert.fail();
         }
@@ -46,7 +46,7 @@ public class LevelTest {
             Image image = new Image(imageStream);
             JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
 
-            new Level(image, jsonLevel);
+            LevelImageParser.createLevelFromImage(image, jsonLevel);
         } catch (IOException e) {
             exceptionCaught = true;
         } catch (IllegalInputException e) {
@@ -68,7 +68,7 @@ public class LevelTest {
             Image image = new Image(imageStream);
             JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
 
-            new Level(image, jsonLevel).validate();
+            LevelImageParser.createLevelFromImage(image, jsonLevel).validate();
         } catch (IOException e) {
             Assert.fail();
         } catch (IllegalInputException e) {
@@ -83,7 +83,7 @@ public class LevelTest {
         boolean exceptionCaught = false;
 
         try {
-            new Level(null, new JSONObject()).validate();
+            LevelImageParser.createLevelFromImage(null, new JSONObject()).validate();
         } catch (IllegalInputException e) {
             exceptionCaught = true;
         }
@@ -96,7 +96,7 @@ public class LevelTest {
         boolean exceptionCaught = false;
 
         try {
-            new Level(new Image(new InputStream() {
+            LevelImageParser.createLevelFromImage(new Image(new InputStream() {
                 @Override
                 public int read() throws IOException {
                     return 0;

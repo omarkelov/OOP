@@ -80,7 +80,8 @@ public class LevelManagerFiller {
                         Image image = new Image(imageStream);
                         JSONObject jsonLevel = new JSONObject(convertStreamToString(jsonStream));
 
-                        levels.put(levelName, new Level(image, jsonLevel).validate());
+                        levels.put(levelName,
+                            LevelImageParser.createLevelFromImage(image, jsonLevel).validate());
                     } catch (IOException|IllegalInputException e) {
                         e.printStackTrace();
                         buildErrorAlert("\"" + levelName + "\"-level loading").showAndWait();

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.nsu.fit.markelov.managers.levelmanager.Level;
+import ru.nsu.fit.markelov.managers.levelmanager.LevelImageParser;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.io.FileInputStream;
@@ -38,7 +39,7 @@ public class WorldTest {
             Image image = new Image(imageStream);
             JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
 
-            new World(new Level(image, jsonLevel), worldObserver);
+            new World(LevelImageParser.createLevelFromImage(image, jsonLevel), worldObserver);
         } catch (IOException|IllegalInputException e) {
             Assert.fail();
         }
@@ -69,7 +70,7 @@ public class WorldTest {
             Image image = new Image(imageStream);
             JSONObject jsonLevel = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonPathName))));
 
-            new World(new Level(image, jsonLevel), null);
+            new World(LevelImageParser.createLevelFromImage(image, jsonLevel), null);
         } catch (IllegalInputException e) {
             exceptionCaught = true;
         } catch (IOException e) {

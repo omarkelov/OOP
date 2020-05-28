@@ -1,10 +1,5 @@
 package ru.nsu.fit.markelov.managers.levelmanager;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.paint.Color;
-import org.json.JSONException;
-import org.json.JSONObject;
 import ru.nsu.fit.markelov.util.Vector2;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 import ru.nsu.fit.markelov.util.validation.Validatable;
@@ -16,84 +11,29 @@ import java.util.List;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 /**
- * Level class is used for holding level data after parsing it from an image and description file.
+ * Level class is used for holding level data.
  *
  * @author Oleg Markelov
  */
 public class Level implements Validatable<Level> {
 
-    private enum CellType {
-        EMPTY(Color.WHITE),
-        SNAKE(Color.BLUE),
-        OBSTACLE(Color.BLACK);
+    private int width;
+    private int height;
 
-        private final Color color;
-
-        CellType(Color color) {
-            this.color = color;
-        }
-
-        public boolean isSameColor(Color color) {
-            return this.color.equals(color);
-        }
-    }
-
-    private final int width;
-    private final int height;
-
-    private final int goalScore;
-    private final int delayBetweenMoves;
+    private int goalScore;
+    private int delayBetweenMoves;
 
     private int emptyCellsCount;
 
-    Deque<Vector2> snakeCellPositions;
-    List<Vector2> obstacleCellPositions;
+    private final Deque<Vector2> snakeCellPositions;
+    private final List<Vector2> obstacleCellPositions;
 
     /**
-     * Creates Level from the specified image and description file.
-     *
-     * Each pixel of the image stands for a single cell. Blue stands for snake, black – obstacle,
-     * white – empty space.
-     *
-     * @param levelImage      level image.
-     * @param levelJSONObject level description file.
-     * @throws IllegalInputException if one of the input parameters is null or 'levelJSONObject' is
-     *                               invalid.
+     * Creates new Level with empty data.
      */
-    public Level(Image levelImage, JSONObject levelJSONObject) throws IllegalInputException {
-        requireNonNull(levelImage);
-        requireNonNull(levelJSONObject);
-
-        emptyCellsCount = 0;
+    public Level() {
         snakeCellPositions = new LinkedList<>();
         obstacleCellPositions = new LinkedList<>();
-
-        try {
-            goalScore = levelJSONObject.getInt("goalScore");
-            delayBetweenMoves = levelJSONObject.getInt("delayBetweenMoves");
-        } catch (JSONException e) {
-            throw new IllegalInputException();
-        }
-
-        width = (int) levelImage.getWidth();
-        height = (int) levelImage.getHeight();
-
-        PixelReader pixelReader = levelImage.getPixelReader();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Color currentPixel = pixelReader.getColor(x, y);
-
-                if (CellType.SNAKE.isSameColor(currentPixel)) {
-                    snakeCellPositions.addFirst(new Vector2(x, y));
-                } else if (CellType.OBSTACLE.isSameColor(currentPixel)) {
-                    obstacleCellPositions.add(new Vector2(x, y));
-                } else if (CellType.EMPTY.isSameColor(currentPixel)) {
-                    emptyCellsCount++;
-                } else {
-                    System.out.println("Unknown object at (" + x + "; " + y + ").");
-                }
-            }
-        }
     }
 
     /**
@@ -125,12 +65,30 @@ public class Level implements Validatable<Level> {
     }
 
     /**
+     * Sets width.
+     *
+     * @param width width.
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
      * Returns level height.
      *
      * @return level height.
      */
     public int getHeight() {
         return height;
+    }
+
+    /**
+     * Sets height.
+     *
+     * @param height height.
+     */
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     /**
@@ -143,12 +101,39 @@ public class Level implements Validatable<Level> {
     }
 
     /**
+     * Sets goal score.
+     *
+     * @param goalScore goal score.
+     */
+    public void setGoalScore(int goalScore) {
+        this.goalScore = goalScore;
+    }
+
+    /**
      * Returns delay between moves.
      *
      * @return delay between moves.
      */
     public int getDelayBetweenMoves() {
         return delayBetweenMoves;
+    }
+
+    /**
+     * Sets delay between moves.
+     *
+     * @param delayBetweenMoves delay between moves.
+     */
+    public void setDelayBetweenMoves(int delayBetweenMoves) {
+        this.delayBetweenMoves = delayBetweenMoves;
+    }
+
+    /**
+     * Sets empty cells count.
+     *
+     * @param emptyCellsCount empty cells count.
+     */
+    public void setEmptyCellsCount(int emptyCellsCount) {
+        this.emptyCellsCount = emptyCellsCount;
     }
 
     /**
@@ -161,11 +146,31 @@ public class Level implements Validatable<Level> {
     }
 
     /**
+     * Adds new cell position to snake cell positions.
+     *
+     * @param vector2 cell position.
+     * @throws IllegalInputException if 'vector2' parameter is null.
+     */
+    public void addSnakeCellPosition(Vector2 vector2) throws IllegalInputException {
+        snakeCellPositions.addFirst(requireNonNull(vector2));
+    }
+
+    /**
      * Returns obstacle cell positions.
      *
      * @return obstacle cell positions.
      */
     public List<Vector2> getObstacleCellPositions() {
         return obstacleCellPositions;
+    }
+
+    /**
+     * Adds new cell position to obstacle cell positions.
+     *
+     * @param vector2 cell position.
+     * @throws IllegalInputException if 'vector2' parameter is null.
+     */
+    public void addObstacleCellPosition(Vector2 vector2) throws IllegalInputException {
+        obstacleCellPositions.add(requireNonNull(vector2));
     }
 }
