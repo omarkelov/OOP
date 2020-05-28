@@ -49,7 +49,7 @@ public class SceneManager implements AutoCloseable {
      */
     public void switchToGame(String levelName) {
         try {
-            switchScene(new GameController(this, levelManager.getLevel(levelName)));
+            switchScene(new GameController(this, levelManager.getLevels().get(levelName)));
         } catch (IllegalInputException e) {
             buildErrorAlert("scene switching").showAndWait();
         }
