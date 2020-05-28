@@ -28,7 +28,7 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireN
  */
 public class LevelManagerFiller {
 
-    private final Map<String, Level> levels;
+    private Map<String, Level> levels;
 
     /**
      * Creates new LevelManagerFiller with specifies Map.
@@ -36,7 +36,12 @@ public class LevelManagerFiller {
      * @param levels a map [levelName -> level].
      */
     public LevelManagerFiller(Map<String, Level> levels) {
-        this.levels = levels;
+        try {
+            this.levels = requireNonNull(levels);
+        } catch (IllegalInputException e) {
+            e.printStackTrace();
+            buildErrorAlert("levels loading").showAndWait();
+        }
     }
 
     /**
