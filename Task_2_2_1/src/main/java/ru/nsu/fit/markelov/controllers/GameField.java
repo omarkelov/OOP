@@ -1,5 +1,6 @@
 package ru.nsu.fit.markelov.controllers;
 
+import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import ru.nsu.fit.markelov.game.Cell;
@@ -86,8 +87,10 @@ public class GameField {
         requireNonNull(cssClassName);
 
         erase(cell);
-        regions[cell.getPosition().getY()][cell.getPosition().getX()]
-            .getStyleClass().add(cssClassName);
+
+        int x = cell.getPosition().getX();
+        int y = cell.getPosition().getY();
+        Platform.runLater(() -> regions[y][x].getStyleClass().add(cssClassName));
     }
 
     /**
@@ -99,8 +102,10 @@ public class GameField {
     public void erase(Cell cell) throws IllegalInputException {
         validateCell(cell);
 
-        regions[cell.getPosition().getY()][cell.getPosition().getX()]
-            .getStyleClass().removeIf(className -> !className.equals(DARK_BACKGROUND_CLASS_NAME));
+        int x = cell.getPosition().getX();
+        int y = cell.getPosition().getY();
+        Platform.runLater(() -> regions[y][x].getStyleClass()
+            .removeIf(className -> !className.equals(DARK_BACKGROUND_CLASS_NAME)));
     }
 
     private void validateCell(Cell cell) throws IllegalInputException {
