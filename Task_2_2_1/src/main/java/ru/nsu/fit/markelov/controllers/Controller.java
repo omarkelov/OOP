@@ -9,7 +9,7 @@ import ru.nsu.fit.markelov.util.validation.IllegalInputException;
  *
  * @author Oleg Markelov
  */
-public interface Controller {
+public interface Controller extends AutoCloseable {
     /**
      * Returns .fxml file name.
      *
@@ -26,7 +26,8 @@ public interface Controller {
     default void runAfterSceneSet(Parent root) throws IllegalInputException {}
 
     /**
-     * Disposes all the controller resources.
+     * {@inheritDoc}
      */
-    default void dispose() {}
+    @Override
+    default void close() {}
 }

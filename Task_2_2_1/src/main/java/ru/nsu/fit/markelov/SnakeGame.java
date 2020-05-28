@@ -53,12 +53,12 @@ public class SnakeGame extends Application {
     }
 
     /**
-     * Disposes all the scene manager resources.
+     * Closes scene manager, relinquishing any underlying resources.
      *
      * Called when JavaFX stops the application.
      */
     @Override
     public void stop() {
-        sceneManager.dispose();
+        sceneManager.close();
     }
 }

@@ -154,8 +154,8 @@ public class GameController implements Controller, WorldObserver {
      * {@inheritDoc}
      */
     @Override
-    public void dispose() {
-        System.out.println("dispose");
+    public void close() {
+        System.out.println("close");
 
         if (worldUpdateExecutor != null) {
             worldUpdateExecutor.shutdownNow();

@@ -21,7 +21,7 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireN
  *
  * @author Oleg Markelov
  */
-public class SceneManager {
+public class SceneManager implements AutoCloseable {
 
     private static final String GAME_TITLE = "Blue Snake";
     private static final String FXML_DIRECTORY = "/ru/nsu/fit/markelov/fxml/";
@@ -78,10 +78,11 @@ public class SceneManager {
     }
 
     /**
-     * Disposes all the controller resources.
+     * {@inheritDoc}
      */
-    public void dispose() {
-        controller.dispose();
+    @Override
+    public void close() {
+        controller.close();
     }
 
     private void switchScene(Controller controller) {
@@ -93,7 +94,7 @@ public class SceneManager {
             Parent root = fxmlLoader.load();
 
             if (this.controller != null) {
-                this.controller.dispose();
+                this.controller.close();
             }
             this.controller = controller;
 
