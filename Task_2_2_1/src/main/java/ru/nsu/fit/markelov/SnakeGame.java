@@ -3,8 +3,12 @@ package ru.nsu.fit.markelov;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import ru.nsu.fit.markelov.managers.SceneManager;
+import ru.nsu.fit.markelov.managers.levelmanager.Level;
 import ru.nsu.fit.markelov.managers.levelmanager.LevelManager;
+import ru.nsu.fit.markelov.managers.levelmanager.LevelsDirectoryScanner;
 import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+
+import java.util.Map;
 
 import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildErrorAlert;
 
@@ -15,15 +19,7 @@ import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildErrorAlert;
  */
 public class SnakeGame extends Application {
 
-    private final LevelManager levelManager;
     private SceneManager sceneManager;
-
-    /**
-     * Creates new SnakeGame and loads all the game levels.
-     */
-    public SnakeGame() {
-        levelManager = new LevelManager();
-    }
 
     /**
      * Launches JavaFX application.
@@ -44,6 +40,12 @@ public class SnakeGame extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            LevelManager levelManager = new LevelManager();
+            for (Map.Entry<String, Level> entry : LevelsDirectoryScanner.getLevelsFromDirectory(
+                "/ru/nsu/fit/markelov/levels/", ".png", ".json").entrySet()) {
+                levelManager.addLevel(entry.getKey(), entry.getValue());
+            }
+
             sceneManager = new SceneManager(primaryStage, levelManager);
             sceneManager.switchToMenu();
             primaryStage.show();

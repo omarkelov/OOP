@@ -16,49 +16,39 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 import static ru.nsu.fit.markelov.javafxutil.AlertBuilder.buildErrorAlert;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 /**
- * LevelManagerFiller class is used for loading the levels from the directory and adding them to
- * specified Map.
+ * LevelsDirectoryScanner class is used for loading the levels from the directory.
  *
  * @author Oleg Markelov
  */
-public class LevelManagerFiller {
+public class LevelsDirectoryScanner {
 
-    private Map<String, Level> levels;
-
-    /**
-     * Creates new LevelManagerFiller with specifies Map.
-     *
-     * @param levels a map [levelName -> level].
-     */
-    public LevelManagerFiller(Map<String, Level> levels) {
-        try {
-            this.levels = requireNonNull(levels);
-        } catch (IllegalInputException e) {
-            e.printStackTrace();
-            buildErrorAlert("levels loading").showAndWait();
-        }
-    }
+    private static final Class<LevelsDirectoryScanner> CLASS = LevelsDirectoryScanner.class;
 
     /**
-     * Scans the directory looking for images, parses them as levels and adds to a map.
+     * Scans the directory looking for images, parses them as levels, adds to a map and then returns
+     * it.
      *
      * @param directory            directory to scan.
      * @param imageExtension       image extension.
      * @param descriptionExtension description extension.
+     * @return a map [levelName -> level].
      */
-    public void addLevelsFromDirectory(String directory, String imageExtension,
-                                       String descriptionExtension) {
+    public static Map<String, Level> getLevelsFromDirectory(String directory, String imageExtension,
+                                                            String descriptionExtension) {
+        Map<String, Level> levels = new TreeMap<>();
+
         try {
             requireNonNull(directory);
             requireNonNull(imageExtension);
             requireNonNull(descriptionExtension);
 
-            URI uri = getClass().getResource(directory).toURI();
+            URI uri = CLASS.getResource(directory).toURI();
             Path levelsPath;
             if (uri.getScheme().equals("jar")) {
                 FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
@@ -75,8 +65,8 @@ public class LevelManagerFiller {
                     String imagePathName = directory + levelName + imageExtension;
                     String jsonPathName = directory + levelName + descriptionExtension;
 
-                    try (InputStream imageStream = getClass().getResourceAsStream(imagePathName);
-                         InputStream jsonStream = getClass().getResourceAsStream(jsonPathName)) {
+                    try (InputStream imageStream = CLASS.getResourceAsStream(imagePathName);
+                         InputStream jsonStream = CLASS.getResourceAsStream(jsonPathName)) {
                         Image image = new Image(imageStream);
                         JSONObject jsonLevel = new JSONObject(convertStreamToString(jsonStream));
 
@@ -91,13 +81,15 @@ public class LevelManagerFiller {
             e.printStackTrace();
             buildErrorAlert("levels loading").showAndWait();
         }
+
+        return levels;
     }
 
-    private String getFileBaseName(Path singleFileName) {
+    private static String getFileBaseName(Path singleFileName) {
         return singleFileName.toString().replaceFirst("[.][^.]+$", "");
     }
 
-    private String convertStreamToString(InputStream iStream) {
+    private static String convertStreamToString(InputStream iStream) {
         Scanner s = new Scanner(iStream).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }

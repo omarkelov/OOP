@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 /**
- * LevelManager class is used for loading and holding all the available levels.
+ * LevelManager class is used for adding and holding the levels.
  *
  * @author Oleg Markelov
  */
@@ -17,13 +17,21 @@ public class LevelManager {
     private final Map<String, Level> levels;
 
     /**
-     * Creates new LevelManager loading all the available levels.
+     * Creates new LevelManager.
      */
     public LevelManager() {
         levels = new TreeMap<>();
-        LevelManagerFiller levelManagerFiller = new LevelManagerFiller(levels);
-        levelManagerFiller.addLevelsFromDirectory(
-            "/ru/nsu/fit/markelov/levels/", ".png", ".json");
+    }
+
+    /**
+     * Adds level to a map [levelName -> level].
+     *
+     * @param levelName level name.
+     * @param level     level.
+     * @throws IllegalInputException if one of the input parameters is null.
+     */
+    public void addLevel(String levelName, Level level) throws IllegalInputException {
+        levels.put(requireNonNull(levelName), requireNonNull(level));
     }
 
     /**
@@ -34,7 +42,7 @@ public class LevelManager {
      * @throws IllegalInputException if there is no level with specified name.
      */
     public Level getLevel(String levelName) throws IllegalInputException {
-        return requireNonNull(levels).get(requireNonNull(levelName));
+        return levels.get(requireNonNull(levelName));
     }
 
     /**
