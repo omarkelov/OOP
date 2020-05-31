@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import ru.nsu.fit.markelov.javafxutil.Control?>
+<BorderPane xmlns="http://javafx.com/javafx/100.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            styleClass="root">
+   <stylesheets>
+      <URL value="@../css/main.css"/>
+      <URL value="@../css/help.css"/>
+   </stylesheets>
+   <top>
+      <HBox styleClass="nav-bar">
+         <Button fx:id="menuButton" text="Menu"/>
+         <Button disable="true" text="Help"/>
+      </HBox>
+   </top>
+   <center>
+      <VBox styleClass="content">
+         <Label styleClass="header">Game Controls</Label>
+         <TableView fx:id="controlsTableView" styleClass="controls">
+            <columns>
+               <TableColumn prefWidth="200" text="Action">
+                  <cellValueFactory>
+                     <PropertyValueFactory property="action"/>
+                  </cellValueFactory>
+               </TableColumn>
+               <TableColumn prefWidth="200" styleClass="center" text="Primary key">
+                  <cellValueFactory>
+                     <PropertyValueFactory property="primaryKey"/>
+                  </cellValueFactory>
+               </TableColumn>
+               <TableColumn prefWidth="200" styleClass="center" text="Secondary key">
+                  <cellValueFactory>
+                     <PropertyValueFactory property="secondaryKey"/>
+                  </cellValueFactory>
+               </TableColumn>
+            </columns>
+            <items>
+               <FXCollections fx:factory="observableArrayList">
+                  <Control action="Menu" primaryKey="M" secondaryKey="Esc"/>
+                  <Control action="Help" primaryKey="H"/>
+                  <Control action="Restart" primaryKey="R"/>
+                  <Control action="Pause" primaryKey="P"/>
+                  <Control action="Move Up" primaryKey="W" secondaryKey="UP"/>
+                  <Control action="Move Left" primaryKey="A" secondaryKey="LEFT"/>
+                  <Control action="Move Down" primaryKey="S" secondaryKey="DOWN"/>
+                  <Control action="Move Right" primaryKey="D" secondaryKey="RIGHT"/>
+               </FXCollections>
+            </items>
+         </TableView>
+      </VBox>
+   </center>
+</BorderPane>

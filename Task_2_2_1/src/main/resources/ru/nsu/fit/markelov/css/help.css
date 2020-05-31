@@ -1,0 +1,7 @@
+.controls {
+    -fx-pref-height: 500px;
+}
+
+.center {
+    -fx-alignment: top-center;
+}

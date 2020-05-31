@@ -1,0 +1,27 @@
+.root {
+    -fx-pref-width: 1080px;
+    -fx-pref-height: 720px;
+    -fx-min-width: 720px;
+    -fx-font-size: 20px;
+}
+
+.nav-bar {
+    -fx-padding: 10px 30px;
+    -fx-spacing: 10px;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.content {
+    -fx-alignment: top-center;
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+}
+
+.header {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.invisible {
+    visibility: hidden;
+}
