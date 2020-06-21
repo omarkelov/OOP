@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 public class TasksObject {
     private Integer semester;
-    private Map<String, TaskObject> tasks = new TreeMap<>();
+    private Map<String, TaskObject> taskObjects = new TreeMap<>();
 
     /**
      * Returns semester.
@@ -28,14 +28,14 @@ public class TasksObject {
      *
      * @return tasks.
      */
-    public Map<String, TaskObject> getTasks() {
-        return tasks;
+    public Map<String, TaskObject> getTaskObjects() {
+        return taskObjects;
     }
 
     /**
      * Sets tasks.
      */
-    public void setTasks(Map<String, TaskObject> tasks) {
-        this.tasks = tasks;
+    public void setTaskObjects(Map<String, TaskObject> taskObjects) {
+        this.taskObjects = taskObjects;
     }
 }

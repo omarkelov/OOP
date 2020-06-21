@@ -1,6 +1,6 @@
 controlPoint {
     name 'K-1'
-    date '22.03.2020'
+    date '15.03.2020'
 }
 
 controlPoint {

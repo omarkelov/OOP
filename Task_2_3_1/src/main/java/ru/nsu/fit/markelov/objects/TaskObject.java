@@ -2,11 +2,16 @@ package ru.nsu.fit.markelov.objects;
 
 import java.util.Date;
 
-public class TaskObject {
+public class TaskObject implements Comparable<TaskObject> {
     private String id;
     private String name;
     private float points;
     private Date deadline;
+
+    @Override
+    public int compareTo(TaskObject taskObject) {
+        return id.compareTo(taskObject.getId());
+    }
 
     /**
      * Returns id.

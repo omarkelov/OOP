@@ -2,18 +2,17 @@ package ru.nsu.fit.markelov;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import ru.nsu.fit.markelov.app.Course;
+import ru.nsu.fit.markelov.git.GitHardcoded;
 import ru.nsu.fit.markelov.objects.ControlPointObject;
 import ru.nsu.fit.markelov.objects.GroupObject;
 import ru.nsu.fit.markelov.objects.LessonObject;
-import ru.nsu.fit.markelov.objects.StudentObject;
-import ru.nsu.fit.markelov.objects.TaskObject;
 import ru.nsu.fit.markelov.objects.TasksObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Map;
 import java.util.Set;
 
 public class Main {
@@ -44,6 +43,13 @@ public class Main {
         "src/main/groovy/ru/nsu/fit/markelov/scripts/controlPoints.dsl";
     private static final String CONTROL_POINTS_DSL_VAR = "controlPointsDSL";
 
+    private static final String ATTENDANCE_SCRIPT_PATH =
+        "src/main/groovy/ru/nsu/fit/markelov/engine/attendance/attendance.groovy";
+    private static final String ATTENDANCE_DSL_PATH =
+        "src/main/groovy/ru/nsu/fit/markelov/scripts/attendance.dsl";
+
+    private static final String COURSE_DSL_VAR = "course";
+
     public static void main(String[] args) {
         try {
             GroupObject groupObject = (GroupObject)
@@ -59,6 +65,12 @@ public class Main {
             @SuppressWarnings("unchecked")
             Set<ControlPointObject> controlPoints = (Set<ControlPointObject>) runScript(
                 CONTROL_POINTS_SCRIPT_PATH, CONTROL_POINTS_DSL_PATH, CONTROL_POINTS_DSL_VAR);
+
+            Course course = new Course(new GitHardcoded(), groupObject, tasksObject, lessons, controlPoints);
+
+            runScript(ATTENDANCE_SCRIPT_PATH, ATTENDANCE_DSL_PATH, COURSE_DSL_VAR, course);
+
+            System.out.println(course.createReport());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,6 +82,13 @@ public class Main {
         new GroovyShell(binding).evaluate(readFile(scriptPath) + readFile(dslPath));
 
         return binding.getVariable(variableName);
+    }
+
+    private static void runScript(String scriptPath, String dslPath,
+                                  String variableName, Object variable) throws IOException {
+        Binding binding = new Binding();
+        binding.setVariable(variableName, variable);
+        new GroovyShell(binding).evaluate(readFile(scriptPath) + readFile(dslPath));
     }
 
     private static String readFile(String path) throws IOException {

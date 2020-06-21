@@ -12,6 +12,6 @@ class TasksDSL extends TasksObject {
         closure.resolveStrategy = DELEGATE_ONLY
         closure.call()
 
-        super.tasks[taskDSL.id] = taskDSL
+        super.taskObjects[taskDSL.id] = taskDSL
     }
 }

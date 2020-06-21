@@ -1,10 +1,15 @@
 package ru.nsu.fit.markelov.objects;
 
-public class StudentObject {
+public class StudentObject implements Comparable<StudentObject> {
     private String nickname;
     private String fullName;
     private String repositoryUrl;
     private String branchName;
+
+    @Override
+    public int compareTo(StudentObject studentObject) {
+        return nickname.compareTo(studentObject.getNickname());
+    }
 
     /**
      * Returns nickname.

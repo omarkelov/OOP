@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 public class GroupObject {
     private String name;
-    private Map<String, StudentObject> students = new TreeMap<>();
+    private Map<String, StudentObject> studentObjects = new TreeMap<>();
 
     /**
      * Returns name.
@@ -28,14 +28,14 @@ public class GroupObject {
      *
      * @return students.
      */
-    public Map<String, StudentObject> getStudents() {
-        return students;
+    public Map<String, StudentObject> getStudentObjects() {
+        return studentObjects;
     }
 
     /**
      * Sets students.
      */
-    public void setStudents(Map<String, StudentObject> students) {
-        this.students = students;
+    public void setStudentObjects(Map<String, StudentObject> studentObjects) {
+        this.studentObjects = studentObjects;
     }
 }

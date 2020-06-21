@@ -12,6 +12,6 @@ class GroupDSL extends GroupObject {
         closure.resolveStrategy = DELEGATE_ONLY
         closure.call()
 
-        super.students[studentDSL.nickname] = studentDSL
+        super.studentObjects[studentDSL.nickname] = studentDSL
     }
 }
