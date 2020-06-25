@@ -3,9 +3,9 @@ package ru.nsu.fit.markelov.objects;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class TasksObject {
+public class Tasks {
     private Integer semester;
-    private Map<String, TaskObject> taskObjects = new TreeMap<>();
+    private Map<String, Task> tasks = new TreeMap<>();
 
     /**
      * Returns semester.
@@ -28,14 +28,14 @@ public class TasksObject {
      *
      * @return tasks.
      */
-    public Map<String, TaskObject> getTaskObjects() {
-        return taskObjects;
+    public Map<String, Task> getTasks() {
+        return tasks;
     }
 
     /**
      * Sets tasks.
      */
-    public void setTaskObjects(Map<String, TaskObject> taskObjects) {
-        this.taskObjects = taskObjects;
+    public void setTasks(Map<String, Task> tasks) {
+        this.tasks = tasks;
     }
 }

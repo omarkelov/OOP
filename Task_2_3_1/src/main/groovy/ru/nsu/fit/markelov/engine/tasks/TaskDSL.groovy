@@ -1,12 +1,10 @@
 package ru.nsu.fit.markelov.engine.tasks
 
-import ru.nsu.fit.markelov.objects.TaskObject
-
-import java.text.SimpleDateFormat
+import ru.nsu.fit.markelov.objects.Task
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT
 
-class TaskDSL extends TaskObject {
+class TaskDSL extends Task {
 
     void id(String id) {
         super.id = id

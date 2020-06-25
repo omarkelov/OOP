@@ -1,10 +1,10 @@
 package ru.nsu.fit.markelov.engine.group
 
-import ru.nsu.fit.markelov.objects.GroupObject
+import ru.nsu.fit.markelov.objects.Group
 
 import static groovy.lang.Closure.DELEGATE_ONLY
 
-class GroupDSL extends GroupObject {
+class GroupDSL extends Group {
     void student(@DelegatesTo(strategy = DELEGATE_ONLY, value = StudentDSL) Closure closure) {
         StudentDSL studentDSL = new StudentDSL()
 
@@ -12,6 +12,6 @@ class GroupDSL extends GroupObject {
         closure.resolveStrategy = DELEGATE_ONLY
         closure.call()
 
-        super.studentObjects[studentDSL.nickname] = studentDSL
+        super.students[studentDSL.id] = studentDSL
     }
 }

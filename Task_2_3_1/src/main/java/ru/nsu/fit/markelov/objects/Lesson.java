@@ -2,12 +2,12 @@ package ru.nsu.fit.markelov.objects;
 
 import java.util.Date;
 
-public class LessonObject implements Comparable<LessonObject> {
+public class Lesson implements Comparable<Lesson> {
     private Date date;
 
     @Override
-    public int compareTo(LessonObject lessonObject) {
-        return date.compareTo(lessonObject.getDate());
+    public int compareTo(Lesson lesson) {
+        return date.compareTo(lesson.getDate());
     }
 
     /**

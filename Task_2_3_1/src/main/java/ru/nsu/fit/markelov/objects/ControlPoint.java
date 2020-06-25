@@ -2,13 +2,13 @@ package ru.nsu.fit.markelov.objects;
 
 import java.util.Date;
 
-public class ControlPointObject implements Comparable<ControlPointObject> {
+public class ControlPoint implements Comparable<ControlPoint> {
     private String name;
     private Date date;
 
     @Override
-    public int compareTo(ControlPointObject controlPointObject) {
-        return date.compareTo(controlPointObject.getDate());
+    public int compareTo(ControlPoint controlPoint) {
+        return date.compareTo(controlPoint.getDate());
     }
 
     /**

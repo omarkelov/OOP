@@ -3,9 +3,9 @@ package ru.nsu.fit.markelov.objects;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class GroupObject {
+public class Group {
     private String name;
-    private Map<String, StudentObject> studentObjects = new TreeMap<>();
+    private Map<String, Student> students = new TreeMap<>();
 
     /**
      * Returns name.
@@ -28,14 +28,14 @@ public class GroupObject {
      *
      * @return students.
      */
-    public Map<String, StudentObject> getStudentObjects() {
-        return studentObjects;
+    public Map<String, Student> getStudents() {
+        return students;
     }
 
     /**
      * Sets students.
      */
-    public void setStudentObjects(Map<String, StudentObject> studentObjects) {
-        this.studentObjects = studentObjects;
+    public void setStudents(Map<String, Student> students) {
+        this.students = students;
     }
 }

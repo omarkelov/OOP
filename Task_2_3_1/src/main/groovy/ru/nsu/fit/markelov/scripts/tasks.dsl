@@ -8,7 +8,7 @@ tasks(2) {
 
     task {
         id 'Task_2_2_1'
-        name 'Snake'
+        name 'JavaFX Snake'
         points 1
         deadline '30.04.2020'
     }

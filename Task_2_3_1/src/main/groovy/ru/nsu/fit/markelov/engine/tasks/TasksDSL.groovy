@@ -1,10 +1,10 @@
 package ru.nsu.fit.markelov.engine.tasks
 
-import ru.nsu.fit.markelov.objects.TasksObject
+import ru.nsu.fit.markelov.objects.Tasks
 
 import static groovy.lang.Closure.DELEGATE_ONLY
 
-class TasksDSL extends TasksObject {
+class TasksDSL extends Tasks {
     void task(@DelegatesTo(strategy = DELEGATE_ONLY, value = TaskDSL) Closure closure) {
         TaskDSL taskDSL = new TaskDSL()
 
@@ -12,6 +12,6 @@ class TasksDSL extends TasksObject {
         closure.resolveStrategy = DELEGATE_ONLY
         closure.call()
 
-        super.taskObjects[taskDSL.id] = taskDSL
+        super.tasks[taskDSL.id] = taskDSL
     }
 }

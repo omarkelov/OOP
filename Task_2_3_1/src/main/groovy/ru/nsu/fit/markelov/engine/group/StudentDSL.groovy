@@ -1,10 +1,10 @@
 package ru.nsu.fit.markelov.engine.group
 
-import ru.nsu.fit.markelov.objects.StudentObject
+import ru.nsu.fit.markelov.objects.Student
 
-class StudentDSL extends StudentObject {
+class StudentDSL extends Student {
     void nick(String nickname) {
-        super.nickname = nickname
+        super.id = nickname
     }
 
     void name(String fullName) {

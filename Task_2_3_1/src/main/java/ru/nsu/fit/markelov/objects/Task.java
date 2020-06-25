@@ -2,15 +2,15 @@ package ru.nsu.fit.markelov.objects;
 
 import java.util.Date;
 
-public class TaskObject implements Comparable<TaskObject> {
+public class Task implements Comparable<Task> {
     private String id;
     private String name;
-    private float points;
+    private int points;
     private Date deadline;
 
     @Override
-    public int compareTo(TaskObject taskObject) {
-        return id.compareTo(taskObject.getId());
+    public int compareTo(Task task) {
+        return id.compareTo(task.getId());
     }
 
     /**
@@ -50,14 +50,14 @@ public class TaskObject implements Comparable<TaskObject> {
      *
      * @return points.
      */
-    public float getPoints() {
+    public int getPoints() {
         return points;
     }
 
     /**
      * Sets points.
      */
-    public void setPoints(float points) {
+    public void setPoints(int points) {
         this.points = points;
     }
 

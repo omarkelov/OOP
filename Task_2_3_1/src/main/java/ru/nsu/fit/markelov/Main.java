@@ -4,10 +4,11 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import ru.nsu.fit.markelov.app.Course;
 import ru.nsu.fit.markelov.git.GitHardcoded;
-import ru.nsu.fit.markelov.objects.ControlPointObject;
-import ru.nsu.fit.markelov.objects.GroupObject;
-import ru.nsu.fit.markelov.objects.LessonObject;
-import ru.nsu.fit.markelov.objects.TasksObject;
+import ru.nsu.fit.markelov.gradle.GradleHardcoded;
+import ru.nsu.fit.markelov.objects.ControlPoint;
+import ru.nsu.fit.markelov.objects.Group;
+import ru.nsu.fit.markelov.objects.Lesson;
+import ru.nsu.fit.markelov.objects.Tasks;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,27 +49,35 @@ public class Main {
     private static final String ATTENDANCE_DSL_PATH =
         "src/main/groovy/ru/nsu/fit/markelov/scripts/attendance.dsl";
 
+    private static final String PASSING_SCRIPT_PATH =
+        "src/main/groovy/ru/nsu/fit/markelov/engine/passing/passing.groovy";
+    private static final String PASSING_DSL_PATH =
+        "src/main/groovy/ru/nsu/fit/markelov/scripts/passing.dsl";
+
     private static final String COURSE_DSL_VAR = "course";
 
     public static void main(String[] args) {
         try {
-            GroupObject groupObject = (GroupObject)
+            Group group = (Group)
                 runScript(GROUP_SCRIPT_PATH, GROUP_DSL_PATH, GROUP_DSL_VAR);
 
-            TasksObject tasksObject = (TasksObject)
+            Tasks tasks = (Tasks)
                 runScript(TASKS_SCRIPT_PATH, TASKS_DSL_PATH, TASKS_DSL_VAR);
 
             @SuppressWarnings("unchecked")
-            Set<LessonObject> lessons = (Set<LessonObject>)
+            Set<Lesson> lessons = (Set<Lesson>)
                 runScript(LESSONS_SCRIPT_PATH, LESSONS_DSL_PATH, LESSONS_DSL_VAR);
 
             @SuppressWarnings("unchecked")
-            Set<ControlPointObject> controlPoints = (Set<ControlPointObject>) runScript(
+            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(
                 CONTROL_POINTS_SCRIPT_PATH, CONTROL_POINTS_DSL_PATH, CONTROL_POINTS_DSL_VAR);
 
-            Course course = new Course(new GitHardcoded(), groupObject, tasksObject, lessons, controlPoints);
+            Course course = new Course(
+                new GitHardcoded(), new GradleHardcoded(), group, tasks, lessons, controlPoints);
 
             runScript(ATTENDANCE_SCRIPT_PATH, ATTENDANCE_DSL_PATH, COURSE_DSL_VAR, course);
+
+            runScript(PASSING_SCRIPT_PATH, PASSING_DSL_PATH, COURSE_DSL_VAR, course);
 
             System.out.println(course.createReport());
         } catch (IOException e) {

@@ -1,10 +1,9 @@
 package ru.nsu.fit.markelov.app;
 
-import ru.nsu.fit.markelov.objects.ControlPointObject;
-import ru.nsu.fit.markelov.objects.LessonObject;
+import ru.nsu.fit.markelov.objects.ControlPoint;
+import ru.nsu.fit.markelov.objects.Lesson;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -15,19 +14,19 @@ import java.util.TreeMap;
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
 
 public class Attendance {
-    private List<Date> commitDates;
-    private Set<LessonObject> lessonObjects;
-    private Set<ControlPointObject> controlPointObjects;
+    private final List<Date> commitDates;
+    private final Set<Lesson> lessons;
+    private final Set<ControlPoint> controlPoints;
 
     // lesson date -> student attendance
     private Map<Date, Boolean> lessonDateToAttendanceMap;
     // control point -> attendance count
-    private Map<ControlPointObject, String> controlPointToAttendanceCountMap;
+    private Map<ControlPoint, String> controlPointToAttendanceCountMap;
 
-    public Attendance(List<Date> commitDates, Set<LessonObject> lessonObjects, Set<ControlPointObject> controlPointObjects) {
+    public Attendance(List<Date> commitDates, Set<Lesson> lessons, Set<ControlPoint> controlPoints) {
         this.commitDates = commitDates;
-        this.lessonObjects = lessonObjects;
-        this.controlPointObjects = controlPointObjects;
+        this.lessons = lessons;
+        this.controlPoints = controlPoints;
 
         initAttendance();
         initAttendanceCount();
@@ -37,8 +36,8 @@ public class Attendance {
         lessonDateToAttendanceMap = new TreeMap<>();
 
         long prevLessonTime = 0;
-        for (LessonObject lessonObject : lessonObjects) {
-            Date lessonDate = lessonObject.getDate();
+        for (Lesson lesson : lessons) {
+            Date lessonDate = lesson.getDate();
             lessonDateToAttendanceMap.put(lessonDate, false);
 
             long lessonTime = lessonDate.getTime();
@@ -56,12 +55,12 @@ public class Attendance {
     private void initAttendanceCount() {
         controlPointToAttendanceCountMap = new TreeMap<>();
 
-        for (ControlPointObject controlPointObject : controlPointObjects) {
+        for (ControlPoint controlPoint : controlPoints) {
             int lessonsCount = 0;
             int attendanceCount = 0;
             for (Map.Entry<Date, Boolean> entry : lessonDateToAttendanceMap.entrySet()) {
                 long lessonTime = entry.getKey().getTime();
-                long controlPointTime = controlPointObject.getDate().getTime();
+                long controlPointTime = controlPoint.getDate().getTime();
                 boolean attended = entry.getValue();
 
                 if (lessonTime <= controlPointTime) {
@@ -74,7 +73,7 @@ public class Attendance {
                 }
             }
 
-            controlPointToAttendanceCountMap.put(controlPointObject, attendanceCount + "/" + lessonsCount);
+            controlPointToAttendanceCountMap.put(controlPoint, attendanceCount + "/" + lessonsCount);
         }
     }
 
