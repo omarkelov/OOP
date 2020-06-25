@@ -3,8 +3,8 @@ package ru.nsu.fit.markelov.engine.group
 import ru.nsu.fit.markelov.objects.Student
 
 class StudentDSL extends Student {
-    void nick(String nickname) {
-        super.id = nickname
+    void id(String id) {
+        super.id = id
     }
 
     void name(String fullName) {

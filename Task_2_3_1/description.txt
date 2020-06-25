@@ -1,0 +1,55 @@
+Объекты модели:
+- Student - хранит уникальный id студента, полное имя, ссылку на репозиторий, название ветки репозитория;
+- Group - хранит имя, коллекцию студентов;
+- Task - хранит уникальный id задачи, название, количество баллов, дедлайн;
+- Tasks - хранит номер семестра, коллекию задач;
+- Lesson - хранит дату занятия;
+- ControlPoint - хранит название контрольной точки, дату.
+
+При запуске приложения сперва поочередно запускаются скрипты из group.dsl, tasks.dsl, lessons.dsl,
+controlPoints.dsl, в результате исполнения которых создаются соответствующие объекты модели. Эти
+объекты передаются в конструктор Course. После этого запускаются скрипты attendance.dsl и passing.dsl,
+позволяющие проставить посещаемость вручную и отметить сданные задачи. В заключение, на основании
+полученных данных формируется отчет по группе, который сохраняется в report.html.
+
+При создании объекта Course формируются связи между объектами модели, которые будут использоваться
+для их модификации через методы passTask и changeAttendance. Также в автоматическом режиме формируются
+данные о посещаемости на основе коммитов, а также данные о задачах после запуска компиляции и
+тестирования. Метод createReport позволяет сгенерировать отчет по группе.
+
+Допустимый синтаксис для скриптов:
+
+- group.dsl: group(<group name>) {
+                 student {
+                     id <unique id>
+                     name <full name>
+                     repository <repository url>
+                     branch <branch name>
+                 }
+             }
+
+- tasks.dsl: tasks(<semester number>) {
+                 task {
+                     id <unique id>
+                     name <name>
+                     points <points>
+                     deadline <deadline>
+                 }
+             }
+
+- lessons.dsl: add <dates...>
+               remove <dates...>
+               since <date> till <date> every <days between lessons>
+
+- controlPoints.dsl: controlPoint {
+                         name <name>
+                         date <date>
+                     }
+
+- attendance.dsl: attended <student ids...> lessons <dates...>
+                  missed <student ids...> lessons <dates...>
+
+- passing.dsl: passed <student id> task <task id> date <date> message <message>
+               passedExtra <student id> task <task id> date <date> message <message>
+
+Примечание: все даты должны быть заданы в формате dd.MM.yyyy (к примеру, 01.01.1970).

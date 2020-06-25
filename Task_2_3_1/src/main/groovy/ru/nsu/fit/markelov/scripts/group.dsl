@@ -1,13 +1,13 @@
 group('18214') {
     student {
-        nick 'Oleg'
+        id 'Oleg'
         name 'Oleg Markelov'
         repository 'https://github.com/omarkelov/OOP'
         branch 'master'
     }
 
     student {
-        nick 'Ivan'
+        id 'Ivan'
         name 'Ivan Ivanov'
         repository 'https://github.com/iivanov/OOP'
         branch 'master'
