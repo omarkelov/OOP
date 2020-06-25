@@ -11,6 +11,8 @@ import ru.nsu.fit.markelov.objects.Lesson;
 import ru.nsu.fit.markelov.objects.Tasks;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -57,7 +59,7 @@ public class Main {
     private static final String COURSE_DSL_VAR = "course";
 
     public static void main(String[] args) {
-        try {
+        try (PrintWriter printWriter = new PrintWriter("report.html")) {
             Group group = (Group)
                 runScript(GROUP_SCRIPT_PATH, GROUP_DSL_PATH, GROUP_DSL_VAR);
 
@@ -79,7 +81,7 @@ public class Main {
 
             runScript(PASSING_SCRIPT_PATH, PASSING_DSL_PATH, COURSE_DSL_VAR, course);
 
-            System.out.println(course.createReport());
+            printWriter.println(course.createReport());
         } catch (IOException e) {
             e.printStackTrace();
         }
