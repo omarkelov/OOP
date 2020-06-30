@@ -13,62 +13,83 @@ import ru.nsu.fit.markelov.objects.Tasks;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Set;
 
 public class Main {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
-    private static final String ENGINE_DIR = "src/main/groovy/ru/nsu/fit/markelov/engine/";
+    private static final String RESOURCES_DIR = "src/main/resources";
+    private static final String ENGINE_DIR = "/ru/nsu/fit/markelov/engine/";
     private static final String COURSE_DSL_VAR = "course";
 
     public static void main(String[] args) {
-        String scriptsDir = args.length > 0 ? args[0] + "/" : "scripts/";
-
         try (PrintWriter printWriter = new PrintWriter("report.html")) {
-            Settings settings = (Settings) runScript(scriptsDir, "settings");
-            Group group = (Group) runScript(scriptsDir, "group");
-            Tasks tasks = (Tasks) runScript(scriptsDir, "tasks");
-            Set<Lesson> lessons = (Set<Lesson>) runScript(scriptsDir, "lessons");
-            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(scriptsDir, "controlPoints");
+            Path enginePath = getResourcePath(ENGINE_DIR);
+            Path scriptsPath = Paths.get(args.length > 0 ? args[0] + "/" : "scripts/");
+
+            Settings settings = (Settings) runScript(enginePath, scriptsPath, "settings");
+            Group group = (Group) runScript(enginePath, scriptsPath, "group");
+            Tasks tasks = (Tasks) runScript(enginePath, scriptsPath, "tasks");
+            @SuppressWarnings("unchecked")
+            Set<Lesson> lessons = (Set<Lesson>) runScript(enginePath, scriptsPath, "lessons");
+            @SuppressWarnings("unchecked")
+            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(enginePath, scriptsPath, "controlPoints");
 
             Course course = new Course(new GitProviderStub(settings),
                 new GradleProviderStub(settings), group, tasks, lessons, controlPoints);
 
-            runScript(scriptsDir, "attendance", COURSE_DSL_VAR, course);
-            runScript(scriptsDir, "passing", COURSE_DSL_VAR, course);
+            runScript(enginePath, scriptsPath, "attendance", COURSE_DSL_VAR, course);
+            runScript(enginePath, scriptsPath, "passing", COURSE_DSL_VAR, course);
 
             printWriter.println(course.createReport());
-        } catch (IOException e) {
+        } catch (IOException|URISyntaxException e) {
             e.printStackTrace();
         }
     }
 
-    private static Object runScript(String scriptsDir, String name) throws IOException {
+    private static Path getResourcePath(String pathName) throws URISyntaxException, IOException {
+        URI uri = Main.class.getResource(pathName).toURI();
+
+        if (uri.getScheme().equals("jar")) {
+            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            return fileSystem.getPath(pathName);
+        } else {
+            return Paths.get(RESOURCES_DIR + pathName);
+        }
+    }
+
+    private static Object runScript(Path enginePath, Path scriptsPath, String name) throws IOException {
         Binding binding = new Binding();
 
         new GroovyShell(binding).evaluate(
-            readFile(ENGINE_DIR + "/" + name + "/" + name + ".groovy") +
-            readFile(scriptsDir + "/" + name + ".dsl")
+            readFile(enginePath.resolve(name.toLowerCase()).resolve(name + ".groovy")) +
+            readFile(scriptsPath.resolve(name + ".dsl"))
         );
 
         return binding.getVariable(name + "DSL");
     }
 
-    private static void runScript(String scriptsDir, String name,
+    private static void runScript(Path enginePath, Path scriptsPath, String name,
                                   String variableName, Object variable) throws IOException {
         Binding binding = new Binding();
         binding.setVariable(variableName, variable);
         new GroovyShell(binding).evaluate(
-            readFile(ENGINE_DIR + "/" + name + "/" + name + ".groovy") +
-            readFile(scriptsDir + "/" + name + ".dsl")
+            readFile(enginePath.resolve(name.toLowerCase()).resolve(name + ".groovy")) +
+            readFile(scriptsPath.resolve(name + ".dsl"))
         );
     }
 
-    private static String readFile(String path) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(path)));
+    private static String readFile(Path path) throws IOException {
+        return new String(Files.readAllBytes(path));
     }
 }
