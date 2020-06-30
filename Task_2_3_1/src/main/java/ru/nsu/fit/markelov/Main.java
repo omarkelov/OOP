@@ -22,73 +22,24 @@ public class Main {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
-    private static final String SETTINGS_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/settings/settings.groovy";
-    private static final String SETTINGS_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/settings.dsl";
-    private static final String SETTINGS_DSL_VAR = "settingsDSL";
-
-    private static final String GROUP_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/group/group.groovy";
-    private static final String GROUP_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/group.dsl";
-    private static final String GROUP_DSL_VAR = "groupDSL";
-
-    private static final String TASKS_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/tasks/tasks.groovy";
-    private static final String TASKS_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/tasks.dsl";
-    private static final String TASKS_DSL_VAR = "tasksDSL";
-
-    private static final String LESSONS_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/lessons/lessons.groovy";
-    private static final String LESSONS_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/lessons.dsl";
-    private static final String LESSONS_DSL_VAR = "lessonsDSL";
-
-    private static final String CONTROL_POINTS_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/controlpoints/controlPoints.groovy";
-    private static final String CONTROL_POINTS_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/controlPoints.dsl";
-    private static final String CONTROL_POINTS_DSL_VAR = "controlPointsDSL";
-
-    private static final String ATTENDANCE_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/attendance/attendance.groovy";
-    private static final String ATTENDANCE_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/attendance.dsl";
-
-    private static final String PASSING_SCRIPT_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/engine/passing/passing.groovy";
-    private static final String PASSING_DSL_PATH =
-        "src/main/groovy/ru/nsu/fit/markelov/scripts/passing.dsl";
-
+    private static final String ENGINE_DIR = "src/main/groovy/ru/nsu/fit/markelov/engine/";
     private static final String COURSE_DSL_VAR = "course";
 
     public static void main(String[] args) {
+        String scriptsDir = args.length > 0 ? args[0] + "/" : "scripts/";
+
         try (PrintWriter printWriter = new PrintWriter("report.html")) {
-            Settings settings = (Settings)
-                runScript(SETTINGS_SCRIPT_PATH, SETTINGS_DSL_PATH, SETTINGS_DSL_VAR);
-
-            Group group = (Group)
-                runScript(GROUP_SCRIPT_PATH, GROUP_DSL_PATH, GROUP_DSL_VAR);
-
-            Tasks tasks = (Tasks)
-                runScript(TASKS_SCRIPT_PATH, TASKS_DSL_PATH, TASKS_DSL_VAR);
-
-            @SuppressWarnings("unchecked")
-            Set<Lesson> lessons = (Set<Lesson>)
-                runScript(LESSONS_SCRIPT_PATH, LESSONS_DSL_PATH, LESSONS_DSL_VAR);
-
-            @SuppressWarnings("unchecked")
-            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(
-                CONTROL_POINTS_SCRIPT_PATH, CONTROL_POINTS_DSL_PATH, CONTROL_POINTS_DSL_VAR);
+            Settings settings = (Settings) runScript(scriptsDir, "settings");
+            Group group = (Group) runScript(scriptsDir, "group");
+            Tasks tasks = (Tasks) runScript(scriptsDir, "tasks");
+            Set<Lesson> lessons = (Set<Lesson>) runScript(scriptsDir, "lessons");
+            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(scriptsDir, "controlPoints");
 
             Course course = new Course(new GitProviderStub(settings),
                 new GradleProviderStub(settings), group, tasks, lessons, controlPoints);
 
-            runScript(ATTENDANCE_SCRIPT_PATH, ATTENDANCE_DSL_PATH, COURSE_DSL_VAR, course);
-
-            runScript(PASSING_SCRIPT_PATH, PASSING_DSL_PATH, COURSE_DSL_VAR, course);
+            runScript(scriptsDir, "attendance", COURSE_DSL_VAR, course);
+            runScript(scriptsDir, "passing", COURSE_DSL_VAR, course);
 
             printWriter.println(course.createReport());
         } catch (IOException e) {
@@ -96,19 +47,25 @@ public class Main {
         }
     }
 
-    private static Object runScript(String scriptPath, String dslPath,
-                                    String variableName) throws IOException {
+    private static Object runScript(String scriptsDir, String name) throws IOException {
         Binding binding = new Binding();
-        new GroovyShell(binding).evaluate(readFile(scriptPath) + readFile(dslPath));
 
-        return binding.getVariable(variableName);
+        new GroovyShell(binding).evaluate(
+            readFile(ENGINE_DIR + "/" + name + "/" + name + ".groovy") +
+            readFile(scriptsDir + "/" + name + ".dsl")
+        );
+
+        return binding.getVariable(name + "DSL");
     }
 
-    private static void runScript(String scriptPath, String dslPath,
+    private static void runScript(String scriptsDir, String name,
                                   String variableName, Object variable) throws IOException {
         Binding binding = new Binding();
         binding.setVariable(variableName, variable);
-        new GroovyShell(binding).evaluate(readFile(scriptPath) + readFile(dslPath));
+        new GroovyShell(binding).evaluate(
+            readFile(ENGINE_DIR + "/" + name + "/" + name + ".groovy") +
+            readFile(scriptsDir + "/" + name + ".dsl")
+        );
     }
 
     private static String readFile(String path) throws IOException {
