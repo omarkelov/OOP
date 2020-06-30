@@ -1,5 +1,6 @@
 package ru.nsu.fit.markelov.gradle;
 
+import ru.nsu.fit.markelov.objects.Settings;
 import ru.nsu.fit.markelov.objects.Student;
 import ru.nsu.fit.markelov.objects.Task;
 
@@ -7,6 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GradleProviderStub implements GradleProvider {
+
+    public GradleProviderStub(Settings settings) {
+        System.out.println(settings.getWorkingDirectory());
+        System.out.println(settings.getGitLogin());
+        System.out.println(settings.getGitPassword());
+    }
+
+    @Override
+    public void setWorkingDirectory(String directory) {}
+
     @Override
     public TestResult runTask(Task task, Student student) {
         switch (task.getId()) {

@@ -8,6 +8,7 @@ import ru.nsu.fit.markelov.gradle.GradleProviderStub;
 import ru.nsu.fit.markelov.objects.ControlPoint;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
+import ru.nsu.fit.markelov.objects.Settings;
 import ru.nsu.fit.markelov.objects.Tasks;
 
 import java.io.IOException;
@@ -20,6 +21,12 @@ import java.util.Set;
 public class Main {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+
+    private static final String SETTINGS_SCRIPT_PATH =
+        "src/main/groovy/ru/nsu/fit/markelov/engine/settings/settings.groovy";
+    private static final String SETTINGS_DSL_PATH =
+        "src/main/groovy/ru/nsu/fit/markelov/scripts/settings.dsl";
+    private static final String SETTINGS_DSL_VAR = "settingsDSL";
 
     private static final String GROUP_SCRIPT_PATH =
         "src/main/groovy/ru/nsu/fit/markelov/engine/group/group.groovy";
@@ -59,6 +66,9 @@ public class Main {
 
     public static void main(String[] args) {
         try (PrintWriter printWriter = new PrintWriter("report.html")) {
+            Settings settings = (Settings)
+                runScript(SETTINGS_SCRIPT_PATH, SETTINGS_DSL_PATH, SETTINGS_DSL_VAR);
+
             Group group = (Group)
                 runScript(GROUP_SCRIPT_PATH, GROUP_DSL_PATH, GROUP_DSL_VAR);
 
@@ -73,8 +83,8 @@ public class Main {
             Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(
                 CONTROL_POINTS_SCRIPT_PATH, CONTROL_POINTS_DSL_PATH, CONTROL_POINTS_DSL_VAR);
 
-            Course course = new Course(
-                new GitProviderStub(), new GradleProviderStub(), group, tasks, lessons, controlPoints);
+            Course course = new Course(new GitProviderStub(settings),
+                new GradleProviderStub(settings), group, tasks, lessons, controlPoints);
 
             runScript(ATTENDANCE_SCRIPT_PATH, ATTENDANCE_DSL_PATH, COURSE_DSL_VAR, course);
 
