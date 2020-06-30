@@ -4,17 +4,19 @@ def passed(String studentId) {
     [task: { String taskId ->
         [date: { String date ->
             [message: { String message ->
-                course.passTask(studentId, taskId, date, message, false)
+                course.passTask(studentId, taskId, date, message)
             }]
         }]
     }]
 }
 
-def passedExtra(String studentId) {
+def addExtraPoints(String studentId) {
     [task: { String taskId ->
-        [date: { String date ->
-            [message: { String message ->
-                course.passTask(studentId, taskId, date, message, true)
+        [points: { int points ->
+            [date: { String date ->
+                [message: { String message ->
+                    course.addExtraPoints(studentId, taskId, points, date, message)
+                }]
             }]
         }]
     }]

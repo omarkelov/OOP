@@ -4,7 +4,9 @@ import ru.nsu.fit.markelov.gradle.Test;
 import ru.nsu.fit.markelov.gradle.TestResult;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
 
@@ -12,13 +14,12 @@ public class TaskProgress {
     private final TestResult testResult;
 
     private String tests;
-    private int creditPoints;
-    private int extraPoints;
-    private Date creditPointsDate;
-    private Date extraPointsDate;
+    private TaskPoints creditPoints;
+    private List<TaskPoints> extraPointsList;
 
     public TaskProgress(TestResult testResult) {
         this.testResult = testResult;
+        extraPointsList = new ArrayList<>();
 
         init();
     }
@@ -36,14 +37,35 @@ public class TaskProgress {
         tests = passedTests + "/" + failedTests;
     }
 
-    public void pass(int points, String date, String message, boolean extra) throws ParseException {
-        if (!extra) {
-            creditPoints = points;
-            creditPointsDate = DATE_FORMAT.parse(date);
-        } else {
-            extraPoints = points;
-            extraPointsDate = DATE_FORMAT.parse(date);
+    public void pass(int points, String date, String message) throws ParseException {
+        creditPoints = new TaskPoints();
+        creditPoints.setPoints(points);
+        creditPoints.setDate(DATE_FORMAT.parse(date));
+        creditPoints.setMessage(message);
+    }
+
+    public void addExtraPoints(int points, String date, String message) throws ParseException {
+        TaskPoints extraPoints = new TaskPoints();
+        extraPoints.setPoints(points);
+        extraPoints.setDate(DATE_FORMAT.parse(date));
+        extraPoints.setMessage(message);
+        extraPointsList.add(extraPoints);
+    }
+
+    public int countCreditPoints() {
+        return creditPoints != null ? creditPoints.getPoints() : 0;
+    }
+
+    public int countExtraPoints() {
+        int extraPoints = 0;
+        for (TaskPoints points : extraPointsList) {
+            extraPoints += points.getPoints();
         }
+        return extraPoints;
+    }
+
+    public int countAllPoints() {
+        return countCreditPoints() + countExtraPoints();
     }
 
     /**
@@ -87,34 +109,30 @@ public class TaskProgress {
      *
      * @return creditPoints.
      */
-    public int getCreditPoints() {
+    public TaskPoints getCreditPoints() {
         return creditPoints;
     }
 
     /**
-     * Returns extraPoints.
-     *
-     * @return extraPoints.
+     * Sets creditPoints.
      */
-    public int getExtraPoints() {
-        return extraPoints;
+    public void setCreditPoints(TaskPoints creditPoints) {
+        this.creditPoints = creditPoints;
     }
 
     /**
-     * Returns creditPointsDate.
+     * Returns extraPointsList.
      *
-     * @return creditPointsDate.
+     * @return extraPointsList.
      */
-    public Date getCreditPointsDate() {
-        return creditPointsDate;
+    public List<TaskPoints> getExtraPointsList() {
+        return extraPointsList;
     }
 
     /**
-     * Returns extraPointsDate.
-     *
-     * @return extraPointsDate.
+     * Sets extraPointsList.
      */
-    public Date getExtraPointsDate() {
-        return extraPointsDate;
+    public void setExtraPointsList(List<TaskPoints> extraPointsList) {
+        this.extraPointsList = extraPointsList;
     }
 }

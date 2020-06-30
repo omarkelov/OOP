@@ -100,9 +100,14 @@ public class Course {
     }
 
     public void passTask(String studentId, String taskId,
-                         String date, String message, boolean extra) throws ParseException {
+                         String date, String message) throws ParseException {
         int points = tasks.getTasks().get(taskId).getPoints();
-        taskProgressMap.get(taskId).get(studentId).pass(points, date, message, extra);
+        taskProgressMap.get(taskId).get(studentId).pass(points, date, message);
+    }
+
+    public void addExtraPoints(String studentId, String taskId, int points,
+                               String date, String message) throws ParseException {
+        taskProgressMap.get(taskId).get(studentId).addExtraPoints(points, date, message);
     }
 
     public void changeAttendance(String[] studentIds, String[] lessonDates,
@@ -126,7 +131,9 @@ public class Course {
     }
 
     public int countPoints(String studentName, String taskName) {
-        return 0;
+        TaskProgress taskProgress = taskProgressMap.get(taskName).get(studentName);
+
+        return taskProgress.countAllPoints();
     }
 
     public String createControlPointsMessage() {
@@ -214,9 +221,9 @@ public class Course {
                 sb.append("<td>").append(taskProgress.isStyleChecked() ? "+" : "-").append("</td>");
                 sb.append("<td>").append(taskProgress.isDocumentationGenerated() ? "+" : "-").append("</td>");
                 sb.append("<td>").append(taskProgress.getTests()).append("</td>");
-                sb.append("<td>").append(taskProgress.getCreditPoints()).append("</td>");
-                sb.append("<td>").append(taskProgress.getExtraPoints()).append("</td>");
-                sb.append("<td>").append(taskProgress.getCreditPoints() + taskProgress.getExtraPoints()).append("</td>");
+                sb.append("<td>").append(taskProgress.countCreditPoints()).append("</td>");
+                sb.append("<td>").append(taskProgress.countExtraPoints()).append("</td>");
+                sb.append("<td>").append(taskProgress.countAllPoints()).append("</td>");
                 sb.append("\n            </tr>\n");
             }
             sb.append("        </table>\n");

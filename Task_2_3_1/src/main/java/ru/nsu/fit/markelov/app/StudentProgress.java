@@ -26,17 +26,18 @@ public class StudentProgress {
 
             int points = 0;
             for (TaskProgress taskProgress : taskProgressList) {
-                if (taskProgress.getCreditPointsDate() != null) {
-                    long creditPointsTime = taskProgress.getCreditPointsDate().getTime();
+                TaskPoints creditPoints = taskProgress.getCreditPoints();
+                if (creditPoints != null) {
+                    long creditPointsTime = creditPoints.getDate().getTime();
                     if (creditPointsTime < controlPointTime) {
-                        points += taskProgress.getCreditPoints();
+                        points += creditPoints.getPoints();
                     }
                 }
 
-                if (taskProgress.getExtraPointsDate() != null) {
-                    long extraPointsTime = taskProgress.getExtraPointsDate().getTime();
+                for (TaskPoints extraPoints : taskProgress.getExtraPointsList()) {
+                    long extraPointsTime = extraPoints.getDate().getTime();
                     if (extraPointsTime < controlPointTime) {
-                        points += taskProgress.getExtraPoints();
+                        points += extraPoints.getPoints();
                     }
                 }
             }
