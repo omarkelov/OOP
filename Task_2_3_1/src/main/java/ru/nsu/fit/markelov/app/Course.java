@@ -113,6 +113,26 @@ public class Course {
         }
     }
 
+    public String compile(String studentName, String taskName) {
+        return "placeholder";
+    }
+
+    public String checkStyle(String studentName, String taskName) {
+        return "placeholder";
+    }
+
+    public String test(String studentName, String taskName) {
+        return "placeholder";
+    }
+
+    public int countPoints(String studentName, String taskName) {
+        return 0;
+    }
+
+    public String createControlPointsMessage() {
+        return "placeholder";
+    }
+
     public String createReport() {
         StringBuilder sb = new StringBuilder();
 

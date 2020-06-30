@@ -2,6 +2,7 @@ package ru.nsu.fit.markelov;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import groovyjarjarpicocli.CommandLine;
 import ru.nsu.fit.markelov.app.Course;
 import ru.nsu.fit.markelov.git.GitProviderStub;
 import ru.nsu.fit.markelov.gradle.GradleProviderStub;
@@ -11,6 +12,7 @@ import ru.nsu.fit.markelov.objects.Lesson;
 import ru.nsu.fit.markelov.objects.Settings;
 import ru.nsu.fit.markelov.objects.Tasks;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -23,19 +25,45 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
-public class Main {
+@CommandLine.Command(name = "DSL", description = "") // TODO
+public class Main implements Callable<Integer> {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
+    private static final String DEFAULT_SCRIPTS_DIR = "scripts/";
     private static final String RESOURCES_DIR = "src/main/resources";
     private static final String ENGINE_DIR = "/ru/nsu/fit/markelov/engine/";
     private static final String COURSE_DSL_VAR = "course";
 
+    @CommandLine.Parameters(index = "0", description = "command") // TODO
+    private String command;
+
+    @CommandLine.Parameters(index = "1", defaultValue = "", description = "student") // TODO
+    private String student;
+
+    @CommandLine.Parameters(index = "2", defaultValue = "", description = "task") // TODO
+    private String task;
+
+    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true,
+        description = "display this help and exit")
+    boolean helpRequested;
+
+    @CommandLine.Option(names = { "-s", "--scripts" }, defaultValue = DEFAULT_SCRIPTS_DIR,
+        description = "define a directory with scripts")
+    private String scriptsDir;
+
     public static void main(String[] args) {
-        try (PrintWriter printWriter = new PrintWriter("report.html")) {
+        int exitCode = new CommandLine(new Main()).execute(args);
+        System.exit(exitCode);
+    }
+
+    @Override
+    public Integer call() {
+        try {
             Path enginePath = getResourcePath(ENGINE_DIR);
-            Path scriptsPath = Paths.get(args.length > 0 ? args[0] + "/" : "scripts/");
+            Path scriptsPath = Paths.get(scriptsDir);
 
             Settings settings = (Settings) runScript(enginePath, scriptsPath, "settings");
             Group group = (Group) runScript(enginePath, scriptsPath, "group");
@@ -43,7 +71,8 @@ public class Main {
             @SuppressWarnings("unchecked")
             Set<Lesson> lessons = (Set<Lesson>) runScript(enginePath, scriptsPath, "lessons");
             @SuppressWarnings("unchecked")
-            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(enginePath, scriptsPath, "controlPoints");
+            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(
+                enginePath, scriptsPath, "controlPoints");
 
             Course course = new Course(new GitProviderStub(settings),
                 new GradleProviderStub(settings), group, tasks, lessons, controlPoints);
@@ -51,13 +80,15 @@ public class Main {
             runScript(enginePath, scriptsPath, "attendance", COURSE_DSL_VAR, course);
             runScript(enginePath, scriptsPath, "passing", COURSE_DSL_VAR, course);
 
-            printWriter.println(course.createReport());
+            handleCommand(course);
         } catch (IOException|URISyntaxException e) {
             e.printStackTrace();
         }
+
+        return 0;
     }
 
-    private static Path getResourcePath(String pathName) throws URISyntaxException, IOException {
+    private Path getResourcePath(String pathName) throws URISyntaxException, IOException {
         URI uri = Main.class.getResource(pathName).toURI();
 
         if (uri.getScheme().equals("jar")) {
@@ -68,7 +99,8 @@ public class Main {
         }
     }
 
-    private static Object runScript(Path enginePath, Path scriptsPath, String name) throws IOException {
+    private Object runScript(Path enginePath, Path scriptsPath, String name)
+                                    throws IOException {
         Binding binding = new Binding();
 
         new GroovyShell(binding).evaluate(
@@ -79,17 +111,50 @@ public class Main {
         return binding.getVariable(name + "DSL");
     }
 
-    private static void runScript(Path enginePath, Path scriptsPath, String name,
+    private void runScript(Path enginePath, Path scriptsPath, String name,
                                   String variableName, Object variable) throws IOException {
         Binding binding = new Binding();
         binding.setVariable(variableName, variable);
+
         new GroovyShell(binding).evaluate(
             readFile(enginePath.resolve(name.toLowerCase()).resolve(name + ".groovy")) +
             readFile(scriptsPath.resolve(name + ".dsl"))
         );
     }
 
-    private static String readFile(Path path) throws IOException {
+    private String readFile(Path path) throws IOException {
         return new String(Files.readAllBytes(path));
+    }
+
+    private void handleCommand(Course course) throws FileNotFoundException {
+        String message;
+        switch (command) {
+            case "compile":
+                message = course.compile(student, task);
+                System.out.println(student + "'s \"" + task + "\" compile result: " + message);
+                break;
+            case "style":
+                message = course.checkStyle(student, task);
+                System.out.println(student + "'s \"" + task + "\" style check result: " + message);
+                break;
+            case "test":
+                message = course.test(student, task);
+                System.out.println(student + "'s \"" + task + "\" test result: " + message);
+                break;
+            case "points":
+                int points = course.countPoints(student, task);
+                System.out.println(student + "'s \"" + task + "\" points: " + points);
+                break;
+            case "control":
+                System.out.println(course.createControlPointsMessage());
+                break;
+            case "report":
+                try (PrintWriter printWriter = new PrintWriter("report.html")) {
+                    printWriter.println(course.createReport());
+                }
+                break;
+            default:
+                System.out.println("Bad command!");
+        }
     }
 }
