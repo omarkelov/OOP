@@ -5,6 +5,6 @@ import ru.nsu.fit.markelov.objects.Student;
 import java.util.Date;
 import java.util.List;
 
-public interface Git {
+public interface GitProvider {
     List<Date> getCommitDates(Student student);
 }

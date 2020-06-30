@@ -6,7 +6,7 @@ import ru.nsu.fit.markelov.objects.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradleHardcoded implements Gradle {
+public class GradleProviderStub implements GradleProvider {
     @Override
     public TestResult runTask(Task task, Student student) {
         switch (task.getId()) {

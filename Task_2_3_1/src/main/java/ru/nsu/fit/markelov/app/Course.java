@@ -1,7 +1,7 @@
 package ru.nsu.fit.markelov.app;
 
-import ru.nsu.fit.markelov.git.Git;
-import ru.nsu.fit.markelov.gradle.Gradle;
+import ru.nsu.fit.markelov.git.GitProvider;
+import ru.nsu.fit.markelov.gradle.GradleProvider;
 import ru.nsu.fit.markelov.objects.ControlPoint;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
@@ -21,8 +21,8 @@ public class Course {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM");
 
-    private final Git git;
-    private final Gradle gradle;
+    private final GitProvider gitProvider;
+    private final GradleProvider gradleProvider;
     private final Group group;
     private final Tasks tasks;
     private final Set<Lesson> lessons;
@@ -35,10 +35,10 @@ public class Course {
     // student id -> student progress
     private final Map<String, StudentProgress> studentProgressMap;
 
-    public Course(Git git, Gradle gradle, Group group, Tasks tasks,
+    public Course(GitProvider gitProvider, GradleProvider gradleProvider, Group group, Tasks tasks,
                   Set<Lesson> lessons, Set<ControlPoint> controlPoints) {
-        this.git = git;
-        this.gradle = gradle;
+        this.gitProvider = gitProvider;
+        this.gradleProvider = gradleProvider;
         this.group = group;
         this.tasks = tasks;
         this.lessons = lessons;
@@ -59,7 +59,7 @@ public class Course {
             Student student = studentEntry.getValue();
 
             Attendance attendance = new Attendance(
-                git.getCommitDates(student), lessons, controlPoints);
+                gitProvider.getCommitDates(student), lessons, controlPoints);
 
             attendanceMap.put(studentId, attendance);
         }
@@ -77,7 +77,7 @@ public class Course {
                 Student student = studentEntry.getValue();
 
                 studentIdToTaskProgressMap.put(studentId,
-                    new TaskProgress(gradle.runTask(task, student)));
+                    new TaskProgress(gradleProvider.runTask(task, student)));
             }
 
             taskProgressMap.put(taskId, studentIdToTaskProgressMap);

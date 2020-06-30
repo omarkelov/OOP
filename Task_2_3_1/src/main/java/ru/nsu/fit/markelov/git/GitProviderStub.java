@@ -9,7 +9,7 @@ import java.util.List;
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
 
-public class GitHardcoded implements Git {
+public class GitProviderStub implements GitProvider {
     @Override
     public List<Date> getCommitDates(Student student) {
         List<Date> commitDates = new ArrayList<>();

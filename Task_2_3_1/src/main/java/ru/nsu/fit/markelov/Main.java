@@ -3,8 +3,8 @@ package ru.nsu.fit.markelov;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import ru.nsu.fit.markelov.app.Course;
-import ru.nsu.fit.markelov.git.GitHardcoded;
-import ru.nsu.fit.markelov.gradle.GradleHardcoded;
+import ru.nsu.fit.markelov.git.GitProviderStub;
+import ru.nsu.fit.markelov.gradle.GradleProviderStub;
 import ru.nsu.fit.markelov.objects.ControlPoint;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
@@ -12,7 +12,6 @@ import ru.nsu.fit.markelov.objects.Tasks;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -75,7 +74,7 @@ public class Main {
                 CONTROL_POINTS_SCRIPT_PATH, CONTROL_POINTS_DSL_PATH, CONTROL_POINTS_DSL_VAR);
 
             Course course = new Course(
-                new GitHardcoded(), new GradleHardcoded(), group, tasks, lessons, controlPoints);
+                new GitProviderStub(), new GradleProviderStub(), group, tasks, lessons, controlPoints);
 
             runScript(ATTENDANCE_SCRIPT_PATH, ATTENDANCE_DSL_PATH, COURSE_DSL_VAR, course);
 
