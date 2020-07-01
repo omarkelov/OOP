@@ -42,13 +42,14 @@ public class Main implements Callable<Integer> {
     private static final String COURSE_DSL_VAR = "course";
 
     @CommandLine.Parameters(index = "0", defaultValue = "",
-        description = "runs one of the next commands: " +
-            "compile (compiles the task and generates a documentation), " +
-            "style (checks the code style for the task), " +
-            "test (runs the tests for the task), " +
-            "points (calculates the points for the task), " +
-            "control (creates the report for every control point), " +
-            "report (creates the .html report for the group)")
+        description = "run one of the next commands: " +
+            "update (update all the students' repositories), " +
+            "compile (compile the task and generate a documentation), " +
+            "style (check the code style for the task), " +
+            "test (run the tests for the task), " +
+            "points (calculate the points for the task), " +
+            "control (create the report for every control point), " +
+            "report (create the .html report for the group)")
     private String command;
 
     @CommandLine.Parameters(index = "1", defaultValue = "", description = "student unique id")
