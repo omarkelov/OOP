@@ -5,7 +5,15 @@ import ru.nsu.fit.markelov.util.validation.IllegalInputException
 
 import static groovy.lang.Closure.DELEGATE_ONLY
 
+/**
+ * GroupDSL class is used for setting the group data from the user script.
+ *
+ * @author Oleg Markelov
+ */
 class GroupDSL extends Group {
+    /**
+     * Adds student to this group.
+     */
     void student(@DelegatesTo(strategy = DELEGATE_ONLY, value = StudentDSL) Closure closure) {
         StudentDSL studentDSL = new StudentDSL()
 

@@ -10,6 +10,11 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_POSITIVE;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * ControlPoint class is used for setting and getting the control point data.
+ *
+ * @author Oleg Markelov
+ */
 public class ControlPoint implements Comparable<ControlPoint>, Validatable<ControlPoint> {
     private String name;
     private Date date;
@@ -17,6 +22,13 @@ public class ControlPoint implements Comparable<ControlPoint>, Validatable<Contr
     private Integer pointsForGood;
     private Integer pointsForSat;
 
+    /**
+     * Compares this object with the specified object based on their dates.
+     *
+     * @param controlPoint the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object is less than,
+     *         equal to, or greater than the specified object.
+     */
     @Override
     public int compareTo(ControlPoint controlPoint) {
         return date.compareTo(controlPoint.getDate());
@@ -30,7 +42,7 @@ public class ControlPoint implements Comparable<ControlPoint>, Validatable<Contr
         requireNonNull(name, "ControlPoint name " + NOT_NULL);
         requireNonNull(date, "ControlPoint date " + NOT_NULL);
         requireNonNull(pointsForExc, "ControlPoint points for Exc " + NOT_NULL);
-        requireNonNull(pointsForGood, "ControlPoint points for good " + NOT_NULL);
+        requireNonNull(pointsForGood, "ControlPoint points for Good " + NOT_NULL);
         requireNonNull(pointsForSat, "ControlPoint points for Sat " + NOT_NULL);
 
         if (name.isEmpty()) {

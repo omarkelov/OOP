@@ -10,6 +10,11 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_EMPT
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * Group class is used for setting and getting group name and the collection of students.
+ *
+ * @author Oleg Markelov
+ */
 public class Group implements Validatable<Group> {
     private String name;
     private Map<String, Student> students = new TreeMap<>();

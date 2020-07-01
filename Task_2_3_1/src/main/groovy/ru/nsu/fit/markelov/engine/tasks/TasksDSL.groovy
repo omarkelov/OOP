@@ -5,7 +5,15 @@ import ru.nsu.fit.markelov.util.validation.IllegalInputException
 
 import static groovy.lang.Closure.DELEGATE_ONLY
 
+/**
+ * TasksDSL class is used for setting the tasks data from the user script.
+ *
+ * @author Oleg Markelov
+ */
 class TasksDSL extends Tasks {
+    /**
+     * Adds task to the collection of tasks.
+     */
     void task(@DelegatesTo(strategy = DELEGATE_ONLY, value = TaskDSL) Closure closure) {
         TaskDSL taskDSL = new TaskDSL()
 

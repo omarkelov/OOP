@@ -6,6 +6,11 @@ import ru.nsu.fit.markelov.util.validation.Validatable;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Lessons class is used for setting and getting the collection of lessons.
+ *
+ * @author Oleg Markelov
+ */
 public class Lessons implements Validatable<Lessons> {
     private Set<Lesson> lessons = new TreeSet<>();
 

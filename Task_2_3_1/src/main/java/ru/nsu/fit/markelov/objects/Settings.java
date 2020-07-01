@@ -6,6 +6,11 @@ import ru.nsu.fit.markelov.util.validation.Validatable;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * Settings class is used for setting and getting the settings data.
+ *
+ * @author Oleg Markelov
+ */
 public class Settings implements Validatable<Settings> {
     private String workingDirectory;
     private String gitLogin;

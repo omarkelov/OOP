@@ -10,12 +10,24 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_POSITIVE;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * Task class is used for setting and getting the task data.
+ *
+ * @author Oleg Markelov
+ */
 public class Task implements Comparable<Task>, Validatable<Task> {
     private String id;
     private String name;
     private Integer points;
     private Date deadline;
 
+    /**
+     * Compares this object with the specified object based on their ids.
+     *
+     * @param task the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object is less than,
+     *         equal to, or greater than the specified object.
+     */
     @Override
     public int compareTo(Task task) {
         return id.compareTo(task.getId());

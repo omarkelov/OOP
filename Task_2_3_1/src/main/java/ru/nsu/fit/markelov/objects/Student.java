@@ -7,12 +7,24 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_EMPT
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * Student class is used for setting and getting the student data.
+ *
+ * @author Oleg Markelov
+ */
 public class Student implements Comparable<Student>, Validatable<Student> {
     private String id;
     private String fullName;
     private String repositoryUrl;
     private String branchName;
 
+    /**
+     * Compares this object with the specified object based on their ids.
+     *
+     * @param student the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object is less than,
+     *         equal to, or greater than the specified object.
+     */
     @Override
     public int compareTo(Student student) {
         return id.compareTo(student.getId());

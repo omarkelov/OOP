@@ -6,6 +6,11 @@ import ru.nsu.fit.markelov.util.validation.Validatable;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * ControlPoints class is used for setting and getting the collection of control points.
+ *
+ * @author Oleg Markelov
+ */
 public class ControlPoints implements Validatable<ControlPoints> {
     private Set<ControlPoint> controlPoints = new TreeSet<>();
 

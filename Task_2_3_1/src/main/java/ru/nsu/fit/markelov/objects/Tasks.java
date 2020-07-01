@@ -10,6 +10,11 @@ import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_POSITIVE;
 import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
+/**
+ * Tasks class is used for setting and getting semester number and the collection of tasks.
+ *
+ * @author Oleg Markelov
+ */
 public class Tasks implements Validatable<Tasks> {
     private Integer semester;
     private Map<String, Task> tasks = new TreeMap<>();

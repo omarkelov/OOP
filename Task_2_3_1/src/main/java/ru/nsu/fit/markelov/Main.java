@@ -38,12 +38,26 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name = "DSL", description = "") // TODO description
+/**
+ * Main class is a command line application aimed to help teachers manage the learning process of
+ * OOP. It allows to write scripts on a specific dsl language based on Groovy. It also provides
+ * several commands: update students' repositories, compile the task and generate a documentation,
+ * check the code style for the task, run the tests for the task, calculate the points for the task,
+ * create the report for every control point, create the .html report for the group.
+ *
+ * @author Oleg Markelov
+ */
+@CommandLine.Command(name = "GroovyDSL", description = "This application is aimed to help " +
+    "teachers manage the learning process of OOP. It allows to write scripts on a specific dsl " +
+    "language based on Groovy.")
 public class Main implements Callable<Integer> {
 
+    /**
+     * Date format used in user scripts.
+     */
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
-    private static final String NO_MESSAGE = "Command completed";
+    private static final String NO_MESSAGE = "[Command completed]";
 
     private static final String DEFAULT_SCRIPTS_DIR = "scripts/";
     private static final String RESOURCES_DIR = "src/main/resources";
@@ -81,11 +95,21 @@ public class Main implements Callable<Integer> {
         description = "display rules of writing scripts and exit")
     private boolean rulesRequested;
 
+    /**
+     * Starts the application.
+     *
+     * @param args command line arguments.
+     */
     public static void main(String[] args) {
         int exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
     }
 
+    /**
+     * Executes a command passed as a command line argument.
+     *
+     * @return exit code.
+     */
     @Override
     public Integer call() {
         try {
