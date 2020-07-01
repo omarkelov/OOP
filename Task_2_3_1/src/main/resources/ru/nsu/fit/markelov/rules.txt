@@ -1,0 +1,71 @@
+User has to write several scripts and put them to a source folder ("scripts/" by default).
+The next .groovy scripts must be present in the folder:
+- settings.dsl;
+- group.dsl;
+- tasks.dsl;
+- lessons.dsl;
+- controlPoints.dsl;
+- attendance.dsl;
+- passing.dsl.
+
+In settings.dsl a working directory and git data must be defined.
+For git login and password must be defined.
+    Syntax:
+        workingDirectory <directory : String>
+        git {
+            login <login : String>
+            password <password : String>
+        }
+
+In group.dsl a group with a name and students must be defined.
+For student unique id, name, repository and branch must be defined.
+    Syntax:
+        group(<group name>) {
+            student {
+                id <unique id : String>
+                name <full name : String>
+                repository <repository url : String>
+                branch <branch name : String>
+            }
+        }
+
+In tasks.dsl a semester number and tasks must be defined.
+For task unique id, name, points and deadline must be defined.
+    Syntax:
+        tasks(<semester number : int>) {
+            task {
+                id <unique id : String>
+                name <name : String>
+                points <points : String>
+                deadline <deadline : String>
+            }
+        }
+
+In lessons.dsl dates of the lessons may be defined.
+    Syntax:
+        since <date : String> till <date : String> every <days between lessons : int>
+        add <dates... : String>
+        remove <dates... : String>
+
+In controlPoints.dsl control points may be defined.
+For control point name, date and points for excellent, good and sat grades must be defined.
+    Syntax:
+        controlPoint {
+            name <name : String>
+            date <date : String>
+            exc <points : int>
+            good <points : int>
+            sat <points : int>
+        }
+
+In attendance.dsl attendance of the students may be defined.
+    Syntax:
+        attended <student ids... : String> lessons <dates... : String>
+        missed <student ids... : String> lessons <dates... : String>
+
+In passing.dsl task progress and additional points may be defined.
+    Syntax:
+        passed <student id : String> task <task id : String> date <date : String> message <message : String>
+        addExtraPoints <student id : String> task <task id : String> points <extra points : int> date <date : String> message <message : String>
+
+Note: all dates must be specified in the format "dd.MM.yyyy" (for example, "01.01.1970").

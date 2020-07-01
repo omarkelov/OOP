@@ -1,0 +1,33 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:3.0.3'
+    testImplementation 'junit:junit:4.12'
+}
+
+jar {
+    archivesBaseName = 'dsl'
+
+    manifest {
+        attributes 'Main-Class': 'ru.nsu.fit.markelov.Main'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+group 'OOP'
+//version '1.0'
+
+sourceCompatibility = 1.8
+
+mainClassName = 'ru.nsu.fit.markelov.Main'
