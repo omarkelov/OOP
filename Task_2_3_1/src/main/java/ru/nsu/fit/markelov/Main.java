@@ -221,14 +221,7 @@ public class Main implements Callable<Integer> {
         String message;
         switch (command) {
             case "compile":
-                if (student.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'student' must be provided for 'compile' command");
-                }
-                if (task.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'task' must be provided for 'compile' command");
-                }
+                validateArgs();
                 message = course.compile(student, task);
                 if (message == null || message.isEmpty()) {
                     message = NO_MESSAGE;
@@ -236,14 +229,7 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" compile result: " + message);
                 break;
             case "style":
-                if (student.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'student' must be provided for 'style' command");
-                }
-                if (task.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'task' must be provided for 'style' command");
-                }
+                validateArgs();
                 message = course.checkStyle(student, task);
                 if (message == null || message.isEmpty()) {
                     message = NO_MESSAGE;
@@ -251,14 +237,7 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" style check result: " + message);
                 break;
             case "test":
-                if (student.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'student' must be provided for 'test' command");
-                }
-                if (task.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'task' must be provided for 'test' command");
-                }
+                validateArgs();
                 message = course.test(student, task);
                 if (message == null || message.isEmpty()) {
                     message = NO_MESSAGE;
@@ -266,14 +245,7 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" test result: " + message);
                 break;
             case "points":
-                if (student.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'student' must be provided for 'points' command");
-                }
-                if (task.isEmpty()) {
-                    throw new IllegalInputException(
-                        "Argument 'task' must be provided for 'points' command");
-                }
+                validateArgs();
                 int points = course.countPoints(student, task);
                 System.out.println(student + "'s \"" + task + "\" points: " + points);
                 break;
@@ -298,6 +270,18 @@ public class Main implements Callable<Integer> {
                 break;
             default:
                 ErrorHelper.printError("No such command: " + command);
+        }
+    }
+
+    private void validateArgs() throws IllegalInputException {
+        if (student.isEmpty()) {
+            throw new IllegalInputException(
+                "Argument 'student' must be provided for '" + command + "' command");
+        }
+
+        if (task.isEmpty()) {
+            throw new IllegalInputException(
+                "Argument 'task' must be provided for '" + command + "' command");
         }
     }
 }
