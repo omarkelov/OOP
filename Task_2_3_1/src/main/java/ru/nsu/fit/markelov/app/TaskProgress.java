@@ -1,24 +1,23 @@
 package ru.nsu.fit.markelov.app;
 
 import ru.nsu.fit.markelov.gradle.Test;
-import ru.nsu.fit.markelov.gradle.TestResult;
+import ru.nsu.fit.markelov.gradle.TaskResult;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
 
 public class TaskProgress {
-    private final TestResult testResult;
+    private final TaskResult taskResult;
 
     private String tests;
     private TaskPoints creditPoints;
     private List<TaskPoints> extraPointsList;
 
-    public TaskProgress(TestResult testResult) {
-        this.testResult = testResult;
+    public TaskProgress(TaskResult taskResult) {
+        this.taskResult = taskResult;
         extraPointsList = new ArrayList<>();
 
         init();
@@ -27,7 +26,7 @@ public class TaskProgress {
     private void init() {
         int passedTests = 0;
         int failedTests = 0;
-        for (Test test : testResult.getTests()) {
+        for (Test test : taskResult.getTests()) {
             if (test.isPassed()) {
                 passedTests++;
             } else {
@@ -73,8 +72,8 @@ public class TaskProgress {
      *
      * @return build.
      */
-    public boolean isBuilt() {
-        return testResult.isBuilt();
+    public Boolean isBuilt() {
+        return taskResult.isBuilt();
     }
 
     /**
@@ -82,8 +81,8 @@ public class TaskProgress {
      *
      * @return style.
      */
-    public boolean isStyleChecked() {
-        return testResult.isStyleChecked();
+    public Boolean isStyleChecked() {
+        return taskResult.isStyleChecked();
     }
 
     /**
@@ -91,8 +90,8 @@ public class TaskProgress {
      *
      * @return documentation.
      */
-    public boolean isDocumentationGenerated() {
-        return testResult.isDocumentationGenerated();
+    public Boolean isDocumentationGenerated() {
+        return taskResult.isDocumentationGenerated();
     }
 
     /**

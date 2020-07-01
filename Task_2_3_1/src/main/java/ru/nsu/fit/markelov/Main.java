@@ -4,12 +4,15 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovyjarjarpicocli.CommandLine;
 import ru.nsu.fit.markelov.app.Course;
+import ru.nsu.fit.markelov.git.GitProvider;
 import ru.nsu.fit.markelov.git.GitProviderStub;
+import ru.nsu.fit.markelov.gradle.GradleProvider;
 import ru.nsu.fit.markelov.gradle.GradleProviderStub;
 import ru.nsu.fit.markelov.objects.ControlPoint;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
 import ru.nsu.fit.markelov.objects.Settings;
+import ru.nsu.fit.markelov.objects.Student;
 import ru.nsu.fit.markelov.objects.Tasks;
 
 import java.io.FileNotFoundException;
@@ -74,8 +77,28 @@ public class Main implements Callable<Integer> {
             Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(
                 enginePath, scriptsPath, "controlPoints");
 
-            Course course = new Course(new GitProviderStub(settings),
-                new GradleProviderStub(settings), group, tasks, lessons, controlPoints);
+            GitProvider gitProvider = new GitProviderStub();
+            gitProvider.setWorkingDirectory(settings.getWorkingDirectory());
+            gitProvider.setUser(settings.getGitLogin(), settings.getGitPassword());
+            if (command.equals("update")) {
+                for (Student student : group.getStudents().values()) {
+                    if (gitProvider.exists(student)) {
+                        gitProvider.pull(student);
+                        System.out.println(student.getId() + "'s repository pulled");
+                    } else {
+                        gitProvider.clone(student);
+                        System.out.println(student.getId() + "'s repository cloned");
+                    }
+                }
+
+                return 0;
+            }
+
+            GradleProvider gradleProvider = new GradleProviderStub();
+            gradleProvider.setWorkingDirectory(settings.getWorkingDirectory());
+
+            Course course = new Course(gitProvider, gradleProvider,
+                group, tasks, lessons, controlPoints);
 
             runScript(enginePath, scriptsPath, "attendance", COURSE_DSL_VAR, course);
             runScript(enginePath, scriptsPath, "passing", COURSE_DSL_VAR, course);

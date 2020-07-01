@@ -8,6 +8,7 @@ import java.util.List;
 public interface GitProvider {
     void setWorkingDirectory(String directory);
     void setUser(String login, String password);
+    boolean exists(Student student);
     void clone(Student student);
     void pull(Student student);
     List<Date> getCommitDates(Student student);

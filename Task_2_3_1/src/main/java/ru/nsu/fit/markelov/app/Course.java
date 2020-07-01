@@ -2,6 +2,7 @@ package ru.nsu.fit.markelov.app;
 
 import ru.nsu.fit.markelov.git.GitProvider;
 import ru.nsu.fit.markelov.gradle.GradleProvider;
+import ru.nsu.fit.markelov.gradle.Test;
 import ru.nsu.fit.markelov.objects.ControlPoint;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
@@ -77,7 +78,7 @@ public class Course {
                 Student student = studentEntry.getValue();
 
                 studentIdToTaskProgressMap.put(studentId,
-                    new TaskProgress(gradleProvider.runTask(task, student)));
+                    new TaskProgress(gradleProvider.getTaskResult(student, task)));
             }
 
             taskProgressMap.put(taskId, studentIdToTaskProgressMap);
@@ -118,20 +119,40 @@ public class Course {
         }
     }
 
-    public String compile(String studentName, String taskName) {
-        return "placeholder";
+    public String compile(String studentId, String taskId) {
+        Student student = group.getStudents().get(studentId);
+        Task task = tasks.getTasks().get(taskId);
+
+        return gradleProvider.compile(student, task);
     }
 
-    public String checkStyle(String studentName, String taskName) {
-        return "placeholder";
+    public String checkStyle(String studentId, String taskId) {
+        Student student = group.getStudents().get(studentId);
+        Task task = tasks.getTasks().get(taskId);
+
+        return gradleProvider.checkStyle(student, task);
     }
 
-    public String test(String studentName, String taskName) {
-        return "placeholder";
+    public String test(String studentId, String taskId) {
+        Student student = group.getStudents().get(studentId);
+        Task task = tasks.getTasks().get(taskId);
+
+        List<Test> tests = gradleProvider.test(student, task);
+        int passed = 0;
+        int failed = 0;
+        for (Test test : tests) {
+            if (test.isPassed()) {
+                passed++;
+            } else {
+                failed++;
+            }
+        }
+
+        return passed + " out of " + (passed + failed) + " passed";
     }
 
-    public int countPoints(String studentName, String taskName) {
-        TaskProgress taskProgress = taskProgressMap.get(taskName).get(studentName);
+    public int countPoints(String studentId, String taskId) {
+        TaskProgress taskProgress = taskProgressMap.get(taskId).get(studentId);
 
         return taskProgress.countAllPoints();
     }
@@ -238,10 +259,14 @@ public class Course {
                 String studentName = group.getStudents().get(studentId).getFullName();
                 sb.append("            <tr>\n");
                 sb.append("                <td>").append(studentName).append("</td>");
-                sb.append("<td>").append(taskProgress.isBuilt() ? "+" : "-").append("</td>");
-                sb.append("<td>").append(taskProgress.isStyleChecked() ? "+" : "-").append("</td>");
-                sb.append("<td>").append(taskProgress.isDocumentationGenerated() ? "+" : "-").append("</td>");
-                sb.append("<td>").append(taskProgress.getTests()).append("</td>");
+                Boolean built = taskProgress.isBuilt();
+                Boolean styleChecked = taskProgress.isStyleChecked();
+                Boolean docsGenerated = taskProgress.isDocumentationGenerated();
+                String tests = taskProgress.getTests();
+                sb.append("<td>").append(built != null ? built ? "+" : "-" : "").append("</td>");
+                sb.append("<td>").append(styleChecked != null ? styleChecked ? "+" : "-" : "").append("</td>");
+                sb.append("<td>").append(docsGenerated != null ? docsGenerated ? "+" : "-" : "").append("</td>");
+                sb.append("<td>").append(tests != null ? tests : "").append("</td>");
                 sb.append("<td>").append(taskProgress.countCreditPoints()).append("</td>");
                 sb.append("<td>").append(taskProgress.countExtraPoints()).append("</td>");
                 sb.append("<td>").append(taskProgress.countAllPoints()).append("</td>");

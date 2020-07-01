@@ -1,6 +1,5 @@
 package ru.nsu.fit.markelov.git;
 
-import ru.nsu.fit.markelov.objects.Settings;
 import ru.nsu.fit.markelov.objects.Student;
 
 import java.text.ParseException;
@@ -12,17 +11,16 @@ import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
 
 public class GitProviderStub implements GitProvider {
 
-    public GitProviderStub(Settings settings) {
-        System.out.println(settings.getWorkingDirectory());
-        System.out.println(settings.getGitLogin());
-        System.out.println(settings.getGitPassword());
-    }
-
     @Override
     public void setWorkingDirectory(String directory) {}
 
     @Override
     public void setUser(String login, String password) {}
+
+    @Override
+    public boolean exists(Student student) {
+        return student.getId().equals("Oleg");
+    }
 
     @Override
     public void clone(Student student) {}

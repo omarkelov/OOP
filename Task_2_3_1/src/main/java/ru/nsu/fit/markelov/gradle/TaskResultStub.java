@@ -2,17 +2,17 @@ package ru.nsu.fit.markelov.gradle;
 
 import java.util.List;
 
-public class TestResultHardcoded implements TestResult {
-    private boolean built;
-    private boolean styleChecked;
-    private boolean documentationGenerated;
+public class TaskResultStub implements TaskResult {
+    private Boolean built;
+    private Boolean styleChecked;
+    private Boolean documentationGenerated;
     private final List<Test> tests;
 
-    public TestResultHardcoded(List<Test> tests) {
+    public TaskResultStub(List<Test> tests) {
         this.tests = tests;
     }
 
-    public TestResultHardcoded(boolean built, boolean styleChecked, boolean documentationGenerated, List<Test> tests) {
+    public TaskResultStub(boolean built, boolean styleChecked, boolean documentationGenerated, List<Test> tests) {
         this.built = built;
         this.styleChecked = styleChecked;
         this.documentationGenerated = documentationGenerated;
@@ -25,7 +25,7 @@ public class TestResultHardcoded implements TestResult {
      * @return built.
      */
     @Override
-    public boolean isBuilt() {
+    public Boolean isBuilt() {
         return built;
     }
 
@@ -35,7 +35,7 @@ public class TestResultHardcoded implements TestResult {
      * @return styleChecked.
      */
     @Override
-    public boolean isStyleChecked() {
+    public Boolean isStyleChecked() {
         return styleChecked;
     }
 
@@ -45,7 +45,7 @@ public class TestResultHardcoded implements TestResult {
      * @return documentationGenerated.
      */
     @Override
-    public boolean isDocumentationGenerated() {
+    public Boolean isDocumentationGenerated() {
         return documentationGenerated;
     }
 

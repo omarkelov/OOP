@@ -1,10 +1,10 @@
 package ru.nsu.fit.markelov.gradle;
 
-public class TestHardcoded implements Test {
+public class TestStub implements Test {
     private final String name;
     private final boolean passed;
 
-    public TestHardcoded(String name, boolean passed) {
+    public TestStub(String name, boolean passed) {
         this.name = name;
         this.passed = passed;
     }
