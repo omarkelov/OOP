@@ -150,7 +150,7 @@ public class Main implements Callable<Integer> {
                 break;
             case "report":
                 try (PrintWriter printWriter = new PrintWriter("report.html")) {
-                    printWriter.println(course.createReport());
+                    printWriter.println(course.createHtmlReport());
                 }
                 break;
             default:

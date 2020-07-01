@@ -137,10 +137,32 @@ public class Course {
     }
 
     public String createControlPointsMessage() {
-        return "placeholder";
+        StringBuilder sb = new StringBuilder();
+
+        for (Map.Entry<String, StudentProgress> studentProgressEntry : studentProgressMap.entrySet()) {
+            String studentId = studentProgressEntry.getKey();
+            StudentProgress studentProgress = studentProgressEntry.getValue();
+            sb.append(studentId).append(": ");
+
+            Map<ControlPoint, String> pointsMap = studentProgress.calculatePoints();
+            String delim = ", ";
+            for (Map.Entry<ControlPoint, String> pointsEntry : pointsMap.entrySet()) {
+                ControlPoint controlPoint = pointsEntry.getKey();
+                String points = pointsEntry.getValue();
+
+                sb.append(controlPoint.getName()).append(" (").append(points).append(")").append(delim);
+            }
+
+            if (!pointsMap.isEmpty()) {
+                sb.setLength(sb.length() - delim.length());
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
-    public String createReport() {
+    public String createHtmlReport() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<!DOCTYPE html>\n");
@@ -166,11 +188,10 @@ public class Course {
             String studentName = group.getStudents().get(studentId).getFullName();
             sb.append("            <tr>\n");
             sb.append("                <td>").append(studentName).append("</td>");
-            for (Integer points : studentProgress.calculatePoints()) {
+            for (String points : studentProgress.calculatePoints().values()) {
                 sb.append("<td>").append(points).append("</td>");
             }
             sb.append("\n            </tr>\n");
-
         }
         sb.append("        </table>\n");
 

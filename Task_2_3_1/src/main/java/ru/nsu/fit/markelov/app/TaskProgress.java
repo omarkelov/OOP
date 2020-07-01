@@ -34,7 +34,7 @@ public class TaskProgress {
                 failedTests++;
             }
         }
-        tests = passedTests + "/" + failedTests;
+        tests = passedTests + "/" + (passedTests + failedTests);
     }
 
     public void pass(int points, String date, String message) throws ParseException {

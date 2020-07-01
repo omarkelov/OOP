@@ -12,4 +12,16 @@ class ControlPointDSL extends ControlPoint {
     void date(String date) {
         super.date = DATE_FORMAT.parse(date)
     }
+
+    void five(int points) {
+        super.pointsForFive = points
+    }
+
+    void four(int points) {
+        super.pointsForFour = points
+    }
+
+    void three(int points) {
+        super.pointsForThree = points
+    }
 }

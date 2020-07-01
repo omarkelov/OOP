@@ -17,9 +17,9 @@ public class StudentProgress {
         this.taskProgressList = taskProgressList;
     }
 
-    public Collection<Integer> calculatePoints() {
+    public Map<ControlPoint, String> calculatePoints() {
         // control point -> points
-        Map<ControlPoint, Integer> pointsMap = new TreeMap<>();
+        Map<ControlPoint, String> pointsMap = new TreeMap<>();
 
         for (ControlPoint controlPoint : controlPoints) {
             long controlPointTime = controlPoint.getDate().getTime();
@@ -42,9 +42,14 @@ public class StudentProgress {
                 }
             }
 
-            pointsMap.put(controlPoint, points);
+            String grade = "Poor";
+            if (points >= controlPoint.getPointsForThree()) grade = "Sat";
+            if (points >= controlPoint.getPointsForFour()) grade = "Good";
+            if (points >= controlPoint.getPointsForFive()) grade = "Exc";
+
+            pointsMap.put(controlPoint, points + " - " + grade);
         }
 
-        return pointsMap.values();
+        return pointsMap;
     }
 }
