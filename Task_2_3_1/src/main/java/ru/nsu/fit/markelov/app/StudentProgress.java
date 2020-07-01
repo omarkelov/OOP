@@ -2,7 +2,6 @@ package ru.nsu.fit.markelov.app;
 
 import ru.nsu.fit.markelov.objects.ControlPoint;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,9 +42,9 @@ public class StudentProgress {
             }
 
             String grade = "Poor";
-            if (points >= controlPoint.getPointsForThree()) grade = "Sat";
-            if (points >= controlPoint.getPointsForFour()) grade = "Good";
-            if (points >= controlPoint.getPointsForFive()) grade = "Exc";
+            if (points >= controlPoint.getPointsForSat()) grade = "Sat";
+            if (points >= controlPoint.getPointsForGood()) grade = "Good";
+            if (points >= controlPoint.getPointsForExc()) grade = "Exc";
 
             pointsMap.put(controlPoint, points + " - " + grade);
         }

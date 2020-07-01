@@ -5,9 +5,9 @@ import java.util.Date;
 public class ControlPoint implements Comparable<ControlPoint> {
     private String name;
     private Date date;
-    private int pointsForFive;
-    private int pointsForFour;
-    private int pointsForThree;
+    private int pointsForExc;
+    private int pointsForGood;
+    private int pointsForSat;
 
     @Override
     public int compareTo(ControlPoint controlPoint) {
@@ -51,15 +51,15 @@ public class ControlPoint implements Comparable<ControlPoint> {
      *
      * @return pointsForFive.
      */
-    public int getPointsForFive() {
-        return pointsForFive;
+    public int getPointsForExc() {
+        return pointsForExc;
     }
 
     /**
      * Sets pointsForFive.
      */
-    public void setPointsForFive(int pointsForFive) {
-        this.pointsForFive = pointsForFive;
+    public void setPointsForExc(int pointsForExc) {
+        this.pointsForExc = pointsForExc;
     }
 
     /**
@@ -67,15 +67,15 @@ public class ControlPoint implements Comparable<ControlPoint> {
      *
      * @return pointsForFour.
      */
-    public int getPointsForFour() {
-        return pointsForFour;
+    public int getPointsForGood() {
+        return pointsForGood;
     }
 
     /**
      * Sets pointsForFour.
      */
-    public void setPointsForFour(int pointsForFour) {
-        this.pointsForFour = pointsForFour;
+    public void setPointsForGood(int pointsForGood) {
+        this.pointsForGood = pointsForGood;
     }
 
     /**
@@ -83,14 +83,14 @@ public class ControlPoint implements Comparable<ControlPoint> {
      *
      * @return pointsForThree.
      */
-    public int getPointsForThree() {
-        return pointsForThree;
+    public int getPointsForSat() {
+        return pointsForSat;
     }
 
     /**
      * Sets pointsForThree.
      */
-    public void setPointsForThree(int pointsForThree) {
-        this.pointsForThree = pointsForThree;
+    public void setPointsForSat(int pointsForSat) {
+        this.pointsForSat = pointsForSat;
     }
 }

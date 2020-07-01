@@ -38,15 +38,23 @@ public class Main implements Callable<Integer> {
     private static final String DEFAULT_SCRIPTS_DIR = "scripts/";
     private static final String RESOURCES_DIR = "src/main/resources";
     private static final String ENGINE_DIR = "/ru/nsu/fit/markelov/engine/";
+    private static final String RULES_PATH = "/ru/nsu/fit/markelov/rules.txt";
     private static final String COURSE_DSL_VAR = "course";
 
-    @CommandLine.Parameters(index = "0", description = "command") // TODO
+    @CommandLine.Parameters(index = "0", defaultValue = "",
+        description = "runs one of the next commands: " +
+            "compile (compiles the task and generates a documentation), " +
+            "style (checks the code style for the task), " +
+            "test (runs the tests for the task), " +
+            "points (calculates the points for the task), " +
+            "control (creates the report for every control point), " +
+            "report (creates the .html report for the group)")
     private String command;
 
-    @CommandLine.Parameters(index = "1", defaultValue = "", description = "student") // TODO
+    @CommandLine.Parameters(index = "1", defaultValue = "", description = "student unique id")
     private String student;
 
-    @CommandLine.Parameters(index = "2", defaultValue = "", description = "task") // TODO
+    @CommandLine.Parameters(index = "2", defaultValue = "", description = "task unique id")
     private String task;
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true,
@@ -57,6 +65,9 @@ public class Main implements Callable<Integer> {
         description = "define a directory with scripts")
     private String scriptsDir;
 
+    @CommandLine.Option(names = { "-r", "--rules" }, description = "display rules of writing scripts and exit")
+    private boolean rulesRequested;
+
     public static void main(String[] args) {
         int exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
@@ -65,6 +76,12 @@ public class Main implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
+            if (rulesRequested) {
+                System.out.println(readFile(getResourcePath(RULES_PATH)));
+
+                return 0;
+            }
+
             Path enginePath = getResourcePath(ENGINE_DIR);
             Path scriptsPath = Paths.get(scriptsDir);
 
@@ -175,6 +192,9 @@ public class Main implements Callable<Integer> {
                 try (PrintWriter printWriter = new PrintWriter("report.html")) {
                     printWriter.println(course.createHtmlReport());
                 }
+                break;
+            case "":
+                System.out.println("No command provided");
                 break;
             default:
                 System.out.println("Bad command!");

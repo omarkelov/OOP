@@ -13,15 +13,15 @@ class ControlPointDSL extends ControlPoint {
         super.date = DATE_FORMAT.parse(date)
     }
 
-    void five(int points) {
-        super.pointsForFive = points
+    void exc(int points) {
+        super.pointsForExc = points
     }
 
-    void four(int points) {
-        super.pointsForFour = points
+    void good(int points) {
+        super.pointsForGood = points
     }
 
-    void three(int points) {
-        super.pointsForThree = points
+    void sat(int points) {
+        super.pointsForSat = points
     }
 }
