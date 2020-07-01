@@ -1,5 +1,7 @@
 package ru.nsu.fit.markelov.engine.passing
 
+exceptionDSL = null
+
 def passed(String studentId) {
     [task: { String taskId ->
         [date: { String date ->

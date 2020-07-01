@@ -1,8 +1,11 @@
 package ru.nsu.fit.markelov.engine.controlpoints
 
+import ru.nsu.fit.markelov.objects.ControlPoints
+
 import static groovy.lang.Closure.DELEGATE_ONLY
 
-controlPointsDSL = new TreeSet<ControlPointDSL>()
+controlPointsDSL = new ControlPoints()
+exceptionDSL = null
 
 void controlPoint(@DelegatesTo(strategy = DELEGATE_ONLY, value = ControlPointDSL) Closure closure) {
     ControlPointDSL controlPoint = new ControlPointDSL()
@@ -11,5 +14,5 @@ void controlPoint(@DelegatesTo(strategy = DELEGATE_ONLY, value = ControlPointDSL
     closure.resolveStrategy = DELEGATE_ONLY
     closure.call()
 
-    controlPointsDSL.add(controlPoint)
+    controlPointsDSL.controlPoints.add(controlPoint)
 }

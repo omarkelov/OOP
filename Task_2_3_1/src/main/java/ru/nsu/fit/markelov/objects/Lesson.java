@@ -1,13 +1,29 @@
 package ru.nsu.fit.markelov.objects;
 
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+import ru.nsu.fit.markelov.util.validation.Validatable;
+
 import java.util.Date;
 
-public class Lesson implements Comparable<Lesson> {
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
+public class Lesson implements Comparable<Lesson>, Validatable<Lesson> {
     private Date date;
 
     @Override
     public int compareTo(Lesson lesson) {
         return date.compareTo(lesson.getDate());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Lesson validate() throws IllegalInputException {
+        requireNonNull(date, "Lesson date " + NOT_NULL);
+
+        return this;
     }
 
     /**

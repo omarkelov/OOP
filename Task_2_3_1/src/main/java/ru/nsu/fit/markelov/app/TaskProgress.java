@@ -2,23 +2,25 @@ package ru.nsu.fit.markelov.app;
 
 import ru.nsu.fit.markelov.gradle.Test;
 import ru.nsu.fit.markelov.gradle.TaskResult;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class TaskProgress {
     private final TaskResult taskResult;
 
     private String tests;
     private TaskPoints creditPoints;
-    private List<TaskPoints> extraPointsList;
+    private List<TaskPoints> extraPointsList = new ArrayList<>();
 
-    public TaskProgress(TaskResult taskResult) {
-        this.taskResult = taskResult;
-        extraPointsList = new ArrayList<>();
+    public TaskProgress(TaskResult taskResult) throws IllegalInputException {
+        this.taskResult = requireNonNull(taskResult, "TaskProgress task result " + NOT_NULL);
 
         init();
     }

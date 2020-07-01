@@ -1,10 +1,12 @@
 package ru.nsu.fit.markelov.engine.lessons
 
 import ru.nsu.fit.markelov.objects.Lesson
+import ru.nsu.fit.markelov.objects.Lessons
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT
 
-lessonsDSL = new TreeSet<Lesson>()
+lessonsDSL = new Lessons()
+exceptionDSL = null
 
 def since(String start) {
     [till: { String end ->
@@ -15,7 +17,7 @@ def since(String start) {
                 calendar <= endCalendar;
                 calendar.add(Calendar.DATE, days)
             ) {
-                lessonsDSL.add(new Lesson(date: calendar.getTime()))
+                lessonsDSL.lessons.add(new Lesson(date: calendar.getTime()))
             }
         }]
     }]
@@ -23,12 +25,12 @@ def since(String start) {
 
 void add(String... lessons) {
     lessons.each {
-        lessonsDSL.add(new Lesson(date: DATE_FORMAT.parse(it)))
+        lessonsDSL.lessons.add(new Lesson(date: DATE_FORMAT.parse(it)))
     }
 }
 
 void remove(String... lessons) {
     lessons.each {
-        lessonsDSL.remove(new Lesson(date: DATE_FORMAT.parse(it)))
+        lessonsDSL.lessons.remove(new Lesson(date: DATE_FORMAT.parse(it)))
     }
 }

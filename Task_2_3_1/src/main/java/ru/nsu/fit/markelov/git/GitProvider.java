@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 public interface GitProvider {
-    void setWorkingDirectory(String directory);
-    void setUser(String login, String password);
-    boolean exists(Student student);
-    void clone(Student student);
-    void pull(Student student);
-    List<Date> getCommitDates(Student student);
+    void setWorkingDirectory(String directory) throws GitException;
+    void setUser(String login, String password) throws GitException;
+    boolean exists(Student student) throws GitException;
+    void clone(Student student) throws GitException;
+    void pull(Student student) throws GitException;
+    List<Date> getCommitDates(Student student) throws GitException;
 }

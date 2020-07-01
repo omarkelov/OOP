@@ -1,9 +1,25 @@
 package ru.nsu.fit.markelov.objects;
 
-public class Settings {
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+import ru.nsu.fit.markelov.util.validation.Validatable;
+
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
+public class Settings implements Validatable<Settings> {
     private String workingDirectory;
     private String gitLogin;
     private String gitPassword;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Settings validate() throws IllegalInputException {
+        requireNonNull(workingDirectory, "Settings working directory " + NOT_NULL);
+
+        return this;
+    }
 
     /**
      * Returns workingDirectory.

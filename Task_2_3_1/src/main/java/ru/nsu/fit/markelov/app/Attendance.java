@@ -1,7 +1,10 @@
 package ru.nsu.fit.markelov.app;
 
 import ru.nsu.fit.markelov.objects.ControlPoint;
+import ru.nsu.fit.markelov.objects.ControlPoints;
 import ru.nsu.fit.markelov.objects.Lesson;
+import ru.nsu.fit.markelov.objects.Lessons;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -12,21 +15,27 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static ru.nsu.fit.markelov.Main.DATE_FORMAT;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class Attendance {
     private final List<Date> commitDates;
-    private final Set<Lesson> lessons;
-    private final Set<ControlPoint> controlPoints;
+    private final Lessons lessons;
+    private final ControlPoints controlPoints;
 
     // lesson date -> student attendance
     private Map<Date, Boolean> lessonDateToAttendanceMap;
     // control point -> attendance count
     private Map<ControlPoint, String> controlPointToAttendanceCountMap;
 
-    public Attendance(List<Date> commitDates, Set<Lesson> lessons, Set<ControlPoint> controlPoints) {
-        this.commitDates = commitDates;
-        this.lessons = lessons;
-        this.controlPoints = controlPoints;
+    public Attendance(List<Date> commitDates, Lessons lessons, ControlPoints controlPoints)
+                      throws IllegalInputException {
+        this.commitDates = requireNonNull(commitDates,
+            "Attendance commit dates " + NOT_NULL);
+        this.lessons = requireNonNull(lessons,
+            "Attendance lessons " + NOT_NULL);
+        this.controlPoints = requireNonNull(controlPoints,
+            "Attendance control points " + NOT_NULL);
 
         initAttendance();
         initAttendanceCount();
@@ -36,7 +45,7 @@ public class Attendance {
         lessonDateToAttendanceMap = new TreeMap<>();
 
         long prevLessonTime = 0;
-        for (Lesson lesson : lessons) {
+        for (Lesson lesson : lessons.getLessons()) {
             Date lessonDate = lesson.getDate();
             lessonDateToAttendanceMap.put(lessonDate, false);
 
@@ -55,7 +64,7 @@ public class Attendance {
     private void initAttendanceCount() {
         controlPointToAttendanceCountMap = new TreeMap<>();
 
-        for (ControlPoint controlPoint : controlPoints) {
+        for (ControlPoint controlPoint : controlPoints.getControlPoints()) {
             int lessonsCount = 0;
             int attendanceCount = 0;
             for (Map.Entry<Date, Boolean> entry : lessonDateToAttendanceMap.entrySet()) {

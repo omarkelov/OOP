@@ -4,22 +4,30 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovyjarjarpicocli.CommandLine;
 import ru.nsu.fit.markelov.app.Course;
+import ru.nsu.fit.markelov.app.UserScriptException;
+import ru.nsu.fit.markelov.git.GitException;
 import ru.nsu.fit.markelov.git.GitProvider;
 import ru.nsu.fit.markelov.git.GitProviderStub;
+import ru.nsu.fit.markelov.gradle.GradleException;
 import ru.nsu.fit.markelov.gradle.GradleProvider;
 import ru.nsu.fit.markelov.gradle.GradleProviderStub;
 import ru.nsu.fit.markelov.objects.ControlPoint;
+import ru.nsu.fit.markelov.objects.ControlPoints;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
+import ru.nsu.fit.markelov.objects.Lessons;
 import ru.nsu.fit.markelov.objects.Settings;
 import ru.nsu.fit.markelov.objects.Student;
 import ru.nsu.fit.markelov.objects.Tasks;
+import ru.nsu.fit.markelov.util.ErrorHelper;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -30,15 +38,18 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name = "DSL", description = "") // TODO
+@CommandLine.Command(name = "DSL", description = "") // TODO description
 public class Main implements Callable<Integer> {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+
+    private static final String NO_MESSAGE = "Command completed";
 
     private static final String DEFAULT_SCRIPTS_DIR = "scripts/";
     private static final String RESOURCES_DIR = "src/main/resources";
     private static final String ENGINE_DIR = "/ru/nsu/fit/markelov/engine/";
     private static final String RULES_PATH = "/ru/nsu/fit/markelov/rules.txt";
+
     private static final String COURSE_DSL_VAR = "course";
 
     @CommandLine.Parameters(index = "0", defaultValue = "",
@@ -86,14 +97,20 @@ public class Main implements Callable<Integer> {
             Path enginePath = getResourcePath(ENGINE_DIR);
             Path scriptsPath = Paths.get(scriptsDir);
 
-            Settings settings = (Settings) runScript(enginePath, scriptsPath, "settings");
-            Group group = (Group) runScript(enginePath, scriptsPath, "group");
-            Tasks tasks = (Tasks) runScript(enginePath, scriptsPath, "tasks");
-            @SuppressWarnings("unchecked")
-            Set<Lesson> lessons = (Set<Lesson>) runScript(enginePath, scriptsPath, "lessons");
-            @SuppressWarnings("unchecked")
-            Set<ControlPoint> controlPoints = (Set<ControlPoint>) runScript(
-                enginePath, scriptsPath, "controlPoints");
+            Settings settings = ((Settings) runScript(
+                enginePath, scriptsPath, "settings")).validate();
+
+            Group group = ((Group) runScript(
+                enginePath, scriptsPath, "group")).validate();
+
+            Tasks tasks = ((Tasks) runScript(
+                enginePath, scriptsPath, "tasks")).validate();
+
+            Lessons lessons = ((Lessons) runScript(
+                enginePath, scriptsPath, "lessons")).validate();
+
+            ControlPoints controlPoints = ((ControlPoints) runScript(
+                enginePath, scriptsPath, "controlPoints")).validate();
 
             GitProvider gitProvider = new GitProviderStub();
             gitProvider.setWorkingDirectory(settings.getWorkingDirectory());
@@ -122,16 +139,28 @@ public class Main implements Callable<Integer> {
             runScript(enginePath, scriptsPath, "passing", COURSE_DSL_VAR, course);
 
             handleCommand(course);
-        } catch (IOException|URISyntaxException e) {
-            e.printStackTrace();
+        } catch (UserScriptException e) {
+            ErrorHelper.printError("Cannot invoke the script (" + e.getMessage() + ")");
+        } catch (IllegalInputException e) {
+            ErrorHelper.printError("Illegal input (" + e.getMessage() + ")");
+        } catch (GitException|GradleException e) {
+            ErrorHelper.printError(e.getMessage());
+        } catch (URISyntaxException e) {
+            ErrorHelper.printError("Cannot open the resource (" + e.getMessage() + ")");
+        } catch (IOException e) {
+            ErrorHelper.printError("Cannot read the file (" + e.getMessage() + ")");
         }
 
         return 0;
     }
 
     private Path getResourcePath(String pathName) throws URISyntaxException, IOException {
-        URI uri = Main.class.getResource(pathName).toURI();
+        URL url = Main.class.getResource(pathName);
+        if (url == null) {
+            throw new IOException("No such resource: " + pathName);
+        }
 
+        URI uri = url.toURI();
         if (uri.getScheme().equals("jar")) {
             FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
             return fileSystem.getPath(pathName);
@@ -141,45 +170,74 @@ public class Main implements Callable<Integer> {
     }
 
     private Object runScript(Path enginePath, Path scriptsPath, String name)
-                                    throws IOException {
+            throws IOException, UserScriptException {
         Binding binding = new Binding();
 
         new GroovyShell(binding).evaluate(
             readFile(enginePath.resolve(name.toLowerCase()).resolve(name + ".groovy")) +
-            readFile(scriptsPath.resolve(name + ".dsl"))
+            wrapScriptWithTryCatch(readFile(scriptsPath.resolve(name + ".dsl")))
         );
+
+        Exception e = (Exception) binding.getVariable("exceptionDSL");
+        if (e != null) {
+            throw new UserScriptException(e.getMessage());
+        }
 
         return binding.getVariable(name + "DSL");
     }
 
     private void runScript(Path enginePath, Path scriptsPath, String name,
-                                  String variableName, Object variable) throws IOException {
+            String variableName, Object variable) throws IOException, UserScriptException {
         Binding binding = new Binding();
         binding.setVariable(variableName, variable);
 
         new GroovyShell(binding).evaluate(
             readFile(enginePath.resolve(name.toLowerCase()).resolve(name + ".groovy")) +
-            readFile(scriptsPath.resolve(name + ".dsl"))
+            wrapScriptWithTryCatch(readFile(scriptsPath.resolve(name + ".dsl")))
         );
+
+        Exception e = (Exception) binding.getVariable("exceptionDSL");
+        if (e != null) {
+            throw new UserScriptException(e.getMessage());
+        }
     }
 
     private String readFile(Path path) throws IOException {
         return new String(Files.readAllBytes(path));
     }
 
-    private void handleCommand(Course course) throws FileNotFoundException {
+    private String wrapScriptWithTryCatch(String script) {
+        return
+        "try {" +
+            script +
+        "} catch (Exception e) {" +
+            "exceptionDSL = e" +
+        "}";
+    }
+
+    private void handleCommand(Course course) throws
+                               FileNotFoundException, GradleException, IllegalInputException {
         String message;
         switch (command) {
             case "compile":
                 message = course.compile(student, task);
+                if (message == null || message.isEmpty()) {
+                    message = NO_MESSAGE;
+                }
                 System.out.println(student + "'s \"" + task + "\" compile result: " + message);
                 break;
             case "style":
                 message = course.checkStyle(student, task);
+                if (message == null || message.isEmpty()) {
+                    message = NO_MESSAGE;
+                }
                 System.out.println(student + "'s \"" + task + "\" style check result: " + message);
                 break;
             case "test":
                 message = course.test(student, task);
+                if (message == null || message.isEmpty()) {
+                    message = NO_MESSAGE;
+                }
                 System.out.println(student + "'s \"" + task + "\" test result: " + message);
                 break;
             case "points":
@@ -187,18 +245,26 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" points: " + points);
                 break;
             case "control":
-                System.out.println(course.createControlPointsMessage());
+                message = course.createControlPointsMessage();
+                if (message == null || message.isEmpty()) {
+                    message = NO_MESSAGE;
+                }
+                System.out.println(message);
                 break;
             case "report":
                 try (PrintWriter printWriter = new PrintWriter("report.html")) {
-                    printWriter.println(course.createHtmlReport());
+                    message = course.createHtmlReport();
+                    if (message == null || message.isEmpty()) {
+                        message = NO_MESSAGE;
+                    }
+                    printWriter.println(message);
                 }
                 break;
             case "":
-                System.out.println("No command provided");
+                ErrorHelper.printError("No command provided");
                 break;
             default:
-                System.out.println("Bad command!");
+                ErrorHelper.printError("No such command: " + command);
         }
     }
 }

@@ -1,16 +1,49 @@
 package ru.nsu.fit.markelov.objects;
 
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+import ru.nsu.fit.markelov.util.validation.Validatable;
+
 import java.util.Date;
 
-public class Task implements Comparable<Task> {
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_EMPTY;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_POSITIVE;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
+public class Task implements Comparable<Task>, Validatable<Task> {
     private String id;
     private String name;
-    private int points;
+    private Integer points;
     private Date deadline;
 
     @Override
     public int compareTo(Task task) {
         return id.compareTo(task.getId());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Task validate() throws IllegalInputException {
+        requireNonNull(id, "Task id " + NOT_NULL);
+        requireNonNull(name, "Task name " + NOT_NULL);
+        requireNonNull(points, "Task points " + NOT_NULL);
+        requireNonNull(deadline, "Task deadline " + NOT_NULL);
+
+        if (id.isEmpty()) {
+            throw new IllegalInputException("Task id " + NOT_EMPTY);
+        }
+
+        if (name.isEmpty()) {
+            throw new IllegalInputException("Task name " + NOT_EMPTY);
+        }
+
+        if (points <= 0) {
+            throw new IllegalInputException("Task points " + NOT_POSITIVE);
+        }
+
+        return this;
     }
 
     /**
@@ -50,14 +83,14 @@ public class Task implements Comparable<Task> {
      *
      * @return points.
      */
-    public int getPoints() {
+    public Integer getPoints() {
         return points;
     }
 
     /**
      * Sets points.
      */
-    public void setPoints(int points) {
+    public void setPoints(Integer points) {
         this.points = points;
     }
 

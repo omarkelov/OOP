@@ -1,11 +1,36 @@
 package ru.nsu.fit.markelov.objects;
 
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+import ru.nsu.fit.markelov.util.validation.Validatable;
+
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Group {
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_EMPTY;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
+public class Group implements Validatable<Group> {
     private String name;
     private Map<String, Student> students = new TreeMap<>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Group validate() throws IllegalInputException {
+        requireNonNull(name, "Group name " + NOT_NULL);
+
+        if (name.isEmpty()) {
+            throw new IllegalInputException("Group name " + NOT_EMPTY);
+        }
+
+        for (Student student : students.values()) {
+            student.validate();
+        }
+
+        return this;
+    }
 
     /**
      * Returns name.

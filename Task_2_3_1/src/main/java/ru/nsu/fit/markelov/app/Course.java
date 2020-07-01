@@ -1,22 +1,29 @@
 package ru.nsu.fit.markelov.app;
 
+import ru.nsu.fit.markelov.git.GitException;
 import ru.nsu.fit.markelov.git.GitProvider;
+import ru.nsu.fit.markelov.gradle.GradleException;
 import ru.nsu.fit.markelov.gradle.GradleProvider;
 import ru.nsu.fit.markelov.gradle.Test;
 import ru.nsu.fit.markelov.objects.ControlPoint;
+import ru.nsu.fit.markelov.objects.ControlPoints;
 import ru.nsu.fit.markelov.objects.Group;
 import ru.nsu.fit.markelov.objects.Lesson;
+import ru.nsu.fit.markelov.objects.Lessons;
 import ru.nsu.fit.markelov.objects.Student;
 import ru.nsu.fit.markelov.objects.Task;
 import ru.nsu.fit.markelov.objects.Tasks;
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
+
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
 
 public class Course {
 
@@ -26,8 +33,8 @@ public class Course {
     private final GradleProvider gradleProvider;
     private final Group group;
     private final Tasks tasks;
-    private final Set<Lesson> lessons;
-    private final Set<ControlPoint> controlPoints;
+    private final Lessons lessons;
+    private final ControlPoints controlPoints;
 
     // student id -> attendance
     private final Map<String, Attendance> attendanceMap;
@@ -37,13 +44,20 @@ public class Course {
     private final Map<String, StudentProgress> studentProgressMap;
 
     public Course(GitProvider gitProvider, GradleProvider gradleProvider, Group group, Tasks tasks,
-                  Set<Lesson> lessons, Set<ControlPoint> controlPoints) {
-        this.gitProvider = gitProvider;
-        this.gradleProvider = gradleProvider;
-        this.group = group;
-        this.tasks = tasks;
-        this.lessons = lessons;
-        this.controlPoints = controlPoints;
+                  Lessons lessons, ControlPoints controlPoints)
+                  throws GitException, GradleException, IllegalInputException {
+        this.gitProvider = requireNonNull(gitProvider,
+            "Course git provider " + NOT_NULL);
+        this.gradleProvider = requireNonNull(gradleProvider,
+            "Course gradle provider " + NOT_NULL);
+        this.group = requireNonNull(group,
+            "Course group " + NOT_NULL);
+        this.tasks = requireNonNull(tasks,
+            "Course tasks " + NOT_NULL);
+        this.lessons = requireNonNull(lessons,
+            "Course lessons " + NOT_NULL);
+        this.controlPoints = requireNonNull(controlPoints,
+            "Course control points " + NOT_NULL);
 
         attendanceMap = new TreeMap<>();
         taskProgressMap = new TreeMap<>();
@@ -54,7 +68,7 @@ public class Course {
         initStudentProgress();
     }
 
-    private void initAttendance() {
+    private void initAttendance() throws GitException, IllegalInputException {
         for (Map.Entry<String, Student> studentEntry : group.getStudents().entrySet()) {
             String studentId = studentEntry.getKey();
             Student student = studentEntry.getValue();
@@ -66,7 +80,7 @@ public class Course {
         }
     }
 
-    private void initTaskProgress() {
+    private void initTaskProgress() throws GradleException, IllegalInputException {
         for (Map.Entry<String, Task> taskEntry : tasks.getTasks().entrySet()) {
             String taskId = taskEntry.getKey();
             Task task = taskEntry.getValue();
@@ -85,7 +99,7 @@ public class Course {
         }
     }
 
-    private void initStudentProgress() {
+    private void initStudentProgress() throws IllegalInputException {
         for (Map.Entry<String, Student> studentEntry : group.getStudents().entrySet()) {
             String studentId = studentEntry.getKey();
 
@@ -100,42 +114,97 @@ public class Course {
         }
     }
 
-    public void passTask(String studentId, String taskId,
-                         String date, String message) throws ParseException {
-        int points = tasks.getTasks().get(taskId).getPoints();
-        taskProgressMap.get(taskId).get(studentId).pass(points, date, message);
+    public void passTask(String studentId, String taskId, String date, String message)
+                         throws ParseException, IllegalInputException {
+        Task task = tasks.getTasks().get(taskId);
+        if (task == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
+
+        int points = task.getPoints();
+
+        Map<String, TaskProgress> taskProgressMap = this.taskProgressMap.get(taskId);
+        if (taskProgressMap == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
+
+        TaskProgress taskProgress = taskProgressMap.get(studentId);
+        if (taskProgress == null) {
+            throw new IllegalInputException("No such student: " + studentId);
+        }
+
+        taskProgress.pass(points, date, message);
     }
 
-    public void addExtraPoints(String studentId, String taskId, int points,
-                               String date, String message) throws ParseException {
-        taskProgressMap.get(taskId).get(studentId).addExtraPoints(points, date, message);
+    public void addExtraPoints(String studentId, String taskId, int points, String date,
+                               String message) throws ParseException, IllegalInputException {
+        Map<String, TaskProgress> taskProgressMap = this.taskProgressMap.get(taskId);
+        if (taskProgressMap == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
+
+        TaskProgress taskProgress = taskProgressMap.get(studentId);
+        if (taskProgress == null) {
+            throw new IllegalInputException("No such student: " + studentId);
+        }
+
+        taskProgress.addExtraPoints(points, date, message);
     }
 
-    public void changeAttendance(String[] studentIds, String[] lessonDates,
-                                 boolean attended) throws ParseException {
+    public void changeAttendance(String[] studentIds, String[] lessonDates, boolean attended)
+                                 throws ParseException, IllegalInputException {
         for (String studentId : studentIds) {
             Attendance attendance = attendanceMap.get(studentId);
+
+            if (attendance == null) {
+                throw new IllegalInputException("No such student: " + studentId);
+            }
+
             attendance.change(lessonDates, attended);
         }
     }
 
-    public String compile(String studentId, String taskId) {
+    public String compile(String studentId, String taskId)
+                          throws GradleException, IllegalInputException {
         Student student = group.getStudents().get(studentId);
+        if (student == null) {
+            throw new IllegalInputException("No such student: " + studentId);
+        }
+
         Task task = tasks.getTasks().get(taskId);
+        if (task == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
 
         return gradleProvider.compile(student, task);
     }
 
-    public String checkStyle(String studentId, String taskId) {
+    public String checkStyle(String studentId, String taskId)
+                             throws GradleException, IllegalInputException {
         Student student = group.getStudents().get(studentId);
+        if (student == null) {
+            throw new IllegalInputException("No such student: " + studentId);
+        }
+
         Task task = tasks.getTasks().get(taskId);
+        if (task == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
 
         return gradleProvider.checkStyle(student, task);
     }
 
-    public String test(String studentId, String taskId) {
+    public String test(String studentId, String taskId)
+                       throws GradleException, IllegalInputException {
         Student student = group.getStudents().get(studentId);
+        if (student == null) {
+            throw new IllegalInputException("No such student: " + studentId);
+        }
+
         Task task = tasks.getTasks().get(taskId);
+        if (task == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
 
         List<Test> tests = gradleProvider.test(student, task);
         int passed = 0;
@@ -151,8 +220,16 @@ public class Course {
         return passed + " out of " + (passed + failed) + " passed";
     }
 
-    public int countPoints(String studentId, String taskId) {
-        TaskProgress taskProgress = taskProgressMap.get(taskId).get(studentId);
+    public int countPoints(String studentId, String taskId) throws IllegalInputException {
+        Map<String, TaskProgress> taskProgressMap = this.taskProgressMap.get(taskId);
+        if (taskProgressMap == null) {
+            throw new IllegalInputException("No such task: " + taskId);
+        }
+
+        TaskProgress taskProgress = taskProgressMap.get(studentId);
+        if (taskProgress == null) {
+            throw new IllegalInputException("No such student: " + studentId);
+        }
 
         return taskProgress.countAllPoints();
     }
@@ -199,7 +276,7 @@ public class Course {
         sb.append("        <table>\n");
         sb.append("            <tr>\n");
         sb.append("                <th>Student</th>");
-        for (ControlPoint controlPoint : controlPoints) {
+        for (ControlPoint controlPoint : controlPoints.getControlPoints()) {
             sb.append("<th>").append(controlPoint.getName()).append("</th>");
         }
         sb.append("\n            </tr>\n");
@@ -220,10 +297,10 @@ public class Course {
         sb.append("        <table>\n");
         sb.append("            <tr>\n");
         sb.append("                <th>Student</th>");
-        for (Lesson lesson : lessons) {
+        for (Lesson lesson : lessons.getLessons()) {
             sb.append("<th>").append(DATE_FORMAT.format(lesson.getDate())).append("</th>");
         }
-        for (ControlPoint controlPoint : controlPoints) {
+        for (ControlPoint controlPoint : controlPoints.getControlPoints()) {
             sb.append("<th>").append(controlPoint.getName()).append("</th>");
         }
         sb.append("\n            </tr>\n");

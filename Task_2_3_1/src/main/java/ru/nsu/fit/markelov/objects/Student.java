@@ -1,6 +1,13 @@
 package ru.nsu.fit.markelov.objects;
 
-public class Student implements Comparable<Student> {
+import ru.nsu.fit.markelov.util.validation.IllegalInputException;
+import ru.nsu.fit.markelov.util.validation.Validatable;
+
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_EMPTY;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.NOT_NULL;
+import static ru.nsu.fit.markelov.util.validation.IllegalInputException.requireNonNull;
+
+public class Student implements Comparable<Student>, Validatable<Student> {
     private String id;
     private String fullName;
     private String repositoryUrl;
@@ -9,6 +16,35 @@ public class Student implements Comparable<Student> {
     @Override
     public int compareTo(Student student) {
         return id.compareTo(student.getId());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Student validate() throws IllegalInputException {
+        requireNonNull(id, "Student id " + NOT_NULL);
+        requireNonNull(fullName, "Student full name " + NOT_NULL);
+        requireNonNull(repositoryUrl, "Student repository url " + NOT_NULL);
+        requireNonNull(branchName, "Student branch name " + NOT_NULL);
+
+        if (id.isEmpty()) {
+            throw new IllegalInputException("Student id " + NOT_EMPTY);
+        }
+
+        if (fullName.isEmpty()) {
+            throw new IllegalInputException("Student full name " + NOT_EMPTY);
+        }
+
+        if (repositoryUrl.isEmpty()) {
+            throw new IllegalInputException("Student repository url " + NOT_EMPTY);
+        }
+
+        if (branchName.isEmpty()) {
+            throw new IllegalInputException("Student branch name " + NOT_EMPTY);
+        }
+
+        return this;
     }
 
     /**
