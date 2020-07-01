@@ -77,7 +77,8 @@ public class Main implements Callable<Integer> {
         description = "define a directory with scripts")
     private String scriptsDir;
 
-    @CommandLine.Option(names = { "-r", "--rules" }, description = "display rules of writing scripts and exit")
+    @CommandLine.Option(names = { "-r", "--rules" },
+        description = "display rules of writing scripts and exit")
     private boolean rulesRequested;
 
     public static void main(String[] args) {
@@ -220,6 +221,14 @@ public class Main implements Callable<Integer> {
         String message;
         switch (command) {
             case "compile":
+                if (student.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'student' must be provided for 'compile' command");
+                }
+                if (task.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'task' must be provided for 'compile' command");
+                }
                 message = course.compile(student, task);
                 if (message == null || message.isEmpty()) {
                     message = NO_MESSAGE;
@@ -227,6 +236,14 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" compile result: " + message);
                 break;
             case "style":
+                if (student.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'student' must be provided for 'style' command");
+                }
+                if (task.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'task' must be provided for 'style' command");
+                }
                 message = course.checkStyle(student, task);
                 if (message == null || message.isEmpty()) {
                     message = NO_MESSAGE;
@@ -234,6 +251,14 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" style check result: " + message);
                 break;
             case "test":
+                if (student.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'student' must be provided for 'test' command");
+                }
+                if (task.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'task' must be provided for 'test' command");
+                }
                 message = course.test(student, task);
                 if (message == null || message.isEmpty()) {
                     message = NO_MESSAGE;
@@ -241,6 +266,14 @@ public class Main implements Callable<Integer> {
                 System.out.println(student + "'s \"" + task + "\" test result: " + message);
                 break;
             case "points":
+                if (student.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'student' must be provided for 'points' command");
+                }
+                if (task.isEmpty()) {
+                    throw new IllegalInputException(
+                        "Argument 'task' must be provided for 'points' command");
+                }
                 int points = course.countPoints(student, task);
                 System.out.println(student + "'s \"" + task + "\" points: " + points);
                 break;
